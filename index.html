@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mini Game</title>
+<style>
+body{
+background:#111;
+color:white;
+font-family:sans-serif;
+text-align:center;
+padding-top:100px;
+}
+button{
+padding:15px 30px;
+font-size:20px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Mini Idle Game</h1>
+
+<p id="gold">Gold : 0</p>
+
+<button onclick="gain()">Mine Gold</button>
+
+<script>
+
+let gold=0;
+
+function gain(){
+gold+=10;
+document.getElementById("gold").innerText="Gold : "+gold;
+}
+
+</script>
+
+</body>
+</html>
