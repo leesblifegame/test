@@ -1,42 +1,1834 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Mini Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아쿠아 서바이벌 — 게임 기획서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{
-background:#111;
-color:white;
-font-family:sans-serif;
-text-align:center;
-padding-top:100px;
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 100; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 200; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 300; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 400; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 500; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 600; }
+@font-face { font-family: 'Typo_Ssangmundong'; src: url('https://cdn.font.co.kr/fonco/static/fonts/OTE3_Typo_Ssangmun_03_B.woff') format('woff'); font-weight: 700; }
+</style>
+<style>
+:root {
+  --teal:        #17a589;
+  --teal-light:  #76d7c4;
+  --teal-dark:   #0e6655;
+  --ocean:       #050f1a;
+  --ocean-mid:   #0a2342;
+  --ocean-card:  #112b45;
+  --blue-glow:   #5b9df5;
+  --blue-accent: #2e86c1;
+  --cyan:        #76d7c4;
+  --gold:        #f0b429;
+  --text-body:   #a9cce3;
+  --text-strong: #eefaf8;
+  --text-muted:  #566573;
+  --sidebar-w:   230px;
 }
-button{
-padding:15px 30px;
-font-size:20px;
-cursor:pointer;
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: inherit; }
+
+body {
+  font-family: 'Typo_Ssangmundong', 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-body);
+  background-color: var(--ocean);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--ocean-mid);
+  border-right: 1px solid rgba(23,165,137,0.18);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 22px 16px 16px;
+  border-bottom: 1px solid rgba(23,165,137,0.15);
+}
+
+.sidebar-header h2 {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.sidebar-logo {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+
+.sidebar-version {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* Sidebar nav */
+.toc-section {
+  flex: 1;
+  padding: 10px 0;
+}
+
+.toc-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 16px 4px;
+}
+
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-size: 13px;
+  color: var(--text-body);
+  border-left: 3px solid transparent;
+}
+
+.toc-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-strong);
+}
+
+.toc-item.active {
+  background: rgba(23,165,137,0.1);
+  color: var(--teal);
+  border-left-color: var(--teal);
+  font-weight: 600;
+}
+
+.toc-icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── SUBNAV (contextual subtitles) ── */
+.subnav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 16px 8px 20px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-size: 12.5px;
+  color: var(--text-body);
+  border-left: 2px solid transparent;
+  line-height: 1.45;
+}
+
+.subnav-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-strong);
+}
+
+.subnav-item.active {
+  background: rgba(23,165,137,0.09);
+  color: var(--teal-light);
+  border-left-color: var(--teal);
+  font-weight: 600;
+}
+
+.subnav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 6px;
+  transition: background 0.15s;
+}
+
+.subnav-item.active .subnav-dot { background: var(--teal); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Topnav */
+.topnav {
+  background: var(--ocean-mid);
+  border-bottom: 1px solid rgba(23,165,137,0.22);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  overflow-x: auto;
+}
+
+.nav-tab {
+  padding: 18px 22px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.nav-tab:hover { color: var(--text-strong); }
+
+.nav-tab.active {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+  font-weight: 600;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 44px 52px;
+  max-width: 900px;
+}
+
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+.page-title {
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(23,165,137,0.15);
+}
+
+/* ── OVERVIEW TABLE ── */
+.overview-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.overview-table th, .overview-table td {
+  padding: 12px 16px;
+  border: 1px solid rgba(23,165,137,0.12);
+  text-align: left;
+  vertical-align: top;
+}
+
+.overview-table th {
+  background: rgba(23,165,137,0.12);
+  color: var(--teal-light);
+  font-weight: 600;
+  width: 130px;
+  white-space: nowrap;
+}
+
+.overview-table td {
+  background: var(--ocean-card);
+  color: var(--text-body);
+}
+
+.overview-table tr:hover td { background: rgba(23,165,137,0.06); }
+
+/* KPI badges */
+.kpi-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.kpi-badge {
+  background: var(--ocean-card);
+  border: 1px solid rgba(23,165,137,0.2);
+  border-radius: 10px;
+  padding: 14px 20px;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+}
+
+.kpi-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--teal);
+  display: block;
+}
+
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+  display: block;
+}
+
+/* ── CARDS ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: var(--ocean-card);
+  border: 1px solid rgba(91,157,245,0.13);
+  border-radius: 12px;
+  padding: 22px;
+  transition: border-color 0.2s;
+}
+
+.card:hover { border-color: rgba(23,165,137,0.3); }
+
+.card-icon { font-size: 26px; margin-bottom: 10px; }
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 6px;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* ── SECTION BLOCK ── */
+.section-block {
+  margin-bottom: 36px;
+}
+
+.section-block h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(23,165,137,0.2);
+}
+
+.section-block p, .section-block li {
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.9;
+  margin-bottom: 6px;
+}
+
+.section-block ul { padding-left: 20px; }
+.section-block li { margin-bottom: 3px; }
+
+/* ── WORLD ZONE CARDS ── */
+.zone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.zone-card {
+  border-radius: 12px;
+  padding: 20px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.zone-outer {
+  background: rgba(10,35,66,0.8);
+  border-color: rgba(169,204,227,0.3);
+}
+
+.zone-inner {
+  background: rgba(14,102,85,0.25);
+  border-color: rgba(23,165,137,0.4);
+}
+
+.zone-center {
+  background: rgba(120,40,10,0.25);
+  border-color: rgba(240,180,41,0.4);
+}
+
+.zone-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.zone-outer .zone-label { color: var(--text-muted); }
+.zone-inner .zone-label { color: var(--teal); }
+.zone-center .zone-label { color: var(--gold); }
+
+.zone-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 10px;
+}
+
+.zone-card li {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.75;
+  list-style: none;
+  padding-left: 0;
+}
+
+.zone-card li::before { content: "▸ "; color: var(--teal-light); font-size: 10px; }
+
+/* ── GAMEPLAY LOOP ── */
+.loop-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.loop-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  flex: 1;
+}
+
+.loop-box {
+  background: var(--ocean-card);
+  border: 1px solid rgba(23,165,137,0.3);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.loop-box:hover { border-color: var(--teal); }
+
+.loop-num {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: var(--teal);
+  color: var(--ocean);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.loop-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 4px;
+}
+
+.loop-desc {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.loop-arrow {
+  color: var(--teal);
+  font-size: 16px;
+  margin-top: 16px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── TROOP CARDS ── */
+.troop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.troop-card {
+  border-radius: 12px;
+  padding: 20px;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.troop-warrior  { background: rgba(20,60,100,0.5); border-color: #2e86c1; }
+.troop-hunter   { background: rgba(10,80,60,0.4);  border-color: #17a589; }
+.troop-gunner   { background: rgba(70,20,100,0.4); border-color: #8e44ad; }
+
+.troop-icon { font-size: 30px; margin-bottom: 8px; }
+
+.troop-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 2px;
+}
+
+.troop-eng {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.troop-role {
+  font-size: 12px;
+  color: var(--teal-light);
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  background: rgba(23,165,137,0.1);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.troop-detail {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.7;
+}
+
+.troop-strong { color: var(--teal); font-weight: 600; }
+.troop-weak   { color: #e74c3c; font-weight: 600; }
+
+.counter-banner {
+  background: var(--ocean-card);
+  border: 1px solid rgba(23,165,137,0.2);
+  border-radius: 8px;
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+/* ── DATA TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 28px;
+  font-size: 13.5px;
+}
+
+.data-table th {
+  background: rgba(23,165,137,0.15);
+  color: var(--teal-light);
+  font-weight: 600;
+  padding: 10px 14px;
+  border: 1px solid rgba(23,165,137,0.12);
+  text-align: left;
+}
+
+.data-table td {
+  padding: 9px 14px;
+  border: 1px solid rgba(91,157,245,0.08);
+  color: var(--text-body);
+  background: var(--ocean-card);
+}
+
+.data-table tr:nth-child(odd) td  { background: rgba(17,43,69,0.6); }
+.data-table tr:nth-child(even) td { background: rgba(17,43,69,0.9); }
+.data-table tr:hover td           { background: rgba(23,165,137,0.07); }
+
+.data-table .col-hl { color: var(--teal-light); font-weight: 600; }
+.data-table .col-gold { color: var(--gold); font-weight: 700; }
+
+/* ── BUILD PROGRESSION ── */
+.build-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.build-step {
+  flex: 1;
+  background: var(--ocean-card);
+  border: 2px solid rgba(23,165,137,0.3);
+  border-radius: 10px;
+  padding: 18px 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.build-step:hover { border-color: var(--teal); }
+.build-icon { font-size: 28px; margin-bottom: 8px; }
+.build-name { font-size: 13px; font-weight: 700; color: var(--text-strong); margin-bottom: 4px; }
+.build-desc { font-size: 11.5px; color: var(--text-muted); }
+.build-arrow { font-size: 22px; color: var(--teal); padding: 0 10px; flex-shrink: 0; }
+
+/* ── RESOURCE CHIPS ── */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.resource-chip {
+  background: var(--ocean-card);
+  border-radius: 10px;
+  padding: 16px 12px;
+  text-align: center;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.resource-chip .r-icon { font-size: 24px; margin-bottom: 6px; }
+.resource-chip .r-name { font-size: 12.5px; font-weight: 700; color: var(--text-strong); }
+.resource-chip .r-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── ACCORDION (FAQ-style sections) ── */
+.accordion-item {
+  background: var(--ocean-card);
+  border: 1px solid rgba(91,157,245,0.1);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.accordion-q {
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.accordion-q:hover { color: var(--teal); }
+.accordion-arrow { font-size: 12px; transition: transform 0.2s; color: var(--text-muted); }
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+
+.accordion-body {
+  display: none;
+  padding: 0 20px 16px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.accordion-item.open .accordion-body { display: block; }
+
+.accordion-body ul { padding-left: 18px; margin-top: 8px; }
+.accordion-body li { margin-bottom: 4px; color: var(--text-body); }
+.accordion-body strong { color: var(--teal-light); font-weight: 600; }
+
+/* ── GROWTH TIMELINE ── */
+.growth-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.growth-timeline::before {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--teal), rgba(23,165,137,0.1));
+}
+
+.growth-item {
+  display: flex;
+  gap: 20px;
+  padding: 0 0 24px;
+  position: relative;
+}
+
+.growth-num {
+  width: 38px;
+  height: 38px;
+  background: var(--ocean-mid);
+  border: 2px solid var(--teal);
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+}
+
+.growth-content {
+  flex: 1;
+  background: var(--ocean-card);
+  border: 1px solid rgba(91,157,245,0.1);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-top: 2px;
+}
+
+.growth-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 2px;
+}
+
+.growth-sub {
+  font-size: 11.5px;
+  color: var(--teal);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.growth-range {
+  display: inline-block;
+  font-size: 11px;
+  background: rgba(23,165,137,0.15);
+  color: var(--teal-light);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.growth-content ul { padding-left: 16px; }
+.growth-content li { font-size: 13px; color: var(--text-body); margin-bottom: 2px; }
+
+/* ── PHASE CARDS ── */
+.phase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.phase-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.phase-header {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.phase-body {
+  background: var(--ocean-card);
+  padding: 16px;
+}
+
+.phase-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.phase-body ul { padding-left: 16px; }
+.phase-body li { font-size: 12.5px; color: var(--text-body); margin-bottom: 5px; line-height: 1.65; }
+
+.phase-1 { border-color: var(--teal); }
+.phase-1 .phase-header { background: var(--teal); color: var(--ocean); }
+
+.phase-2 { border-color: var(--blue-accent); }
+.phase-2 .phase-header { background: var(--blue-accent); color: #fff; }
+
+.phase-3 { border-color: #8e44ad; }
+.phase-3 .phase-header { background: #8e44ad; color: #fff; }
+
+/* ── MONETIZATION ── */
+.mono-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.mono-card {
+  background: var(--ocean-card);
+  border-radius: 12px;
+  padding: 20px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.mono-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mono-card ul { padding-left: 16px; }
+.mono-card li { font-size: 13px; color: var(--text-body); margin-bottom: 4px; }
+
+/* ── DIFF CARDS ── */
+.diff-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+.diff-item {
+  background: var(--ocean-card);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: border-color 0.2s;
+}
+
+.diff-item:hover { border-left-color: var(--teal-light); }
+
+.diff-num {
+  width: 26px;
+  height: 26px;
+  background: var(--teal);
+  color: var(--ocean);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.diff-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 4px;
+}
+
+.diff-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+/* ── TAG CHIPS ── */
+.tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+.tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.tag-teal   { background: rgba(23,165,137,0.18); color: var(--teal-light); border: 1px solid rgba(23,165,137,0.3); }
+.tag-blue   { background: rgba(46,134,193,0.2);  color: #7eb5ff; border: 1px solid rgba(46,134,193,0.4); }
+.tag-gold   { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+.tag-purple { background: rgba(142,68,173,0.2);  color: #c9a0f5; border: 1px solid rgba(142,68,173,0.4); }
+
+/* ── ANCHOR COMPARE ── */
+.anchor-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.anchor-box {
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.anchor-down {
+  background: rgba(14,102,85,0.2);
+  border: 1px solid rgba(23,165,137,0.4);
+  color: var(--teal-light);
+}
+
+.anchor-up {
+  background: rgba(17,43,69,0.6);
+  border: 1px solid rgba(169,204,227,0.2);
+  color: var(--text-body);
+}
+
+.anchor-box strong { font-weight: 700; display: block; margin-bottom: 6px; font-size: 14px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ocean); }
+::-webkit-scrollbar-thumb { background: var(--ocean-card); border-radius: 3px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 60px; }
+  .toc-item span.toc-name { display: none; }
+  .sidebar-header h2, .sidebar-logo, .sidebar-version, .toc-section-title { display: none; }
+  .toc-item { padding: 10px; justify-content: center; }
+  .content { padding: 24px 18px; }
+  .card-grid, .zone-grid, .troop-grid, .phase-grid, .mono-grid { grid-template-columns: 1fr; }
+  .resource-grid { grid-template-columns: 1fr 1fr; }
+  .topnav { padding: 0 10px; }
+  .nav-tab { padding: 14px 10px; font-size: 12px; }
+  .build-flow { flex-direction: column; align-items: stretch; }
+  .build-arrow { transform: rotate(90deg); text-align: center; }
+  .anchor-compare { grid-template-columns: 1fr; }
 }
 </style>
 </head>
-
 <body>
 
-<h1>🎮 Mini Idle Game</h1>
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Game Design Doc</h2>
+    <div class="sidebar-logo">⚓ 아쿠아 서바이벌</div>
+    <div class="sidebar-version">v1.0 · 2026.04</div>
+  </div>
+  <div class="toc-section">
+    <div class="toc-section-title">목차</div>
 
-<p id="gold">Gold : 0</p>
+    <div class="toc-item active" onclick="switchPage('overview', this)">
+      <span class="toc-icon">📋</span>
+      <span class="toc-name">게임 개요</span>
+    </div>
+    <div class="toc-item" onclick="switchPage('world', this)">
+      <span class="toc-icon">🌊</span>
+      <span class="toc-name">세계관 & 스토리</span>
+    </div>
+    <div class="toc-item" onclick="switchPage('gameplay', this)">
+      <span class="toc-icon">🎮</span>
+      <span class="toc-name">핵심 게임플레이</span>
+    </div>
+    <div class="toc-item" onclick="switchPage('systems', this)">
+      <span class="toc-icon">⚙️</span>
+      <span class="toc-name">게임 시스템</span>
+    </div>
+    <div class="toc-item" onclick="switchPage('monetize', this)">
+      <span class="toc-icon">💰</span>
+      <span class="toc-name">수익화 모델</span>
+    </div>
+    <div class="toc-item" onclick="switchPage('roadmap', this)">
+      <span class="toc-icon">🗺️</span>
+      <span class="toc-name">성장 & 로드맵</span>
+    </div>
+  </div>
+</div>
 
-<button onclick="gain()">Mine Gold</button>
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- Topnav: 현재 페이지의 부제(소목차) -->
+  <div class="topnav" id="topnav-list"></div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 게임 개요
+    ════════════════════════════════════════════ -->
+    <div class="page-section active" id="page-overview">
+      <div class="page-title">아쿠아 서바이벌 <span style="font-size:16px;font-weight:400;color:var(--text-muted)">Aqua Survival</span></div>
+      <div class="page-subtitle">게임 기획서 v1.0 — 대홍수 이후, 물 위에서 새로운 문명을 건설하라</div>
+
+      <div class="kpi-row">
+        <div class="kpi-badge"><span class="kpi-val">SLG</span><span class="kpi-label">장르</span></div>
+        <div class="kpi-badge"><span class="kpi-val">3</span><span class="kpi-label">월드 존</span></div>
+        <div class="kpi-badge"><span class="kpi-val">3종</span><span class="kpi-label">병종 시스템</span></div>
+        <div class="kpi-badge"><span class="kpi-val">Mobile</span><span class="kpi-label">플랫폼</span></div>
+      </div>
+
+      <div class="section-block" id="sec-overview-info">
+        <h3>기본 정보</h3>
+        <table class="overview-table">
+          <tr><th>장르</th><td>모바일 전략 서바이벌 (SLG)</td></tr>
+          <tr><th>플랫폼</th><td>iOS / Android</td></tr>
+          <tr><th>세계관</th><td>현대 문명 붕괴 후 원시 생존 시대 — 대홍수로 잠긴 세계</td></tr>
+          <tr><th>핵심 테마</th><td>대홍수 이후 물 위에서의 생존, 건설, 연합, 패권</td></tr>
+          <tr><th>레퍼런스</th><td>Whiteout Survival (WOS), State of Survival (SOS), King Shot</td></tr>
+          <tr><th>타겟 유저</th><td>전략 SLG 유저, 서바이벌 장르 팬, 해양 테마 선호 유저</td></tr>
+          <tr><th>월드 구조</th><td>아우터 (생존) → 이너 (단합) → 센터 (패권)</td></tr>
+          <tr><th>기지 컨셉</th><td>판자 → 땟목 → 함선 기지 단계적 확장</td></tr>
+        </table>
+      </div>
+
+      <div class="section-block" id="sec-overview-diff">
+        <h3>핵심 차별화 포인트</h3>
+        <div class="diff-list">
+          <div class="diff-item">
+            <div class="diff-num">01</div>
+            <div>
+              <div class="diff-title">동적 기지 이동 — 닻(Anchor) 시스템</div>
+              <div class="diff-desc">고정 기지 SLG와 달리 닻 시스템으로 연맹 단위 이동 가능. 닻을 올리면 자유 항해, 내리면 연맹 버프 활성화.</div>
+            </div>
+          </div>
+          <div class="diff-item">
+            <div class="diff-num">02</div>
+            <div>
+              <div class="diff-title">빙산의 일각 자원 시스템</div>
+              <div class="diff-desc">탐사할수록 드러나는 자원지. 수면 아래 숨겨진 대량 자원 — 전략적 탐사 경쟁 유도.</div>
+            </div>
+          </div>
+          <div class="diff-item">
+            <div class="diff-num">03</div>
+            <div>
+              <div class="diff-title">땟목 건설 메카닉</div>
+              <div class="diff-desc">판자 → 땟목 → 함선의 단계적 기지 확장. 성장이 시각적으로 직관적으로 표현됨.</div>
+            </div>
+          </div>
+          <div class="diff-item">
+            <div class="diff-num">04</div>
+            <div>
+              <div class="diff-title">해류 이벤트 시스템</div>
+              <div class="diff-desc">주기적으로 해류 방향이 변화하여 자원 분포와 이동 경로에 전략적 영향을 줌.</div>
+            </div>
+          </div>
+          <div class="diff-item">
+            <div class="diff-num">05</div>
+            <div>
+              <div class="diff-title">대홍수 프롤로그 미니게임</div>
+              <div class="diff-desc">첫 로그인 시 땟목 연결 미니게임으로 세계관 몰입도 극대화 및 핵심 건설 메카닉 선체험.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="sec-overview-ref">
+        <h3>레퍼런스 게임 비교</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>요소</th>
+              <th>WOS (Whiteout Survival)</th>
+              <th>SOS (State of Survival)</th>
+              <th>King Shot</th>
+              <th style="color:var(--gold)">아쿠아 서바이벌</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-hl">세계관</td>
+              <td>빙하기 생존</td>
+              <td>좀비 아포칼립스</td>
+              <td>서부 개척</td>
+              <td class="col-gold">대홍수 해양 생존</td>
+            </tr>
+            <tr>
+              <td class="col-hl">기지</td>
+              <td>요새 건설</td>
+              <td>도시 재건</td>
+              <td>마을 건설</td>
+              <td class="col-gold">함선 기지 (땟목+판자)</td>
+            </tr>
+            <tr>
+              <td class="col-hl">이동</td>
+              <td>고정</td>
+              <td>고정</td>
+              <td>고정</td>
+              <td class="col-gold">닻 기반 이동 ★차별화</td>
+            </tr>
+            <tr>
+              <td class="col-hl">병종</td>
+              <td>3종 상성</td>
+              <td>3종 상성</td>
+              <td>3종 상성</td>
+              <td class="col-gold">3종 해양 상성</td>
+            </tr>
+            <tr>
+              <td class="col-hl">월드</td>
+              <td>아우터/이너/센터</td>
+              <td>존 구조</td>
+              <td>존 구조</td>
+              <td class="col-gold">아우터/이너/센터</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 세계관 & 스토리
+    ════════════════════════════════════════════ -->
+    <div class="page-section" id="page-world">
+      <div class="page-title">세계관 & 스토리</div>
+      <div class="page-subtitle">대홍수 이후 원시로 돌아간 인류의 생존 서사</div>
+
+      <div class="section-block" id="sec-world-bg">
+        <h3>세계관 배경</h3>
+        <div class="tag-row">
+          <span class="tag tag-teal">생존</span>
+          <span class="tag tag-blue">건설</span>
+          <span class="tag tag-teal">연합</span>
+          <span class="tag tag-gold">패권</span>
+        </div>
+        <p>기후 이변과 연속된 자연재해로 <strong style="color:var(--text-strong)">현대 문명이 붕괴</strong>되었다. 전례 없는 대홍수가 대륙의 대부분을 삼켜버렸고, 살아남은 자들은 물 위에서 땟목과 판자로 삶을 이어간다.</p>
+        <p>문명의 유산은 물속 깊이 잠들어 있고, 인류는 다시 원시 생존의 시대로 돌아갔다. 하지만 생존한 이들은 포기하지 않는다 — 판자 하나, 땟목 하나씩 쌓아 올리며 새로운 문명을 건설하기 시작한다.</p>
+        <p style="font-style:italic;color:var(--teal-light);margin-top:12px">분위기: 묵시록적 해양 서바이벌 + 원시 부족 문명 재건</p>
+      </div>
+
+      <div class="section-block" id="sec-world-prologue">
+        <h3>프롤로그 — 대홍수의 기억</h3>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">🌊</div>
+            <div class="card-title">컷신: 대홍수</div>
+            <div class="card-desc">거대한 쓰나미가 도시를 집어삼키는 장면. 현대 문명의 마지막 순간을 목격한 주인공이 잔해 위에서 눈을 뜬다.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🪵</div>
+            <div class="card-title">최초 로그인 미니게임: 땟목 연결</div>
+            <div class="card-desc">물 위에 떠 있는 판자 조각들을 드래그하여 연결. 시간 제한 내에 기본 땟목 완성 시 생존 거점 확보 → 튜토리얼 시작.</div>
+          </div>
+        </div>
+
+        <p style="font-size:13px;color:var(--text-muted);font-style:italic">목적: 세계관 몰입 극대화 + 핵심 건설 메카닉 최초 체험</p>
+      </div>
+
+      <div class="section-block" id="sec-world-zone">
+        <h3>월드 존 구조 — 3단계 동심원</h3>
+        <div class="zone-grid">
+          <div class="zone-card zone-outer">
+            <div class="zone-label">Outer Zone</div>
+            <div class="zone-name">아우터 존<br><small style="font-size:12px;font-weight:400;color:var(--text-muted)">생존 (Survival)</small></div>
+            <ul>
+              <li>신규 플레이어 시작 구역</li>
+              <li>낮은 경쟁 강도</li>
+              <li>풍부한 기초 자원</li>
+              <li>PvE 중심, 보호막 시스템</li>
+            </ul>
+          </div>
+          <div class="zone-card zone-inner">
+            <div class="zone-label">Inner Zone</div>
+            <div class="zone-name">이너 존<br><small style="font-size:12px;font-weight:400;color:var(--teal-dark)">단합 (Unity)</small></div>
+            <ul>
+              <li>중급 경쟁 구역</li>
+              <li>연맹 간 동맹/대립 본격화</li>
+              <li>침몰 도시 분포</li>
+              <li>PvP 활성화, 연맹전 시작</li>
+            </ul>
+          </div>
+          <div class="zone-card zone-center">
+            <div class="zone-label">Center Zone</div>
+            <div class="zone-name">센터 존<br><small style="font-size:12px;font-weight:400;color:#a0522d">패권 (Hegemony)</small></div>
+            <ul>
+              <li>최고 경쟁 구역</li>
+              <li>패권 건물 "대홍수의 탑"</li>
+              <li>점령 연맹에 서버 버프</li>
+              <li>정기 점령전 (킹오브힐)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 핵심 게임플레이
+    ════════════════════════════════════════════ -->
+    <div class="page-section" id="page-gameplay">
+      <div class="page-title">핵심 게임플레이 루프</div>
+      <div class="page-subtitle">생존부터 패권까지 — 7단계 순환 성장 구조</div>
+
+      <div class="section-block" id="sec-gp-loop">
+        <h3>핵심 루프</h3>
+        <div class="loop-flow">
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">1</div>
+              <div class="loop-title">생존</div>
+              <div class="loop-desc">땟목 확장<br>기초 자원 확보</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">2</div>
+              <div class="loop-title">자원 수집</div>
+              <div class="loop-desc">부유물 채취<br>섬 탐사</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">3</div>
+              <div class="loop-title">기지 건설</div>
+              <div class="loop-desc">판자+땟목<br>함선 기지 확장</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">4</div>
+              <div class="loop-title">병력 훈련</div>
+              <div class="loop-desc">3종 병종<br>육성</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">5</div>
+              <div class="loop-title">전투/약탈</div>
+              <div class="loop-desc">PvE/PvP<br>자원 쟁탈</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">6</div>
+              <div class="loop-title">연맹 참여</div>
+              <div class="loop-desc">닻 고정<br>연합 작전</div>
+            </div>
+          </div>
+          <div class="loop-arrow">▶</div>
+          <div class="loop-step">
+            <div class="loop-box">
+              <div class="loop-num">7</div>
+              <div class="loop-title">월드 패권</div>
+              <div class="loop-desc">센터 존<br>점령</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--teal);text-align:center;margin-top:4px">◀─── 반복 성장 루프 ───▶</p>
+      </div>
+
+      <div class="section-block" id="sec-gp-detail">
+        <h3>각 단계 상세</h3>
+        <div class="accordion-item open">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>① 생존 단계 — 물 위 땟목 확장</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <p>물 위에 떠 있는 잔해와 판자를 연결하여 초기 땟목을 확장한다. 기초 자원을 확보하며 생존 거점을 구축하는 가장 핵심적인 초반 행동 루프.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>② 자원 수집 — 부유물, 섬, 침몰 유적</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li>월드맵 부유 자원: 해류에 따라 이동하는 자원 오브젝트 채취</li>
+              <li>섬 탐사 (빙산의 일각): 수면 아래 숨겨진 대량 자원</li>
+              <li>침몰 도시 유적: 고위험 고보상, 연맹 협력 탐사</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>③ 기지 건설 — 판자에서 함선까지</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <p>판자(Plank) → 땟목(Raft) → 함선 기지(Ship Fortress)로 단계적 확장. 생산/군사/방어/연구/지휘 시설을 배치하여 전략적 기지를 완성한다.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>④ ~ ⑦ 병력 훈련 → 전투 → 연맹 → 패권</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li><strong>병력 훈련:</strong> 3종 병종(파도전사·해류사냥꾼·심해포격수) 상성 운영</li>
+              <li><strong>전투/약탈:</strong> PvE 몬스터 처치, PvP 타 플레이어 약탈</li>
+              <li><strong>연맹 참여:</strong> 닻 시스템으로 연맹 단위 이동 및 연합 작전</li>
+              <li><strong>월드 패권:</strong> 센터 존 "대홍수의 탑" 점령 → 서버 전체 버프 획득</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 게임 시스템
+    ════════════════════════════════════════════ -->
+    <div class="page-section" id="page-systems">
+      <div class="page-title">게임 시스템</div>
+      <div class="page-subtitle">기지 건설 · 자원 · 섬 · 병종 · 연맹 시스템 상세</div>
+
+      <!-- 기지 건설 -->
+      <div class="section-block" id="sec-sys-build">
+        <h3>기지 건설 시스템</h3>
+        <div class="build-flow">
+          <div class="build-step">
+            <div class="build-icon">🪵</div>
+            <div class="build-name">판자 (Plank)</div>
+            <div class="build-desc">가장 작은 건설 단위<br>목재 1~3개 소모</div>
+          </div>
+          <div class="build-arrow">➜</div>
+          <div class="build-step">
+            <div class="build-icon">🛖</div>
+            <div class="build-name">땟목 (Raft)</div>
+            <div class="build-desc">판자 여러 개를 연결한<br>플랫폼 단위</div>
+          </div>
+          <div class="build-arrow">➜</div>
+          <div class="build-step">
+            <div class="build-icon">⛵</div>
+            <div class="build-name">함선 기지</div>
+            <div class="build-desc">땟목들을 이어<br>거대 기지 완성</div>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>카테고리</th><th>건물 예시</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-hl">생산 시설</td><td>낚시터, 해초 농장, 빗물 저장소</td></tr>
+            <tr><td class="col-hl">군사 시설</td><td>훈련소, 무기고, 갑판 포대</td></tr>
+            <tr><td class="col-hl">방어 시설</td><td>방책, 망루, 기뢰 설치대</td></tr>
+            <tr><td class="col-hl">연구 시설</td><td>항해 연구소, 생존 연구소</td></tr>
+            <tr><td class="col-gold">지휘 시설</td><td style="color:var(--gold)">함교 — 주력 지휘소 (핵심 건물)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 자원 시스템 -->
+      <div class="section-block" id="sec-sys-resource">
+        <h3>자원 시스템</h3>
+        <div class="resource-grid">
+          <div class="resource-chip" style="border-color:#7d5a3c">
+            <div class="r-icon">🪵</div>
+            <div class="r-name">목재 (Wood)</div>
+            <div class="r-desc">판자/땟목 건설 기본 재료</div>
+          </div>
+          <div class="resource-chip" style="border-color:#1a7a4a">
+            <div class="r-icon">🐟</div>
+            <div class="r-name">식량 (Food)</div>
+            <div class="r-desc">병력 유지 및 생산</div>
+          </div>
+          <div class="resource-chip" style="border-color:#566573">
+            <div class="r-icon">⚙️</div>
+            <div class="r-name">금속 (Metal)</div>
+            <div class="r-desc">무기/장비 제작 소재</div>
+          </div>
+          <div class="resource-chip" style="border-color:var(--blue-accent)">
+            <div class="r-icon">💧</div>
+            <div class="r-name">청정수</div>
+            <div class="r-desc">고급 연구 및 특수 유닛</div>
+          </div>
+        </div>
+
+        <p style="font-size:13.5px;font-weight:600;color:var(--teal-light);margin-bottom:8px">자원 획득처</p>
+        <table class="data-table">
+          <thead><tr><th>획득처</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="col-hl">기지 내 생산 시설</td><td>시간 기반 자원 생성, 레벨업으로 생산량 증가</td></tr>
+            <tr><td class="col-hl">월드맵 부유 자원</td><td>해류에 따라 이동하는 자원 오브젝트 채취</td></tr>
+            <tr><td class="col-hl">섬 탐사</td><td>빙산의 일각 — 수면 아래 대량 자원 잠재</td></tr>
+            <tr><td class="col-hl">침몰 도시 유적</td><td>고위험 고보상, 연맹 협력 탐사 필요</td></tr>
+            <tr><td class="col-hl">타 플레이어 약탈</td><td>PvP 공격으로 자원 강탈 가능</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 섬 & 자원지 -->
+      <div class="section-block" id="sec-sys-island">
+        <h3>섬 & 자원지 시스템 — 빙산의 일각</h3>
+        <p>월드맵에 분포하는 섬들은 <strong style="color:var(--text-strong)">"빙산의 일각"</strong> 형태. 수면 위에는 작은 암초/얼음 조각처럼 보이지만, 수면 아래에는 거대한 자원 저장소가 숨어 있다. 채굴할수록 섬이 점점 드러나며 탐사 경쟁이 형성된다.</p>
+
+        <table class="data-table" style="margin-top:16px">
+          <thead>
+            <tr><th>등급</th><th>특징</th><th>자원량</th><th>비고</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>★ 표류 잔해</td><td>소형, 단독 채취</td><td>소량</td><td>초보 구역</td></tr>
+            <tr><td>★★ 암초 섬</td><td>중형, 경쟁 채취</td><td>중량</td><td>이너 진입 후</td></tr>
+            <tr><td class="col-hl">★★★ 침몰 도시</td><td>대형, 연맹 점령전</td><td>대량</td><td>연맹전 필요</td></tr>
+            <tr><td class="col-gold">★★★★ 심해 유적</td><td>특수, 이벤트 한정</td><td>최대량</td><td>시즌 이벤트</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 병종 시스템 -->
+      <div class="section-block" id="sec-sys-troop">
+        <h3>병종 시스템 — 3종 가위바위보 상성</h3>
+        <div class="troop-grid">
+          <div class="troop-card troop-warrior">
+            <div class="troop-icon">⚔️</div>
+            <div class="troop-name">파도 전사</div>
+            <div class="troop-eng">Wave Warrior</div>
+            <div class="troop-role">근접 강습 특화</div>
+            <div class="troop-detail">
+              무기: 작살, 방패<br>
+              특기: 갑판 돌격, 함선 탑승 전투<br>
+              <span class="troop-strong">★ 사냥꾼에 강함</span><br>
+              <span class="troop-weak">✗ 포격수에 약함</span>
+            </div>
+          </div>
+          <div class="troop-card troop-hunter">
+            <div class="troop-icon">🏹</div>
+            <div class="troop-name">해류 사냥꾼</div>
+            <div class="troop-eng">Current Hunter</div>
+            <div class="troop-role">원거리 정찰 특화</div>
+            <div class="troop-detail">
+              무기: 활, 투창<br>
+              특기: 원거리 공격, 정찰 범위 확장<br>
+              <span class="troop-strong">★ 포격수에 강함</span><br>
+              <span class="troop-weak">✗ 파도전사에 약함</span>
+            </div>
+          </div>
+          <div class="troop-card troop-gunner">
+            <div class="troop-icon">💣</div>
+            <div class="troop-name">심해 포격수</div>
+            <div class="troop-eng">Deep Gunner</div>
+            <div class="troop-role">중화력 공성 특화</div>
+            <div class="troop-detail">
+              무기: 화포, 투석기<br>
+              특기: 건물 파괴, 광역 피해<br>
+              <span class="troop-strong">★ 파도전사에 강함</span><br>
+              <span class="troop-weak">✗ 사냥꾼에 약함</span>
+            </div>
+          </div>
+        </div>
+        <div class="counter-banner">
+          상성 순환 (가위바위보) ▸ 파도전사 → 사냥꾼 → 포격수 → 파도전사
+        </div>
+      </div>
+
+      <!-- 연맹 시스템 -->
+      <div class="section-block" id="sec-sys-alliance">
+        <h3>연맹 시스템 — 닻(Anchor) 이동 메카닉</h3>
+        <p>연맹 가입 후 <strong style="color:var(--text-strong)">연맹 기지(Alliance Flagship)</strong>가 등장하며, 연맹원들은 기지를 중심으로 닻을 고정하여 집결/이동한다. 이것이 일반 SLG와 아쿠아 서바이벌을 구분하는 핵심 차별점.</p>
+
+        <div class="anchor-compare" style="margin-top:16px">
+          <div class="anchor-box anchor-down">
+            <strong>⚓ 닻 내림 (정박 모드)</strong>
+            위치 고정, 이동 불가<br>
+            연맹 버프 +20% 활성화<br>
+            방어력 +15% 상시 적용<br>
+            연맹장 이동 시 함께 이동
+          </div>
+          <div class="anchor-box anchor-up">
+            <strong>⛵ 닻 올림 (항해 모드)</strong>
+            자유 항해 가능<br>
+            이동 속도 +30%<br>
+            연맹 버프 비활성화<br>
+            단독 탐사/약탈에 적합
+          </div>
+        </div>
+
+        <p style="font-size:13.5px;font-weight:600;color:var(--teal-light);margin:20px 0 8px">연맹 건물</p>
+        <table class="data-table">
+          <thead><tr><th>건물</th><th>기능</th></tr></thead>
+          <tbody>
+            <tr><td class="col-hl">연맹 함교 (Alliance Bridge)</td><td>연맹 주력 지휘소, 연맹 버프 발원지</td></tr>
+            <tr><td class="col-hl">연맹 조선소 (Alliance Shipyard)</td><td>연맹 공용 함선 건조 및 업그레이드</td></tr>
+            <tr><td class="col-hl">연맹 포대 (Alliance Battery)</td><td>연맹 영역 방어, 적 침략 대응</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 수익화 모델
+    ════════════════════════════════════════════ -->
+    <div class="page-section" id="page-monetize">
+      <div class="page-title">수익화 모델</div>
+      <div class="page-subtitle">WOS / SOS / King Shot 레퍼런스 기반 모바일 SLG 수익 구조</div>
+
+      <div class="section-block" id="sec-mono-3axis">
+        <h3>수익화 3축 구조</h3>
+        <div class="mono-grid">
+          <div class="mono-card" style="border-color:var(--gold)">
+            <div class="mono-card-title">💳 패스 상품</div>
+            <ul>
+              <li><strong style="color:var(--teal-light)">항해자 패스 (월정액)</strong><br>일일 자원 + 가속 아이템</li>
+              <li style="margin-top:8px"><strong style="color:var(--teal-light)">함장 패스 (배틀패스)</strong><br>시즌 미션 보상 트랙</li>
+            </ul>
+          </div>
+          <div class="mono-card" style="border-color:var(--teal)">
+            <div class="mono-card-title">🛒 상점 상품</div>
+            <ul>
+              <li>자원 팩 (목재/식량/금속/청정수)</li>
+              <li>가속 아이템 (건설/훈련/연구)</li>
+              <li>영웅 조각 (지휘관 강화)</li>
+              <li>특수 스킨 (함선, 병종 외형)</li>
+            </ul>
+          </div>
+          <div class="mono-card" style="border-color:var(--blue-accent)">
+            <div class="mono-card-title">🎪 이벤트 수익화</div>
+            <ul>
+              <li>시즌 이벤트 상점</li>
+              <li>연맹 이벤트 보상 구매</li>
+              <li>한정 스킨/아이템 판매</li>
+              <li>협력 이벤트 패키지</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="sec-mono-kpi">
+        <h3>수익화 지표 목표</h3>
+        <div class="kpi-row">
+          <div class="kpi-badge"><span class="kpi-val">월정액</span><span class="kpi-label">안정적 MRR</span></div>
+          <div class="kpi-badge"><span class="kpi-val">배틀패스</span><span class="kpi-label">시즌 리텐션</span></div>
+          <div class="kpi-badge"><span class="kpi-val">인앱 구매</span><span class="kpi-label">고 ARPU</span></div>
+          <div class="kpi-badge"><span class="kpi-val">이벤트</span><span class="kpi-label">참여 유도</span></div>
+        </div>
+      </div>
+
+      <div class="section-block" id="sec-mono-principle">
+        <h3>과금 설계 원칙</h3>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>레퍼런스 WOS (Whiteout Survival) 과금 구조 분석</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li>월정액 패스 → 무과금도 즐길 수 있는 기본 성장 제공</li>
+              <li>배틀패스 → 시즌 콘텐츠로 리텐션 강화</li>
+              <li>한정 영웅 패키지 → 고과금 유저 대상 핵심 수익</li>
+              <li>가속 아이템 → 시간 가치 소비, 경쟁 심리 자극</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>아쿠아 서바이벌 과금 차별화 방향</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            <ul>
+              <li><strong>함선 스킨:</strong> 기지 전체 외형 변경 — 시각적 성취감 + 과금 동기</li>
+              <li><strong>닻 이동권:</strong> 빠른 이동을 위한 소모성 아이템</li>
+              <li><strong>탐사 가속:</strong> 침몰 유적 탐사 시간 단축권</li>
+              <li><strong>시즌 함선 스킨:</strong> 시즌별 한정 함선 외형 제공</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAGE: 성장 & 로드맵
+    ════════════════════════════════════════════ -->
+    <div class="page-section" id="page-roadmap">
+      <div class="page-title">성장 & 개발 로드맵</div>
+      <div class="page-subtitle">플레이어 성장 5단계 + 개발 Phase 3단계</div>
+
+      <div class="section-block" id="sec-road-growth">
+        <h3>플레이어 성장 단계</h3>
+        <div class="growth-timeline">
+          <div class="growth-item">
+            <div class="growth-num">1</div>
+            <div class="growth-content">
+              <div class="growth-title">표류자 (Drifter)</div>
+              <div class="growth-sub">튜토리얼 ~ 기지 레벨 5</div>
+              <ul>
+                <li>땟목 연결 미니게임 클리어</li>
+                <li>기초 자원 확보 및 기지 건설 시작</li>
+                <li>기본 병종 훈련</li>
+              </ul>
+            </div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-num">2</div>
+            <div class="growth-content">
+              <div class="growth-title">생존자 (Survivor)</div>
+              <div class="growth-sub">기지 레벨 6~15</div>
+              <ul>
+                <li>함선 기지 본격 확장</li>
+                <li>2차 병종 해금 및 상성 전략 학습</li>
+                <li>아우터 존 섬 탐사 시작</li>
+              </ul>
+            </div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-num">3</div>
+            <div class="growth-content">
+              <div class="growth-title">항해자 (Navigator)</div>
+              <div class="growth-sub">기지 레벨 16~25</div>
+              <ul>
+                <li>연맹 가입, 닻 시스템 활성화</li>
+                <li>이너 존 진출 및 연맹전 참여</li>
+                <li>침몰 도시 탐사 시작</li>
+              </ul>
+            </div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-num">4</div>
+            <div class="growth-content">
+              <div class="growth-title">함장 (Captain)</div>
+              <div class="growth-sub">기지 레벨 26~35</div>
+              <ul>
+                <li>전문 병종 육성 완성</li>
+                <li>센터 존 도전 및 패권 경쟁 참여</li>
+                <li>연맹 고위직 역할 수행</li>
+              </ul>
+            </div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-num">5</div>
+            <div class="growth-content">
+              <div class="growth-title">해왕 (Sea King)</div>
+              <div class="growth-sub">기지 레벨 36+</div>
+              <ul>
+                <li>서버 패권 도전 — "대홍수의 탑" 점령</li>
+                <li>레전드 장비 제작 및 최강 함선 완성</li>
+                <li>서버 전체 버프 보유, 영향력 행사</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="sec-road-phase">
+        <h3>개발 우선순위 — Phase 구분</h3>
+        <div class="phase-grid">
+          <div class="phase-card phase-1">
+            <div class="phase-header">PHASE 1</div>
+            <div class="phase-body">
+              <div class="phase-title">핵심 프로토타입</div>
+              <ul>
+                <li>땟목 연결 미니게임 (프롤로그)</li>
+                <li>기초 기지 건설 시스템</li>
+                <li>3종 병종 기본 전투</li>
+              </ul>
+            </div>
+          </div>
+          <div class="phase-card phase-2">
+            <div class="phase-header">PHASE 2</div>
+            <div class="phase-body">
+              <div class="phase-title">월드 구축</div>
+              <ul>
+                <li>월드맵 및 자원지 시스템</li>
+                <li>연맹 & 닻 이동 시스템</li>
+                <li>아우터/이너/센터 존 구조</li>
+              </ul>
+            </div>
+          </div>
+          <div class="phase-card phase-3">
+            <div class="phase-header">PHASE 3</div>
+            <div class="phase-body">
+              <div class="phase-title">콘텐츠 확장</div>
+              <ul>
+                <li>침몰 도시 탐사 콘텐츠</li>
+                <li>시즌 이벤트 시스템</li>
+                <li>수익화 모델 구현</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="sec-road-next">
+        <h3>다음 논의 항목</h3>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>지휘관(영웅) 시스템 상세 기획</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            스킬 구성, 등급 체계, 성장 트리, 영웅 수집 방식 등 지휘관 시스템 전반을 정의해야 합니다. WOS의 영웅 시스템을 참고하되 해양 세계관에 맞는 고유 특성이 필요합니다.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>전투 공식 및 밸런싱 수치 설계</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            3종 상성 배율, 공격력/방어력 성장 곡선, 병력 수 vs 전투력 관계, PvP 매칭 범위 등 핵심 수치 설계가 필요합니다.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q" onclick="toggleAccordion(this)">
+            <span>아트 컨셉 방향 확정</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            세계관 비주얼 스타일 가이드 — 캐릭터 아트 방향(사실적 vs 카툰), 함선 기지 비주얼, UI 컬러 팔레트, 아이콘 스타일 확정이 필요합니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
 
 <script>
+/* ─── SUBNAV DATA ─── */
+var subnavData = {
+  overview: [
+    { id: 'sec-overview-info', label: '기본 정보' },
+    { id: 'sec-overview-diff', label: '핵심 차별화 포인트' },
+    { id: 'sec-overview-ref',  label: '레퍼런스 게임 비교' }
+  ],
+  world: [
+    { id: 'sec-world-bg',       label: '세계관 배경' },
+    { id: 'sec-world-prologue', label: '프롤로그 — 대홍수의 기억' },
+    { id: 'sec-world-zone',     label: '월드 존 구조' }
+  ],
+  gameplay: [
+    { id: 'sec-gp-loop',   label: '핵심 루프' },
+    { id: 'sec-gp-detail', label: '각 단계 상세' }
+  ],
+  systems: [
+    { id: 'sec-sys-build',    label: '기지 건설 시스템' },
+    { id: 'sec-sys-resource', label: '자원 시스템' },
+    { id: 'sec-sys-island',   label: '섬 & 자원지' },
+    { id: 'sec-sys-troop',    label: '병종 시스템' },
+    { id: 'sec-sys-alliance', label: '연맹 시스템' }
+  ],
+  monetize: [
+    { id: 'sec-mono-3axis',     label: '수익화 3축 구조' },
+    { id: 'sec-mono-kpi',       label: '수익화 지표 목표' },
+    { id: 'sec-mono-principle', label: '과금 설계 원칙' }
+  ],
+  roadmap: [
+    { id: 'sec-road-growth', label: '플레이어 성장 단계' },
+    { id: 'sec-road-phase',  label: '개발 Phase 구분' },
+    { id: 'sec-road-next',   label: '다음 논의 항목' }
+  ]
+};
 
-let gold=0;
+var pageTabTitles = {
+  overview: '게임 개요',
+  world:    '세계관 & 스토리',
+  gameplay: '핵심 게임플레이',
+  systems:  '게임 시스템',
+  monetize: '수익화 모델',
+  roadmap:  '성장 & 로드맵'
+};
 
-function gain(){
-gold+=10;
-document.getElementById("gold").innerText="Gold : "+gold;
+var currentPage = 'overview';
+
+/* ─── RENDER TOPNAV (부제) ─── */
+function renderTopnav(page) {
+  var nav = document.getElementById('topnav-list');
+  var items = subnavData[page] || [];
+  nav.innerHTML = items.map(function(item) {
+    return '<div class="nav-tab" data-target="' + item.id + '" onclick="scrollToSection(\'' + item.id + '\')">'
+      + item.label
+      + '</div>';
+  }).join('');
+  setTimeout(updateActiveTopnav, 50);
 }
 
-</script>
+/* ─── SCROLL TO SECTION ─── */
+function scrollToSection(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var top = el.getBoundingClientRect().top + window.pageYOffset - 64;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+}
 
+/* ─── SCROLL SPY (topnav 하이라이트) ─── */
+function updateActiveTopnav() {
+  var items = subnavData[currentPage] || [];
+  var scrollY = window.pageYOffset + 100;
+  var activeId = items.length ? items[0].id : null;
+
+  for (var i = 0; i < items.length; i++) {
+    var el = document.getElementById(items[i].id);
+    if (el && el.offsetTop <= scrollY) activeId = items[i].id;
+  }
+
+  document.querySelectorAll('#topnav-list .nav-tab').forEach(function(el) {
+    el.classList.toggle('active', el.getAttribute('data-target') === activeId);
+  });
+}
+
+window.addEventListener('scroll', updateActiveTopnav, { passive: true });
+
+/* ─── PAGE SWITCH ─── */
+function switchPage(page, btn) {
+  currentPage = page;
+
+  document.querySelectorAll('.page-section').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.getElementById('page-' + page).classList.add('active');
+
+  document.querySelectorAll('.toc-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  if (btn && btn.classList.contains('toc-item')) btn.classList.add('active');
+
+  // 사이드바 toc-item 동기화
+  var tocItems = document.querySelectorAll('.toc-item');
+  var pageOrder = ['overview','world','gameplay','systems','monetize','roadmap'];
+  tocItems.forEach(function(el, i) {
+    if (pageOrder[i] === page) el.classList.add('active');
+  });
+
+  renderTopnav(page);
+  history.replaceState(null, '', '#' + page);
+  window.scrollTo(0, 0);
+}
+
+/* ─── ACCORDION TOGGLE ─── */
+function toggleAccordion(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+/* ─── INIT ─── */
+window.onload = function() {
+  var hash = window.location.hash.replace('#', '');
+  var valid = ['overview','world','gameplay','systems','monetize','roadmap'];
+  var page = valid.indexOf(hash) !== -1 ? hash : 'overview';
+  switchPage(page, null);
+};
+
+window.addEventListener('hashchange', function() {
+  var hash = window.location.hash.replace('#', '');
+  var valid = ['overview','world','gameplay','systems','monetize','roadmap'];
+  var page = valid.indexOf(hash) !== -1 ? hash : 'overview';
+  switchPage(page, null);
+});
+</script>
 </body>
 </html>
