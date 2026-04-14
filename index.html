@@ -21,14 +21,32 @@ body{font-family:'Segoe UI',sans-serif;background:#2a6010;color:#e0e0f0;height:1
 
 /* ── 하단 버튼바 ── */
 #bottombar{position:fixed;bottom:0;left:0;right:0;height:58px;background:#080614;border-top:1px solid #1a1628;display:flex;align-items:center;gap:5px;padding:5px 8px;z-index:300;
-  /* 모바일 홈바/노치 safe area */
   padding-bottom:max(5px,env(safe-area-inset-bottom));
   height:calc(58px + env(safe-area-inset-bottom));
-  /* 모바일 브라우저 고정 강화 */
   -webkit-transform:translateZ(0);transform:translateZ(0);
   touch-action:none;
 }
+#act-btns{display:flex;align-items:center;gap:5px;flex:1;}
+#aux-btns{display:flex;align-items:center;gap:4px;}
 .bsep{width:1px;height:36px;background:#1e1c30;margin:0 3px;flex-shrink:0;}
+
+/* ── 모바일: 보조버튼(로그/정보/AUTO/DEV)을 종료버튼 위에 배치 ── */
+@media (pointer:coarse),(max-width:768px){
+  #bottombar{
+    flex-direction:column;
+    height:auto!important;
+    padding:4px 8px max(4px,env(safe-area-inset-bottom))!important;
+    gap:3px;
+  }
+  #mapwrap{bottom:calc(96px + env(safe-area-inset-bottom))!important;}
+  #zoom-indicator{bottom:calc(104px + env(safe-area-inset-bottom))!important;}
+  #hint{bottom:calc(106px + env(safe-area-inset-bottom))!important;}
+  #aux-btns{order:-1;width:100%;justify-content:flex-end;gap:4px;}
+  #act-btns{width:100%;justify-content:stretch;}
+  #act-btns .cb{flex:1;}
+  #bsep-aux{display:none;}
+  .cb2{min-width:36px;padding:3px 4px;font-size:.6rem;}
+}
 .cb{flex:1;min-width:48px;max-width:72px;border-radius:8px;border:2px solid #1e1c30;background:#0d0b18;color:#444;font-size:.7rem;font-weight:700;text-align:center;padding:4px 2px;line-height:1.25;pointer-events:auto;cursor:pointer;transition:all .15s;}
 .cb.on{pointer-events:auto;cursor:pointer;color:#fff;box-shadow:0 0 10px currentColor;}
 .cb.on:hover{filter:brightness(1.2);}
@@ -523,16 +541,20 @@ polygon.skl-range{animation:hexsklrng .8s ease-in-out infinite alternate;}
 
 <!-- 하단 버튼바 (fixed) -->
 <div id="bottombar">
-  <div class="cb" id="bmv" onclick="focusCurUnit()"><span class="kbd">`</span>🎯<br>포커스</div>
-  <div class="cb" id="ba"  onclick="openA()"><span class="kbd">1</span>⚔️<br>공격</div>
-  <div class="cb" id="bd"  onclick="openD()"><span class="kbd">2</span>🛡<br>방어</div>
-  <div class="cb" id="bs"  onclick="openS()"><span class="kbd">3</span>✨<br>스킬</div>
-  <div id="bet" onclick="endTurnBtn()"><span class="kbd">Space</span>⏩<br>종료</div>
-  <div class="bsep"></div>
-  <div class="cb2" id="blog" onclick="toggleLog()">📜<br>로그</div>
-  <div class="cb2" id="binfo" onclick="toggleInfo()">📋<br>정보</div>
-  <div class="cb2" id="bau" onclick="toggleAuto()">🤖<br>AUTO</div>
-  <div class="cb2" id="bdev" onclick="toggleDev()">📊<br>DEV</div>
+  <div id="act-btns">
+    <div class="cb" id="bmv" onclick="focusCurUnit()"><span class="kbd">`</span>🎯<br>포커스</div>
+    <div class="cb" id="ba"  onclick="openA()"><span class="kbd">1</span>⚔️<br>공격</div>
+    <div class="cb" id="bd"  onclick="openD()"><span class="kbd">2</span>🛡<br>방어</div>
+    <div class="cb" id="bs"  onclick="openS()"><span class="kbd">3</span>✨<br>스킬</div>
+    <div id="bet" onclick="endTurnBtn()"><span class="kbd">Space</span>⏩<br>종료</div>
+  </div>
+  <div class="bsep" id="bsep-aux"></div>
+  <div id="aux-btns">
+    <div class="cb2" id="blog" onclick="toggleLog()">📜<br>로그</div>
+    <div class="cb2" id="binfo" onclick="toggleInfo()">📋<br>정보</div>
+    <div class="cb2" id="bau" onclick="toggleAuto()">🤖<br>AUTO</div>
+    <div class="cb2" id="bdev" onclick="toggleDev()">📊<br>DEV</div>
+  </div>
 </div>
 
 <!-- 로그 팝업 (fixed) -->
