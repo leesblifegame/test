@@ -2,1826 +2,3036 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>아쿠아 서바이벌 — 게임 기획서</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CardBattle 맵 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
 <style>
-</style>
-<style>
-:root {
-  --teal:        #17a589;
-  --teal-light:  #76d7c4;
-  --teal-dark:   #0e6655;
-  --ocean:       #050f1a;
-  --ocean-mid:   #0a2342;
-  --ocean-card:  #112b45;
-  --blue-glow:   #5b9df5;
-  --blue-accent: #2e86c1;
-  --cyan:        #76d7c4;
-  --gold:        #f0b429;
-  --text-body:   #a9cce3;
-  --text-strong: #eefaf8;
-  --text-muted:  #566573;
-  --sidebar-w:   230px;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: inherit; }
-
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--text-body);
-  background-color: var(--ocean);
-  min-height: 100vh;
-  display: flex;
-}
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width: var(--sidebar-w);
-  min-height: 100vh;
-  background: var(--ocean-mid);
-  border-right: 1px solid rgba(23,165,137,0.18);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0; left: 0;
-  overflow-y: auto;
-  z-index: 100;
-}
-
-.sidebar-header {
-  padding: 22px 16px 16px;
-  border-bottom: 1px solid rgba(23,165,137,0.15);
-}
-
-.sidebar-header h2 {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-
-.sidebar-logo {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--teal);
-  letter-spacing: 0.03em;
-  line-height: 1.4;
-}
-
-.sidebar-version {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 3px;
-}
-
-/* Sidebar nav */
-.toc-section {
-  flex: 1;
-  padding: 10px 0;
-}
-
-.toc-section-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  padding: 10px 16px 4px;
-}
-
-.toc-item {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  font-size: 13px;
-  color: var(--text-body);
-  border-left: 3px solid transparent;
-}
-
-.toc-item:hover {
-  background: rgba(255,255,255,0.04);
-  color: var(--text-strong);
-}
-
-.toc-item.active {
-  background: rgba(23,165,137,0.1);
-  color: var(--teal);
-  border-left-color: var(--teal);
-  font-weight: 600;
-}
-
-.toc-icon {
-  font-size: 16px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-/* ── SUBNAV (contextual subtitles) ── */
-.subnav-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px 16px 8px 20px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  font-size: 12.5px;
-  color: var(--text-body);
-  border-left: 2px solid transparent;
-  line-height: 1.45;
-}
-
-.subnav-item:hover {
-  background: rgba(255,255,255,0.04);
-  color: var(--text-strong);
-}
-
-.subnav-item.active {
-  background: rgba(23,165,137,0.09);
-  color: var(--teal-light);
-  border-left-color: var(--teal);
-  font-weight: 600;
-}
-
-.subnav-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  flex-shrink: 0;
-  margin-top: 6px;
-  transition: background 0.15s;
-}
-
-.subnav-item.active .subnav-dot { background: var(--teal); }
-
-/* ── MAIN ── */
-.main {
-  margin-left: var(--sidebar-w);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Topnav */
-.topnav {
-  background: var(--ocean-mid);
-  border-bottom: 1px solid rgba(23,165,137,0.22);
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  overflow-x: auto;
-}
-
-.nav-tab {
-  padding: 18px 22px;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
-}
-
-.nav-tab:hover { color: var(--text-strong); }
-
-.nav-tab.active {
-  color: var(--teal);
-  border-bottom-color: var(--teal);
-  font-weight: 600;
-}
-
-/* Content */
-.content {
-  flex: 1;
-  padding: 44px 52px;
-  max-width: 900px;
-}
-
-.page-section { display: none; }
-.page-section.active { display: block; }
-
-.page-title {
-  font-size: 27px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 5px;
-  letter-spacing: -0.01em;
-}
-
-.page-subtitle {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 36px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid rgba(23,165,137,0.15);
-}
-
-/* ── OVERVIEW TABLE ── */
-.overview-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 32px;
-  font-size: 14px;
-}
-
-.overview-table th, .overview-table td {
-  padding: 12px 16px;
-  border: 1px solid rgba(23,165,137,0.12);
-  text-align: left;
-  vertical-align: top;
-}
-
-.overview-table th {
-  background: rgba(23,165,137,0.12);
-  color: var(--teal-light);
-  font-weight: 600;
-  width: 130px;
-  white-space: nowrap;
-}
-
-.overview-table td {
-  background: var(--ocean-card);
-  color: var(--text-body);
-}
-
-.overview-table tr:hover td { background: rgba(23,165,137,0.06); }
-
-/* KPI badges */
-.kpi-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 36px;
-}
-
-.kpi-badge {
-  background: var(--ocean-card);
-  border: 1px solid rgba(23,165,137,0.2);
-  border-radius: 10px;
-  padding: 14px 20px;
-  flex: 1;
-  min-width: 120px;
-  text-align: center;
-}
-
-.kpi-val {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--teal);
-  display: block;
-}
-
-.kpi-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 2px;
-  display: block;
-}
-
-/* ── CARDS ── */
-.card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: var(--ocean-card);
-  border: 1px solid rgba(91,157,245,0.13);
-  border-radius: 12px;
-  padding: 22px;
-  transition: border-color 0.2s;
-}
-
-.card:hover { border-color: rgba(23,165,137,0.3); }
-
-.card-icon { font-size: 26px; margin-bottom: 10px; }
-
-.card-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 6px;
-}
-
-.card-desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.65;
-}
-
-/* ── SECTION BLOCK ── */
-.section-block {
-  margin-bottom: 36px;
-}
-
-.section-block h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--teal);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(23,165,137,0.2);
-}
-
-.section-block p, .section-block li {
-  font-size: 14px;
-  color: var(--text-body);
-  line-height: 1.9;
-  margin-bottom: 6px;
-}
-
-.section-block ul { padding-left: 20px; }
-.section-block li { margin-bottom: 3px; }
-
-/* ── WORLD ZONE CARDS ── */
-.zone-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 32px;
-}
-
-.zone-card {
-  border-radius: 12px;
-  padding: 20px;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.zone-outer {
-  background: rgba(10,35,66,0.8);
-  border-color: rgba(169,204,227,0.3);
-}
-
-.zone-inner {
-  background: rgba(14,102,85,0.25);
-  border-color: rgba(23,165,137,0.4);
-}
-
-.zone-center {
-  background: rgba(120,40,10,0.25);
-  border-color: rgba(240,180,41,0.4);
-}
-
-.zone-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.zone-outer .zone-label { color: var(--text-muted); }
-.zone-inner .zone-label { color: var(--teal); }
-.zone-center .zone-label { color: var(--gold); }
-
-.zone-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 10px;
-}
-
-.zone-card li {
-  font-size: 12.5px;
-  color: var(--text-body);
-  line-height: 1.75;
-  list-style: none;
-  padding-left: 0;
-}
-
-.zone-card li::before { content: "▸ "; color: var(--teal-light); font-size: 10px; }
-
-/* ── GAMEPLAY LOOP ── */
-.loop-flow {
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
-}
-
-.loop-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 100px;
-  flex: 1;
-}
-
-.loop-box {
-  background: var(--ocean-card);
-  border: 1px solid rgba(23,165,137,0.3);
-  border-radius: 8px;
-  padding: 10px 8px;
-  text-align: center;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-
-.loop-box:hover { border-color: var(--teal); }
-
-.loop-num {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background: var(--teal);
-  color: var(--ocean);
-  border-radius: 50%;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: center;
-  margin-bottom: 6px;
-}
-
-.loop-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 4px;
-}
-
-.loop-desc {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  line-height: 1.55;
-}
-
-.loop-arrow {
-  color: var(--teal);
-  font-size: 16px;
-  margin-top: 16px;
-  padding: 0 4px;
-  flex-shrink: 0;
-}
-
-/* ── TROOP CARDS ── */
-.troop-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.troop-card {
-  border-radius: 12px;
-  padding: 20px;
-  border-width: 2px;
-  border-style: solid;
-}
-
-.troop-warrior  { background: rgba(20,60,100,0.5); border-color: #2e86c1; }
-.troop-hunter   { background: rgba(10,80,60,0.4);  border-color: #17a589; }
-.troop-gunner   { background: rgba(70,20,100,0.4); border-color: #8e44ad; }
-
-.troop-icon { font-size: 30px; margin-bottom: 8px; }
-
-.troop-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 2px;
-}
-
-.troop-eng {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-.troop-role {
-  font-size: 12px;
-  color: var(--teal-light);
-  margin-bottom: 10px;
-  padding: 4px 8px;
-  background: rgba(23,165,137,0.1);
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.troop-detail {
-  font-size: 12.5px;
-  color: var(--text-body);
-  line-height: 1.7;
-}
-
-.troop-strong { color: var(--teal); font-weight: 600; }
-.troop-weak   { color: #e74c3c; font-weight: 600; }
-
-.counter-banner {
-  background: var(--ocean-card);
-  border: 1px solid rgba(23,165,137,0.2);
-  border-radius: 8px;
-  padding: 14px 20px;
-  text-align: center;
-  font-size: 13.5px;
-  color: var(--teal);
-  font-weight: 600;
-  margin-bottom: 32px;
-}
-
-/* ── DATA TABLE ── */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 28px;
-  font-size: 13.5px;
-}
-
-.data-table th {
-  background: rgba(23,165,137,0.15);
-  color: var(--teal-light);
-  font-weight: 600;
-  padding: 10px 14px;
-  border: 1px solid rgba(23,165,137,0.12);
-  text-align: left;
-}
-
-.data-table td {
-  padding: 9px 14px;
-  border: 1px solid rgba(91,157,245,0.08);
-  color: var(--text-body);
-  background: var(--ocean-card);
-}
-
-.data-table tr:nth-child(odd) td  { background: rgba(17,43,69,0.6); }
-.data-table tr:nth-child(even) td { background: rgba(17,43,69,0.9); }
-.data-table tr:hover td           { background: rgba(23,165,137,0.07); }
-
-.data-table .col-hl { color: var(--teal-light); font-weight: 600; }
-.data-table .col-gold { color: var(--gold); font-weight: 700; }
-
-/* ── BUILD PROGRESSION ── */
-.build-flow {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-bottom: 28px;
-}
-
-.build-step {
-  flex: 1;
-  background: var(--ocean-card);
-  border: 2px solid rgba(23,165,137,0.3);
-  border-radius: 10px;
-  padding: 18px 16px;
-  text-align: center;
-  transition: border-color 0.2s;
-}
-
-.build-step:hover { border-color: var(--teal); }
-.build-icon { font-size: 28px; margin-bottom: 8px; }
-.build-name { font-size: 13px; font-weight: 700; color: var(--text-strong); margin-bottom: 4px; }
-.build-desc { font-size: 11.5px; color: var(--text-muted); }
-.build-arrow { font-size: 22px; color: var(--teal); padding: 0 10px; flex-shrink: 0; }
-
-/* ── RESOURCE CHIPS ── */
-.resource-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.resource-chip {
-  background: var(--ocean-card);
-  border-radius: 10px;
-  padding: 16px 12px;
-  text-align: center;
-  border-width: 2px;
-  border-style: solid;
-}
-
-.resource-chip .r-icon { font-size: 24px; margin-bottom: 6px; }
-.resource-chip .r-name { font-size: 12.5px; font-weight: 700; color: var(--text-strong); }
-.resource-chip .r-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-
-/* ── ACCORDION (FAQ-style sections) ── */
-.accordion-item {
-  background: var(--ocean-card);
-  border: 1px solid rgba(91,157,245,0.1);
-  border-radius: 10px;
-  margin-bottom: 10px;
-  overflow: hidden;
-}
-
-.accordion-q {
-  padding: 15px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-strong);
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: color 0.15s;
-}
-
-.accordion-q:hover { color: var(--teal); }
-.accordion-arrow { font-size: 12px; transition: transform 0.2s; color: var(--text-muted); }
-.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
-
-.accordion-body {
-  display: none;
-  padding: 0 20px 16px;
-  font-size: 13.5px;
-  color: var(--text-muted);
-  line-height: 1.75;
-  border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.accordion-item.open .accordion-body { display: block; }
-
-.accordion-body ul { padding-left: 18px; margin-top: 8px; }
-.accordion-body li { margin-bottom: 4px; color: var(--text-body); }
-.accordion-body strong { color: var(--teal-light); font-weight: 600; }
-
-/* ── GROWTH TIMELINE ── */
-.growth-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin-bottom: 32px;
-  position: relative;
-}
-
-.growth-timeline::before {
-  content: '';
-  position: absolute;
-  left: 28px;
-  top: 0; bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--teal), rgba(23,165,137,0.1));
-}
-
-.growth-item {
-  display: flex;
-  gap: 20px;
-  padding: 0 0 24px;
-  position: relative;
-}
-
-.growth-num {
-  width: 38px;
-  height: 38px;
-  background: var(--ocean-mid);
-  border: 2px solid var(--teal);
-  border-radius: 50%;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--teal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  z-index: 1;
-  position: relative;
-}
-
-.growth-content {
-  flex: 1;
-  background: var(--ocean-card);
-  border: 1px solid rgba(91,157,245,0.1);
-  border-radius: 10px;
-  padding: 16px 18px;
-  margin-top: 2px;
-}
-
-.growth-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 2px;
-}
-
-.growth-sub {
-  font-size: 11.5px;
-  color: var(--teal);
-  font-style: italic;
-  margin-bottom: 8px;
-}
-
-.growth-range {
-  display: inline-block;
-  font-size: 11px;
-  background: rgba(23,165,137,0.15);
-  color: var(--teal-light);
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.growth-content ul { padding-left: 16px; }
-.growth-content li { font-size: 13px; color: var(--text-body); margin-bottom: 2px; }
-
-/* ── PHASE CARDS ── */
-.phase-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.phase-card {
-  border-radius: 12px;
-  overflow: hidden;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.phase-header {
-  padding: 10px 16px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-align: center;
-}
-
-.phase-body {
-  background: var(--ocean-card);
-  padding: 16px;
-}
-
-.phase-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.phase-body ul { padding-left: 16px; }
-.phase-body li { font-size: 12.5px; color: var(--text-body); margin-bottom: 5px; line-height: 1.65; }
-
-.phase-1 { border-color: var(--teal); }
-.phase-1 .phase-header { background: var(--teal); color: var(--ocean); }
-
-.phase-2 { border-color: var(--blue-accent); }
-.phase-2 .phase-header { background: var(--blue-accent); color: #fff; }
-
-.phase-3 { border-color: #8e44ad; }
-.phase-3 .phase-header { background: #8e44ad; color: #fff; }
-
-/* ── MONETIZATION ── */
-.mono-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.mono-card {
-  background: var(--ocean-card);
-  border-radius: 12px;
-  padding: 20px;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.mono-card-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mono-card ul { padding-left: 16px; }
-.mono-card li { font-size: 13px; color: var(--text-body); margin-bottom: 4px; }
-
-/* ── DIFF CARDS ── */
-.diff-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
-
-.diff-item {
-  background: var(--ocean-card);
-  border-left: 4px solid var(--teal);
-  border-radius: 0 10px 10px 0;
-  padding: 14px 18px;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  transition: border-color 0.2s;
-}
-
-.diff-item:hover { border-left-color: var(--teal-light); }
-
-.diff-num {
-  width: 26px;
-  height: 26px;
-  background: var(--teal);
-  color: var(--ocean);
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.diff-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-strong);
-  margin-bottom: 4px;
-}
-
-.diff-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
-
-/* ── TAG CHIPS ── */
-.tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-
-.tag {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.tag-teal   { background: rgba(23,165,137,0.18); color: var(--teal-light); border: 1px solid rgba(23,165,137,0.3); }
-.tag-blue   { background: rgba(46,134,193,0.2);  color: #7eb5ff; border: 1px solid rgba(46,134,193,0.4); }
-.tag-gold   { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
-.tag-purple { background: rgba(142,68,173,0.2);  color: #c9a0f5; border: 1px solid rgba(142,68,173,0.4); }
-
-/* ── ANCHOR COMPARE ── */
-.anchor-compare {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.anchor-box {
-  border-radius: 10px;
-  padding: 16px;
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.anchor-down {
-  background: rgba(14,102,85,0.2);
-  border: 1px solid rgba(23,165,137,0.4);
-  color: var(--teal-light);
-}
-
-.anchor-up {
-  background: rgba(17,43,69,0.6);
-  border: 1px solid rgba(169,204,227,0.2);
-  color: var(--text-body);
-}
-
-.anchor-box strong { font-weight: 700; display: block; margin-bottom: 6px; font-size: 14px; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--ocean); }
-::-webkit-scrollbar-thumb { background: var(--ocean-card); border-radius: 3px; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  :root { --sidebar-w: 60px; }
-  .toc-item span.toc-name { display: none; }
-  .sidebar-header h2, .sidebar-logo, .sidebar-version, .toc-section-title { display: none; }
-  .toc-item { padding: 10px; justify-content: center; }
-  .content { padding: 24px 18px; }
-  .card-grid, .zone-grid, .troop-grid, .phase-grid, .mono-grid { grid-template-columns: 1fr; }
-  .resource-grid { grid-template-columns: 1fr 1fr; }
-  .topnav { padding: 0 10px; }
-  .nav-tab { padding: 14px 10px; font-size: 12px; }
-  .build-flow { flex-direction: column; align-items: stretch; }
-  .build-arrow { transform: rotate(90deg); text-align: center; }
-  .anchor-compare { grid-template-columns: 1fr; }
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:#2a6010;color:#e0e0f0;height:100vh;overflow:hidden;user-select:none;}
+
+/* ── 레이아웃 ── */
+#mapwrap{position:fixed;top:0;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom));overflow:hidden;cursor:grab;}
+#mapwrap.panning{cursor:grabbing;}
+#mapcanvas{position:absolute;top:0;left:0;transform-origin:0 0;}
+#zoom-indicator{position:fixed;bottom:66px;left:50%;transform:translateX(-50%);background:#0d0b1ecc;border:1px solid #1e1c30;border-radius:12px;padding:3px 12px;font-size:.65rem;color:#667;z-index:320;pointer-events:none;opacity:0;transition:opacity .4s;}
+#toast{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a0e2aee;border:1px solid #5a3a7a;border-radius:14px;padding:14px 28px;font-size:1rem;font-weight:700;color:#ff9060;z-index:999;pointer-events:none;text-align:center;box-shadow:0 4px 32px #000c;}
+@keyframes toastpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.85);}15%{opacity:1;transform:translate(-50%,-50%) scale(1.04);}85%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(.95);}}
+
+/* ── 하단 버튼바 ── */
+#bottombar{position:fixed;bottom:0;left:0;right:0;height:58px;background:#080614;border-top:1px solid #1a1628;display:flex;align-items:center;gap:5px;padding:5px 8px;z-index:300;
+  /* 모바일 홈바/노치 safe area */
+  padding-bottom:max(5px,env(safe-area-inset-bottom));
+  height:calc(58px + env(safe-area-inset-bottom));
+  /* 모바일 브라우저 고정 강화 */
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+  touch-action:none;
+}
+.bsep{width:1px;height:36px;background:#1e1c30;margin:0 3px;flex-shrink:0;}
+.cb{flex:1;min-width:48px;max-width:72px;border-radius:8px;border:2px solid #1e1c30;background:#0d0b18;color:#444;font-size:.7rem;font-weight:700;text-align:center;padding:4px 2px;line-height:1.25;pointer-events:auto;cursor:pointer;transition:all .15s;}
+.cb.on{pointer-events:auto;cursor:pointer;color:#fff;box-shadow:0 0 10px currentColor;}
+.cb.on:hover{filter:brightness(1.2);}
+#bmv.on{color:#42a5f5;border-color:#42a5f5;}
+#bmv.moved{color:#334;border-color:#1e1c30;pointer-events:none;}
+#ba.on{color:#ff7043;border-color:#ff7043;}
+#bd.on{color:#64b5f6;border-color:#64b5f6;}
+#bs.on{color:#ba68c8;border-color:#ba68c8;}
+#bet{flex:0 0 44px;height:38px;align-self:center;border-radius:7px;border:2px solid #1e1c30;background:#0d0b18;color:#555;font-size:.58rem;font-weight:700;text-align:center;padding:3px 2px;line-height:1.25;pointer-events:none;cursor:not-allowed;transition:all .15s;opacity:.75;}
+#bet.on{pointer-events:auto;cursor:pointer;color:#80cbc4;border-color:#80cbc4;box-shadow:0 0 8px #80cbc433;opacity:.9;}
+#bet.on:hover{filter:brightness(1.2);opacity:1;}
+.cb2{flex:0 0 48px;border-radius:8px;border:2px solid #1e1c30;background:#0d0b18;font-size:.68rem;font-weight:700;text-align:center;padding:4px 2px;line-height:1.25;pointer-events:auto;cursor:pointer;color:#445;transition:all .2s;}
+.cb2.on{box-shadow:0 0 8px currentColor;}
+#bau.on{color:#4caf50;border-color:#4caf50;}
+#bdev.on{color:#ba68c8;border-color:#ba68c8;}
+#blog.on{color:#ffd54f;border-color:#ffd54f;}
+#binfo.on{color:#80cbc4;border-color:#80cbc4;}
+
+/* ── 팝업 사이드패널 (로그/정보) ── */
+.sidepanel{display:none;position:fixed;bottom:66px;background:#0a0818;border:1px solid #1e1c30;border-radius:10px;z-index:250;overflow:hidden;box-shadow:0 -4px 24px #000a;}
+.sidepanel.show{display:flex;flex-direction:column;}
+.sp-tit{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#0f0d22;border-bottom:1px solid #1e1c30;font-size:.75rem;font-weight:700;color:#aaa;flex-shrink:0;cursor:move;user-select:none;}
+.sp-tit span{cursor:pointer;color:#555;font-size:.9rem;}
+.sp-tit span:hover{color:#fff;}
+#logpanel{right:8px;bottom:66px;width:300px;max-height:320px;}
+#log{flex:1;overflow-y:auto;padding:6px 10px;font-size:.7rem;display:flex;flex-direction:column;gap:2px;}
+#infopanel{left:8px;bottom:66px;width:270px;}
+#uinfo{padding:10px 12px;font-size:.72rem;}
+
+/* ── DEV 패널 ── */
+#devpanel{position:fixed;left:-195px;top:0;width:190px;bottom:58px;background:#07060f;border-right:1px solid #1a1628;border-bottom:1px solid #1a1628;border-radius:0 0 8px 0;padding:8px 10px;overflow-y:auto;transition:left .22s ease;z-index:50;font-size:.65rem;}
+#devpanel.open{left:0;}
+
+/* ── 헥스 그리드 (SVG) ── */
+polygon.reachable{animation:hexrcl .9s ease-in-out infinite alternate;cursor:pointer;}
+polygon.water-hex{animation:waterpulse 2.8s ease-in-out infinite alternate;}
+@keyframes waterpulse{
+  0%{fill:rgb(34,86,148);filter:brightness(1);}
+  50%{fill:rgb(42,105,175);filter:brightness(1.08);}
+  100%{fill:rgb(34,86,148);filter:brightness(1);}
+}
+polygon.atktgt{animation:hexatk .6s ease-in-out infinite alternate;cursor:crosshair;}
+polygon.atk-range{animation:hexatkrng .8s ease-in-out infinite alternate;}
+polygon.skl-range{animation:hexsklrng .8s ease-in-out infinite alternate;}
+@keyframes hexrcl{
+  0%{fill:#2060c888;stroke:#4488ee;stroke-width:2;filter:none;}
+  50%{fill:#3878e8aa;stroke:#66aaff;stroke-width:3;filter:drop-shadow(0 0 8px #3366ee99);}
+  100%{fill:#2060c888;stroke:#4488ee;stroke-width:2;filter:none;}
+}
+@keyframes hexatk{
+  from{stroke:#e8304488;stroke-width:2;}
+  to{stroke:#ff5544;stroke-width:3.5;filter:drop-shadow(0 0 6px #ff4433cc);}
+}
+@keyframes hexatkrng{
+  from{fill:#e8303044;stroke:#cc2828;stroke-width:1.5;}
+  to{fill:#ff444466;stroke:#ff6644;stroke-width:2.5;filter:drop-shadow(0 0 5px #ff3322);}
+}
+@keyframes hexsklrng{
+  from{fill:#9920cc44;stroke:#aa30dd;stroke-width:1.5;}
+  to{fill:#bb44ee66;stroke:#dd66ff;stroke-width:2.5;filter:drop-shadow(0 0 6px #cc44ff);}
+}
+
+/* ── 유닛 칩 (원형 토큰) ── */
+.chip{position:absolute;transform:translate(-50%,-62%);z-index:10;pointer-events:none;display:flex;flex-direction:column;align-items:center;}
+.chip-3d{position:relative;flex-shrink:0;}
+.chip-hex-side{position:absolute;top:7px;left:0;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);z-index:1;filter:brightness(.38) saturate(1.4);}
+.chip-hex{display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:filter .25s;position:absolute;top:0;left:0;z-index:2;}
+.chip-hex-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;position:relative;overflow:hidden;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:#0c0a1e;}
+.chip.active .chip-3d{filter:drop-shadow(0 0 8px currentColor);}
+.chip.active .chip-hex{filter:brightness(1.25);}
+.chip.nextturn .chip-3d{animation:nxthex 1.4s ease-in-out infinite alternate;}
+.chip.attacktgt{pointer-events:auto;cursor:crosshair;}
+.chip.attacktgt .chip-3d{animation:atkhex .55s ease-in-out infinite alternate;}
+.chip.dead{opacity:.18;filter:grayscale(1);}
+@keyframes nxthex{from{filter:drop-shadow(0 0 2px #ffd54f22);}to{filter:drop-shadow(0 0 10px #ffd54fbb);}}
+@keyframes atkhex{from{filter:drop-shadow(0 0 3px #ff504400);}to{filter:drop-shadow(0 0 16px #ff5044ff);}}
+.chip-name{font-size:.56rem;font-weight:900;letter-spacing:-.01em;text-shadow:0 1px 4px #000a;white-space:nowrap;}
+.chip-hpbar{position:absolute;bottom:0;left:0;right:0;height:3px;background:#0009;}
+.chip-hp{height:100%;transition:width .3s;}
+.chip-moved{position:absolute;top:1px;right:2px;font-size:.4rem;color:rgba(255,255,255,.35);}
+.chip-eff{font-size:.46rem;line-height:1;}
+
+/* ── 유닛 스탯 툴팁 ── */
+#unit-tooltip{
+  display:none;position:fixed;z-index:9000;pointer-events:none;
+  background:linear-gradient(160deg,#3a2008ee,#241205f0);
+  border:2px solid #8b5a1a;border-radius:12px;
+  padding:10px 13px;min-width:160px;max-width:210px;
+  box-shadow:0 4px 24px #0009,0 0 0 1px #c08040aa;
+  font-size:.72rem;color:#f0d9b0;
+  animation:tipfadein .12s ease;
+}
+@keyframes tipfadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+#unit-tooltip .tip-name{font-family:'Cinzel',sans-serif;font-size:.82rem;font-weight:700;color:#ffd98a;margin-bottom:6px;border-bottom:1px solid #8b5a1a88;padding-bottom:4px;}
+#unit-tooltip .tip-row{display:flex;justify-content:space-between;gap:8px;margin:2px 0;color:#ddc99a;}
+#unit-tooltip .tip-row .lbl{color:#b08040;font-size:.65rem;}
+#unit-tooltip .tip-hp{margin-top:5px;height:5px;background:#1a1006;border-radius:3px;overflow:hidden;border:1px solid #6a3a0a55;}
+#unit-tooltip .tip-hp-f{height:100%;border-radius:3px;transition:width .3s;}
+#unit-tooltip .tip-skills{margin-top:6px;padding-top:5px;border-top:1px solid #6a3a0a55;font-size:.62rem;color:#c0a068;}
+#unit-tooltip .tip-skill-row{margin:2px 0;color:#d8c090;}
+
+/* ── 타일 지형 툴팁 ── */
+#tile-tooltip{
+  display:none;position:fixed;z-index:8500;pointer-events:none;
+  background:linear-gradient(160deg,#1a3010ee,#0e1e08f0);
+  border:1px solid #4a7a28;border-radius:9px;
+  padding:7px 11px;
+  box-shadow:0 3px 16px #0008,0 0 0 1px #3a6020aa;
+  font-size:.68rem;color:#c8e8a0;white-space:nowrap;
+  animation:tipfadein .10s ease;
+}
+#tile-tooltip .ttl{font-size:.76rem;font-weight:700;color:#e8f8b0;margin-bottom:3px;}
+#tile-tooltip .trow{color:#a0c878;font-size:.62rem;margin:1px 0;}
+#tile-tooltip .trow.bad{color:#f09060;}
+#tile-tooltip .trow.ok{color:#80c8f0;}
+
+/* ── 단축키 뱃지 ── */
+.cb .kbd,.cb2 .kbd,#bet .kbd{
+  display:block;font-size:.44rem;line-height:1;color:rgba(255,220,120,0.65);
+  letter-spacing:.02em;margin-bottom:1px;
+}
+
+/* ── 이동/종료 버튼 소형화 (메인 커맨드 80%) ── */
+#bmv{flex:0 0 44px;height:38px;align-self:center;font-size:.58rem;padding:3px 2px;opacity:.78;border-radius:7px;}
+#bmv.on{opacity:.92;}
+#bmv.moved{opacity:.45;}
+
+/* ── 로그 ── */
+.le{color:#444;} .la{color:#ff9060;} .ld{color:#60b8ff;} .ls{color:#c060ff;} .ly{color:#60e0a0;font-style:italic;} .lx{color:#ff4444;font-weight:700;} .lt{color:#bbb;font-weight:700;border-top:1px solid #1a1628;padding-top:2px;margin-top:2px;}
+.log-r{text-align:right;}
+
+/* ── 힌트 ── */
+#hint{display:none;position:fixed;bottom:68px;left:50%;transform:translateX(-50%);background:#ff704322;border:1px solid #ff7043;border-radius:20px;padding:5px 18px;font-size:.78rem;color:#ff9060;font-weight:700;z-index:310;pointer-events:none;}
+#hint.show{display:block;}
+
+/* ── 팝업 ── */
+.pbg{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;z-index:200;}
+.pbg.show{display:flex;}
+.pbox{background:#15122a;border:1px solid #3a2a5a;border-radius:14px;padding:18px 20px;width:min(90vw,440px);max-height:80vh;overflow-y:auto;}
+.ptit{font-size:.95rem;font-weight:700;margin-bottom:12px;}
+.ar{background:#0f0d22;border:1px solid #252040;border-radius:9px;padding:9px 11px;margin-bottom:7px;}
+.ar.dis{opacity:.3;pointer-events:none;}
+.ah{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.ab{padding:2px 8px;border-radius:16px;font-size:.73rem;font-weight:700;}
+.ht{font-size:.68rem;color:#666;}.et{margin-left:auto;font-size:.68rem;font-weight:700;}
+.ep{color:#ffd54f;}.es{color:#ff7043;}
+.cr{display:flex;gap:4px;}
+.cn{flex:1;padding:6px 0;border-radius:6px;border:1px solid #202040;background:#181530;color:#333;font-size:.74rem;font-weight:700;text-align:center;line-height:1.2;cursor:not-allowed;pointer-events:none;transition:all .1s;}
+.cn.av{cursor:pointer;pointer-events:auto;color:#aaa;border-color:#3a3060;}
+.cn.av:hover{background:#252048;color:#fff;}
+.cn.pk{color:#fff!important;border-color:currentColor!important;box-shadow:0 0 6px currentColor;}
+.pv{background:#0a0818;border-radius:7px;padding:8px 11px;margin:8px 0 12px;font-size:.78rem;color:#666;min-height:32px;}
+.pv b{color:#fff;font-size:.88rem;}
+.pa{display:flex;gap:7px;}
+.pc{flex:1;padding:9px;border-radius:8px;border:2px solid #5a3a80;background:#2a1a40;color:#888;font-size:.83rem;font-weight:700;cursor:not-allowed;pointer-events:none;transition:all .15s;}
+.pc.on{cursor:pointer;pointer-events:auto;color:#fff;border-color:#ba68c8;}
+.pc.on:hover{background:#3a2a55;}
+.px{padding:9px 13px;border-radius:8px;border:1px solid #2a2040;background:transparent;color:#666;font-size:.83rem;cursor:pointer;}
+.px:hover{color:#fff;border-color:#888;}
+.si{background:#0f0d22;border:1px solid #252040;border-radius:9px;padding:10px 12px;margin-bottom:7px;cursor:not-allowed;pointer-events:none;opacity:.35;}
+.si.ok{opacity:1;cursor:pointer;pointer-events:auto;border-color:#4a2a6a;}
+.si.ok:hover{background:#1e1840;border-color:#ba68c8;}
+.sn{font-weight:700;color:#e1bee7;margin-bottom:3px;font-size:.83rem;}
+.sd{font-size:.72rem;color:#999;margin-bottom:5px;}
+.ct{display:inline-block;padding:1px 6px;border-radius:10px;margin:1px 2px;font-size:.65rem;font-weight:700;}
+.ck{background:#1a3a1a;color:#66bb6a;}.cg{background:#3a1a1a;color:#ef5350;}
+
+
+/* ── 데미지 플로터 ── */
+.floater{position:fixed;font-weight:900;pointer-events:none;z-index:600;transform:translateX(-50%);animation:floatup 1s ease-out forwards;text-shadow:0 2px 8px #000c;}
+.floater.dmg{color:#ff6060;font-size:1.1rem;}
+.floater.weak{color:#ff9800;font-size:1.4rem;text-shadow:0 0 12px #ff8800,0 2px 8px #000;}
+.floater.heal{color:#66ee88;font-size:1rem;text-shadow:0 0 10px #44ff66,0 2px 8px #000;}
+.floater.shd{color:#64b5f6;font-size:1rem;text-shadow:0 0 10px #42a5f5,0 2px 8px #000;}
+@keyframes floatup{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1.1);}20%{transform:translateX(-50%) translateY(-12px) scale(1);}100%{opacity:0;transform:translateX(-50%) translateY(-58px) scale(.9);}}
+
+/* ── 칩 전투 연출 ── */
+.chip.flash-atk .chip-3d{filter:drop-shadow(0 0 14px #fff) brightness(1.5)!important;}
+.chip.flash-hit .chip-3d{filter:drop-shadow(0 0 16px #ff4444)!important;}
+.chip.flash-hit .chip-hex-in{background:#ff303088!important;}
+.chip.flash-weak .chip-3d{filter:drop-shadow(0 0 22px #ff8800) brightness(1.4)!important;}
+.chip.flash-weak .chip-hex-in{background:#ff770099!important;}
+.chip.flash-def .chip-3d{filter:drop-shadow(0 0 16px #42a5f5)!important;}
+.chip.flash-def .chip-hex-in{background:#1a5a9966!important;}
+.chip.flash-heal .chip-3d{filter:drop-shadow(0 0 16px #66ee88)!important;}
+@keyframes chipshake{0%,100%{transform:translate(-50%,-50%)}15%{transform:translate(calc(-50% + 5px),-50%)}35%{transform:translate(calc(-50% - 5px),-50%)}55%{transform:translate(calc(-50% + 3px),-50%)}75%{transform:translate(calc(-50% - 2px),-50%)}}
+.chip.shake{animation:chipshake .35s ease-out!important;}
+
+/* ── 발사체 ── */
+.proj{position:fixed;border-radius:50%;pointer-events:none;z-index:550;transform:translate(-50%,-50%);transition:left .22s ease-in,top .22s ease-in;}
+
+/* ── 칩 HP/실드 게이지 ── */
+.chip-gauge{display:flex;flex-direction:column;gap:1.5px;margin-top:12px;}
+.chip-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:0px;line-height:1;margin-bottom:2px;}
+.chip-card-icon{font-size:.5rem;}
+.chip-card-count{font-size:.48rem;color:rgba(255,255,255,.65);text-align:center;margin-bottom:2px;letter-spacing:.02em;}
+.cghp{height:6px;background:#0d0b1e;border-radius:3px;overflow:hidden;border:1px solid #1a1628;box-shadow:0 1px 4px #0008;}
+.cghp-f{height:100%;border-radius:3px;transition:width .35s;}
+.cgsh{height:4px;background:#0d0b1e;border-radius:2px;overflow:hidden;border:1px solid #1a3050;}
+.cgsh-f{height:100%;border-radius:2px;background:linear-gradient(90deg,#42a5f5,#64b5f6);box-shadow:0 0 6px #42a5f5bb;}
+
+/* ── 캐릭터 커맨드 버튼 오버레이 (최상위) ── */
+#cmd-overlay{position:absolute;z-index:500;pointer-events:none;display:flex;gap:4px;transform:translate(-50%,0);}
+.ccb{width:28px;height:28px;border-radius:50%;border:2px solid var(--cc,#888);background:#08061aee;color:var(--cc,#888);font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;pointer-events:auto;transition:filter .12s,transform .12s;line-height:1;box-shadow:0 0 10px var(--cc,#888)66,0 2px 8px #000c;}
+.ccb:hover{filter:brightness(1.5);transform:scale(1.2);}
+.ccb.dis{opacity:.25;cursor:not-allowed;pointer-events:none;box-shadow:none;filter:grayscale(1);}
+.ccb.chosen{filter:brightness(2.8)!important;transform:scale(1.55)!important;box-shadow:0 0 22px var(--cc),0 0 44px var(--cc)!important;transition:none!important;}
+@keyframes cmdbounce{0%{transform:scale(0.3);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+#cmd-overlay .ccb{animation:cmdbounce .2s ease-out both;}
+#cmd-overlay .ccb:nth-child(2){animation-delay:.04s;}
+#cmd-overlay .ccb:nth-child(3){animation-delay:.08s;}
+#cmd-overlay .ccb:nth-child(4){animation-delay:.12s;}
+
+/* ── 결과 ── */
+#ov{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+#ov.show{display:flex;}
+#ob{padding:12px 40px;background:linear-gradient(145deg,#7a4418,#5a2c0c);border:3px solid #3a1a06;border-radius:10px;color:#ffe080;font-size:.9rem;cursor:pointer;font-weight:700;font-family:'Cinzel',sans-serif;letter-spacing:.06em;box-shadow:0 4px 0 #2a1006,0 6px 20px rgba(0,0,0,0.5);transition:all .18s;}
+#ob:hover{background:linear-gradient(145deg,#9a5428,#7a3c18);box-shadow:0 4px 0 #2a1006,0 8px 28px rgba(0,0,0,0.5);transform:translateY(-2px);}
+
+/* ════════════════════════════════════════════
+   ■ VISUAL ENHANCEMENT PACK
+   ════════════════════════════════════════════ */
+
+/* ── 별빛 배경 캔버스 ── */
+#bgcanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.9;}
+
+/* ── 맵 비네트 오버레이 (야외 프레임) ── */
+#mapvignette{
+  position:fixed;inset:0 0 58px 0;
+  background:radial-gradient(ellipse 88% 78% at 50% 50%,transparent 40%,rgba(20,60,5,0.35) 80%,rgba(10,40,2,0.65) 100%);
+  pointer-events:none;z-index:13;
+}
+
+/* ── 판타지 폰트 적용 ── */
+#bottombar .cb, #bottombar .cb2, #bottombar #bet,
+.ptit, .sp-tit, #zoom-indicator, #hint,
+#ob, #om {
+  font-family:'Cinzel',sans-serif;
+}
+#om{font-family:'Cinzel Decorative','Cinzel',sans-serif;}
+.chip-name{font-family:'Cinzel',sans-serif!important;letter-spacing:.03em;}
+
+/* ── 바텀바 나무 RPG 스타일 ── */
+#bottombar{
+  background:linear-gradient(180deg,#7a4418,#5c2e0c)!important;
+  border-top:3px solid #2e1406!important;
+  box-shadow:0 -3px 0 #a06030, 0 -8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,180,80,0.18)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+/* 나무 질감 패턴 힌트 */
+#bottombar::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.03) 60px,rgba(255,255,255,0.03) 62px);
+  pointer-events:none;
+}
+
+/* ── 버튼 기본 (나무 버튼) ── */
+.cb, .cb2, #bet{
+  border-radius:8px!important;
+  background:linear-gradient(180deg,#8a5020,#6a3810)!important;
+  border:2px solid #2e1406!important;
+  color:#c8a040!important;
+  box-shadow:0 3px 0 #2e1406, inset 0 1px 0 rgba(255,200,100,0.15)!important;
+  transition:all .12s!important;
+}
+.cb.on{
+  color:#ffe060!important;
+  background:linear-gradient(180deg,#aa6828,#8a4818)!important;
+  box-shadow:0 3px 0 #2e1406, 0 0 12px currentColor44, inset 0 1px 0 rgba(255,220,100,0.2)!important;
+}
+.cb2.on{
+  color:#ffe060!important;
+  background:linear-gradient(180deg,#aa6828,#8a4818)!important;
+  box-shadow:0 3px 0 #2e1406, 0 0 12px currentColor44!important;
+}
+#bet.on{
+  color:#80f0d8!important;
+  border-color:#40a090!important;
+  background:linear-gradient(180deg,#1a6858,#104840)!important;
+  box-shadow:0 3px 0 #0a2820, 0 0 12px #40c0a044!important;
+}
+.cb.on:hover, .cb2.on:hover, #bet.on:hover{
+  transform:translateY(-2px) scale(1.05)!important;
+  filter:brightness(1.15)!important;
+}
+/* 버튼 눌림 효과 */
+.cb:active, .cb2:active, #bet:active{
+  transform:translateY(2px)!important;
+  box-shadow:0 1px 0 #2e1406, inset 0 2px 4px rgba(0,0,0,0.3)!important;
+}
+/* 비활성 구분선 */
+.bsep{background:#2e1406!important;box-shadow:1px 0 0 rgba(255,180,80,0.1)!important;}
+
+/* ── 팝업 (양피지 RPG 스타일) ── */
+.pbox{
+  background:linear-gradient(148deg,#2e1e10f8,#1e1208f8)!important;
+  border:2px solid #6a3c18!important;
+  box-shadow:0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,180,80,0.15), inset 0 1px 0 rgba(255,200,100,0.1)!important;
+  backdrop-filter:blur(6px)!important;
+  -webkit-backdrop-filter:blur(6px)!important;
+}
+.pbg.show{
+  background:rgba(0,0,0,0.6)!important;
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+/* 팝업 타이틀 */
+.ptit{color:#ffd060!important;text-shadow:0 0 12px currentColor44;}
+
+/* ── 사이드패널 (나무 패널) ── */
+.sidepanel{
+  background:linear-gradient(180deg,#2a1a0cee,#1e1008ee)!important;
+  border:2px solid #5a3010aa!important;
+  box-shadow:0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,200,100,0.08)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.sp-tit{
+  background:linear-gradient(90deg,rgba(90,48,16,0.7),transparent)!important;
+  border-bottom:1px solid rgba(160,90,30,0.4)!important;
+  color:#d0a040!important;
+}
+
+/* ── HP바 shimmer (::after 방식 — 인라인 fill 색상과 충돌 없음) ── */
+.cghp{position:relative;overflow:hidden;}
+@keyframes hpShimmer{0%{left:-70%;}100%{left:130%;}}
+.cghp::after{
+  content:'';
+  position:absolute;top:0;left:-70%;
+  width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+  animation:hpShimmer 2.4s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* ── 쉴드바 shimmer ── */
+.cgsh{position:relative;overflow:hidden;}
+@keyframes shdShimmer{0%{left:-70%;}100%{left:130%;}}
+.cgsh::after{
+  content:'';
+  position:absolute;top:0;left:-70%;
+  width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  animation:shdShimmer 1.8s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* ── 액티브 유닛 글로우 링 ── */
+@keyframes activeGlow{
+  0%{box-shadow:0 0 0 3px #ffd700,0 0 12px #ffa00088,0 4px 14px #0006;}
+  50%{box-shadow:0 0 0 4px #ffe040,0 0 24px #ffd700cc,0 4px 14px #0006;}
+  100%{box-shadow:0 0 0 3px #ffd700,0 0 12px #ffa00088,0 4px 14px #0006;}
+}
+/* 활성 유닛 토큰 금색 반짝임 */
+.chip.active .tok-circle{animation:activeGlow 1.5s ease-in-out infinite!important;}
+
+/* ── 다음턴 유닛 주황 링 ── */
+@keyframes nextGlow{
+  from{box-shadow:0 0 0 2px #ffaa00,0 0 8px #ffaa0055,0 3px 10px #0005;}
+  to{box-shadow:0 0 0 3px #ffcc44,0 0 14px #ffaa0099,0 3px 10px #0005;}
+}
+.chip.nextturn .tok-circle{animation:nextGlow 1.2s ease-in-out infinite alternate!important;}
+
+/* ── 골드 코인 위 부유 애니메이션 ── */
+@keyframes tokFloat{
+  from{transform:translateX(-50%) translateY(0px);}
+  to{transform:translateX(-50%) translateY(-4px);}
+}
+
+/* ── 죽은 유닛 ── */
+.chip.dead .tok-circle{filter:grayscale(1) brightness(0.5)!important;}
+
+/* ── 넥스트턴 유닛 ── */
+@keyframes nxthex{
+  from{filter:drop-shadow(0 0 2px #ffd54f18);}
+  to{filter:drop-shadow(0 0 12px #ffd54fee) drop-shadow(0 0 24px #ffd54f55);}
+}
+
+/* ── 공격 타겟 ── */
+@keyframes atkhex{
+  from{filter:drop-shadow(0 0 4px #ff504400);}
+  to{filter:drop-shadow(0 0 20px #ff5044ff) drop-shadow(0 0 40px #ff504466);}
+}
+
+/* ── 발사체 개선 ── */
+.proj{
+  border-radius:50%!important;
+  transition:left .2s cubic-bezier(.4,0,.2,1),top .2s cubic-bezier(.4,0,.2,1)!important;
+}
+
+/* ── 토스트 개선 ── */
+#toast{
+  background:linear-gradient(148deg,#3a1e08f8,#261408f8)!important;
+  border:2px solid #7a4010aa!important;
+  box-shadow:0 6px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,180,60,0.12)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  font-family:'Cinzel',sans-serif!important;
+  color:#ffe080!important;
+}
+
+/* ── 커맨드 오버레이 버튼 나무 스타일 ── */
+.ccb{
+  background:linear-gradient(145deg,#7a4018,#5a2c0c)!important;
+  border:2px solid #2e1406!important;
+  box-shadow:0 3px 0 #2e1406, 0 4px 12px rgba(0,0,0,0.5), 0 0 10px var(--cc,#888)55!important;
+  font-size:.88rem!important;
+  width:30px!important;height:30px!important;
+  transition:all .12s!important;
+}
+.ccb:hover{
+  background:linear-gradient(145deg,#9a5228,#7a3818)!important;
+  filter:brightness(1.2)!important;
+  transform:scale(1.22) translateY(-1px)!important;
+  box-shadow:0 4px 0 #2e1406, 0 6px 16px rgba(0,0,0,0.5), 0 0 16px var(--cc,#888)88!important;
+}
+.ccb.chosen{
+  filter:brightness(2.2)!important;transform:scale(1.55)!important;
+  box-shadow:0 0 24px var(--cc),0 0 48px var(--cc)66!important;
+}
+
+/* ── DEV 패널 ── */
+#devpanel{
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  background:linear-gradient(180deg,#2a1a0cee,#1e1208ee)!important;
+  border-right:2px solid #5a3010aa!important;
+  border-bottom:2px solid #5a3010aa!important;
+}
+
+/* ── 줌 인디케이터 ── */
+#zoom-indicator{
+  background:linear-gradient(145deg,#0f0d22dd,#0a0818dd)!important;
+  border:1px solid #2a2250!important;
+  backdrop-filter:blur(10px);
+  letter-spacing:.06em;font-size:.68rem;
+}
+
+/* ── 힌트 박스 ── */
+#hint{
+  background:linear-gradient(90deg,#5a2808cc,#3a1808cc)!important;
+  border:2px solid #c86020bb!important;
+  box-shadow:0 0 20px rgba(200,96,32,0.4)!important;
+  color:#ffd060!important;
+  font-family:'Cinzel',sans-serif;letter-spacing:.04em;
+  backdrop-filter:blur(6px);
+}
+
+/* ── 스킬 팝업 항목 개선 ── */
+.si.ok{
+  background:linear-gradient(145deg,#120e2a,#1a1438)!important;
+  border:1px solid #5a3a8a!important;
+  transition:all .16s!important;
+}
+.si.ok:hover{
+  background:linear-gradient(145deg,#1c1440,#241850)!important;
+  border-color:#9a5acc!important;
+  box-shadow:0 0 16px #6a30aa44!important;
+  transform:translateY(-1px)!important;
+}
+
+/* ── 속성 선택 행 개선 ── */
+.ar{
+  background:linear-gradient(145deg,#0e0c20,#12101e)!important;
+  border:1px solid #1e1c30!important;
+  transition:all .14s!important;
+}
+.ar:not(.dis):hover{border-color:#3a2a5a!important;background:linear-gradient(145deg,#14112a,#1a1628)!important;}
+.cn.av:hover{
+  background:linear-gradient(145deg,#28204a,#302860)!important;
+  color:#fff!important;border-color:#5a40a0!important;
+}
+
+/* ── 결과 Victory/Defeat 텍스트 ── */
+#om{
+  text-shadow:0 0 30px currentColor, 0 0 60px currentColor, 0 2px 8px #000c;
+  letter-spacing:.08em;
+}
+#os{font-family:'Cinzel',sans-serif;letter-spacing:.04em;}
 </style>
 </head>
 <body>
+<!-- 별빛 배경 캔버스 (z-index:0 / 최하단) -->
+<canvas id="bgcanvas"></canvas>
+<!-- 맵 비네트 오버레이 -->
+<div id="mapvignette"></div>
+<!-- 맵 (드래그 패닝) -->
+<div id="mapwrap">
+  <div id="mapcanvas"></div>
+</div>
 
-<!-- ── SIDEBAR ── -->
-<div class="sidebar">
-  <div class="sidebar-header">
-    <h2>Game Design Doc</h2>
-    <div class="sidebar-logo">⚓ 아쿠아 서바이벌</div>
-    <div class="sidebar-version">v1.0 · 2026.04</div>
-  </div>
-  <div class="toc-section">
-    <div class="toc-section-title">목차</div>
+<!-- 하단 버튼바 (fixed) -->
+<div id="bottombar">
+  <div class="cb" id="bmv" onclick="focusCurUnit()"><span class="kbd">`</span>🎯<br>포커스</div>
+  <div class="cb" id="ba"  onclick="openA()"><span class="kbd">1</span>⚔️<br>공격</div>
+  <div class="cb" id="bd"  onclick="openD()"><span class="kbd">2</span>🛡<br>방어</div>
+  <div class="cb" id="bs"  onclick="openS()"><span class="kbd">3</span>✨<br>스킬</div>
+  <div id="bet" onclick="endTurnBtn()"><span class="kbd">Space</span>⏩<br>종료</div>
+  <div class="bsep"></div>
+  <div class="cb2" id="blog" onclick="toggleLog()">📜<br>로그</div>
+  <div class="cb2" id="binfo" onclick="toggleInfo()">📋<br>정보</div>
+  <div class="cb2" id="bau" onclick="toggleAuto()">🤖<br>AUTO</div>
+  <div class="cb2" id="bdev" onclick="toggleDev()">📊<br>DEV</div>
+</div>
 
-    <div class="toc-item active" onclick="switchPage('overview', this)">
-      <span class="toc-icon">📋</span>
-      <span class="toc-name">게임 개요</span>
-    </div>
-    <div class="toc-item" onclick="switchPage('world', this)">
-      <span class="toc-icon">🌊</span>
-      <span class="toc-name">세계관 & 스토리</span>
-    </div>
-    <div class="toc-item" onclick="switchPage('gameplay', this)">
-      <span class="toc-icon">🎮</span>
-      <span class="toc-name">핵심 게임플레이</span>
-    </div>
-    <div class="toc-item" onclick="switchPage('systems', this)">
-      <span class="toc-icon">⚙️</span>
-      <span class="toc-name">게임 시스템</span>
-    </div>
-    <div class="toc-item" onclick="switchPage('monetize', this)">
-      <span class="toc-icon">💰</span>
-      <span class="toc-name">수익화 모델</span>
-    </div>
-    <div class="toc-item" onclick="switchPage('roadmap', this)">
-      <span class="toc-icon">🗺️</span>
-      <span class="toc-name">성장 & 로드맵</span>
+<!-- 로그 팝업 (fixed) -->
+<div id="logpanel" class="sidepanel">
+  <div class="sp-tit">📜 전투 로그 <span onclick="toggleLog()">✕</span></div>
+  <div id="log"></div>
+</div>
+
+<!-- 정보 팝업 (fixed) -->
+<div id="infopanel" class="sidepanel">
+  <div class="sp-tit">📋 캐릭터 정보 <span onclick="toggleInfo()">✕</span></div>
+  <div id="uinfo">—</div>
+</div>
+
+<!-- DEV 패널 -->
+<div id="devpanel">
+  <div style="font-weight:700;color:#ba68c8;margin-bottom:7px;font-size:.72rem;border-bottom:1px solid #1a1628;padding-bottom:4px">📊 덱 현황</div>
+  <div id="devinfo"></div>
+</div>
+
+<div id="hint">대상을 선택하세요 (ESC 취소)</div>
+<div id="zoom-indicator">100%</div>
+<div id="toast"></div>
+<div id="unit-tooltip"></div>
+<div id="tile-tooltip"></div>
+
+<!-- 공격 팝업 -->
+<div class="pbg" id="pa">
+  <div class="pbox">
+    <div class="ptit" style="color:#ff7043">⚔️ 공격</div>
+    <div id="al"></div>
+    <div class="pv" id="av">속성과 장수를 선택하세요</div>
+    <div class="pa">
+      <button class="pc" id="ac" onclick="reqAtkTarget()">대상 선택 →</button>
+      <button class="px" onclick="closeP('pa')">취소</button>
     </div>
   </div>
 </div>
-
-<!-- ── MAIN ── -->
-<div class="main">
-
-  <!-- Topnav: 현재 페이지의 부제(소목차) -->
-  <div class="topnav" id="topnav-list"></div>
-
-  <!-- Content -->
-  <div class="content">
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 게임 개요
-    ════════════════════════════════════════════ -->
-    <div class="page-section active" id="page-overview">
-      <div class="page-title">아쿠아 서바이벌 <span style="font-size:16px;font-weight:400;color:var(--text-muted)">Aqua Survival</span></div>
-      <div class="page-subtitle">게임 기획서 v1.0 — 대홍수 이후, 물 위에서 새로운 문명을 건설하라</div>
-
-      <div class="kpi-row">
-        <div class="kpi-badge"><span class="kpi-val">SLG</span><span class="kpi-label">장르</span></div>
-        <div class="kpi-badge"><span class="kpi-val">3</span><span class="kpi-label">월드 존</span></div>
-        <div class="kpi-badge"><span class="kpi-val">3종</span><span class="kpi-label">병종 시스템</span></div>
-        <div class="kpi-badge"><span class="kpi-val">Mobile</span><span class="kpi-label">플랫폼</span></div>
-      </div>
-
-      <div class="section-block" id="sec-overview-info">
-        <h3>기본 정보</h3>
-        <table class="overview-table">
-          <tr><th>장르</th><td>모바일 전략 서바이벌 (SLG)</td></tr>
-          <tr><th>플랫폼</th><td>iOS / Android</td></tr>
-          <tr><th>세계관</th><td>현대 문명 붕괴 후 원시 생존 시대 — 대홍수로 잠긴 세계</td></tr>
-          <tr><th>핵심 테마</th><td>대홍수 이후 물 위에서의 생존, 건설, 연합, 패권</td></tr>
-          <tr><th>레퍼런스</th><td>Whiteout Survival (WOS), State of Survival (SOS), King Shot</td></tr>
-          <tr><th>타겟 유저</th><td>전략 SLG 유저, 서바이벌 장르 팬, 해양 테마 선호 유저</td></tr>
-          <tr><th>월드 구조</th><td>아우터 (생존) → 이너 (단합) → 센터 (패권)</td></tr>
-          <tr><th>기지 컨셉</th><td>판자 → 땟목 → 함선 기지 단계적 확장</td></tr>
-        </table>
-      </div>
-
-      <div class="section-block" id="sec-overview-diff">
-        <h3>핵심 차별화 포인트</h3>
-        <div class="diff-list">
-          <div class="diff-item">
-            <div class="diff-num">01</div>
-            <div>
-              <div class="diff-title">동적 기지 이동 — 닻(Anchor) 시스템</div>
-              <div class="diff-desc">고정 기지 SLG와 달리 닻 시스템으로 연맹 단위 이동 가능. 닻을 올리면 자유 항해, 내리면 연맹 버프 활성화.</div>
-            </div>
-          </div>
-          <div class="diff-item">
-            <div class="diff-num">02</div>
-            <div>
-              <div class="diff-title">빙산의 일각 자원 시스템</div>
-              <div class="diff-desc">탐사할수록 드러나는 자원지. 수면 아래 숨겨진 대량 자원 — 전략적 탐사 경쟁 유도.</div>
-            </div>
-          </div>
-          <div class="diff-item">
-            <div class="diff-num">03</div>
-            <div>
-              <div class="diff-title">땟목 건설 메카닉</div>
-              <div class="diff-desc">판자 → 땟목 → 함선의 단계적 기지 확장. 성장이 시각적으로 직관적으로 표현됨.</div>
-            </div>
-          </div>
-          <div class="diff-item">
-            <div class="diff-num">04</div>
-            <div>
-              <div class="diff-title">해류 이벤트 시스템</div>
-              <div class="diff-desc">주기적으로 해류 방향이 변화하여 자원 분포와 이동 경로에 전략적 영향을 줌.</div>
-            </div>
-          </div>
-          <div class="diff-item">
-            <div class="diff-num">05</div>
-            <div>
-              <div class="diff-title">대홍수 프롤로그 미니게임</div>
-              <div class="diff-desc">첫 로그인 시 땟목 연결 미니게임으로 세계관 몰입도 극대화 및 핵심 건설 메카닉 선체험.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-block" id="sec-overview-ref">
-        <h3>레퍼런스 게임 비교</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>요소</th>
-              <th>WOS (Whiteout Survival)</th>
-              <th>SOS (State of Survival)</th>
-              <th>King Shot</th>
-              <th style="color:var(--gold)">아쿠아 서바이벌</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="col-hl">세계관</td>
-              <td>빙하기 생존</td>
-              <td>좀비 아포칼립스</td>
-              <td>서부 개척</td>
-              <td class="col-gold">대홍수 해양 생존</td>
-            </tr>
-            <tr>
-              <td class="col-hl">기지</td>
-              <td>요새 건설</td>
-              <td>도시 재건</td>
-              <td>마을 건설</td>
-              <td class="col-gold">함선 기지 (땟목+판자)</td>
-            </tr>
-            <tr>
-              <td class="col-hl">이동</td>
-              <td>고정</td>
-              <td>고정</td>
-              <td>고정</td>
-              <td class="col-gold">닻 기반 이동 ★차별화</td>
-            </tr>
-            <tr>
-              <td class="col-hl">병종</td>
-              <td>3종 상성</td>
-              <td>3종 상성</td>
-              <td>3종 상성</td>
-              <td class="col-gold">3종 해양 상성</td>
-            </tr>
-            <tr>
-              <td class="col-hl">월드</td>
-              <td>아우터/이너/센터</td>
-              <td>존 구조</td>
-              <td>존 구조</td>
-              <td class="col-gold">아우터/이너/센터</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<!-- 방어 팝업 -->
+<div class="pbg" id="pd">
+  <div class="pbox">
+    <div class="ptit" style="color:#64b5f6">🛡 방어</div>
+    <div id="dl"></div>
+    <div class="pv" id="dv">속성과 장수를 선택하세요</div>
+    <div class="pa">
+      <button class="pc" id="dc" onclick="doDefend()">방어 실행</button>
+      <button class="px" onclick="closeP('pd')">취소</button>
     </div>
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 세계관 & 스토리
-    ════════════════════════════════════════════ -->
-    <div class="page-section" id="page-world">
-      <div class="page-title">세계관 & 스토리</div>
-      <div class="page-subtitle">대홍수 이후 원시로 돌아간 인류의 생존 서사</div>
-
-      <div class="section-block" id="sec-world-bg">
-        <h3>세계관 배경</h3>
-        <div class="tag-row">
-          <span class="tag tag-teal">생존</span>
-          <span class="tag tag-blue">건설</span>
-          <span class="tag tag-teal">연합</span>
-          <span class="tag tag-gold">패권</span>
-        </div>
-        <p>기후 이변과 연속된 자연재해로 <strong style="color:var(--text-strong)">현대 문명이 붕괴</strong>되었다. 전례 없는 대홍수가 대륙의 대부분을 삼켜버렸고, 살아남은 자들은 물 위에서 땟목과 판자로 삶을 이어간다.</p>
-        <p>문명의 유산은 물속 깊이 잠들어 있고, 인류는 다시 원시 생존의 시대로 돌아갔다. 하지만 생존한 이들은 포기하지 않는다 — 판자 하나, 땟목 하나씩 쌓아 올리며 새로운 문명을 건설하기 시작한다.</p>
-        <p style="font-style:italic;color:var(--teal-light);margin-top:12px">분위기: 묵시록적 해양 서바이벌 + 원시 부족 문명 재건</p>
-      </div>
-
-      <div class="section-block" id="sec-world-prologue">
-        <h3>프롤로그 — 대홍수의 기억</h3>
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-icon">🌊</div>
-            <div class="card-title">컷신: 대홍수</div>
-            <div class="card-desc">거대한 쓰나미가 도시를 집어삼키는 장면. 현대 문명의 마지막 순간을 목격한 주인공이 잔해 위에서 눈을 뜬다.</div>
-          </div>
-          <div class="card">
-            <div class="card-icon">🪵</div>
-            <div class="card-title">최초 로그인 미니게임: 땟목 연결</div>
-            <div class="card-desc">물 위에 떠 있는 판자 조각들을 드래그하여 연결. 시간 제한 내에 기본 땟목 완성 시 생존 거점 확보 → 튜토리얼 시작.</div>
-          </div>
-        </div>
-
-        <p style="font-size:13px;color:var(--text-muted);font-style:italic">목적: 세계관 몰입 극대화 + 핵심 건설 메카닉 최초 체험</p>
-      </div>
-
-      <div class="section-block" id="sec-world-zone">
-        <h3>월드 존 구조 — 3단계 동심원</h3>
-        <div class="zone-grid">
-          <div class="zone-card zone-outer">
-            <div class="zone-label">Outer Zone</div>
-            <div class="zone-name">아우터 존<br><small style="font-size:12px;font-weight:400;color:var(--text-muted)">생존 (Survival)</small></div>
-            <ul>
-              <li>신규 플레이어 시작 구역</li>
-              <li>낮은 경쟁 강도</li>
-              <li>풍부한 기초 자원</li>
-              <li>PvE 중심, 보호막 시스템</li>
-            </ul>
-          </div>
-          <div class="zone-card zone-inner">
-            <div class="zone-label">Inner Zone</div>
-            <div class="zone-name">이너 존<br><small style="font-size:12px;font-weight:400;color:var(--teal-dark)">단합 (Unity)</small></div>
-            <ul>
-              <li>중급 경쟁 구역</li>
-              <li>연맹 간 동맹/대립 본격화</li>
-              <li>침몰 도시 분포</li>
-              <li>PvP 활성화, 연맹전 시작</li>
-            </ul>
-          </div>
-          <div class="zone-card zone-center">
-            <div class="zone-label">Center Zone</div>
-            <div class="zone-name">센터 존<br><small style="font-size:12px;font-weight:400;color:#a0522d">패권 (Hegemony)</small></div>
-            <ul>
-              <li>최고 경쟁 구역</li>
-              <li>패권 건물 "대홍수의 탑"</li>
-              <li>점령 연맹에 서버 버프</li>
-              <li>정기 점령전 (킹오브힐)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  </div>
+</div>
+<!-- 스킬 팝업 -->
+<div class="pbg" id="ps">
+  <div class="pbox">
+    <div class="ptit" style="color:#ba68c8">✨ 스킬</div>
+    <div id="sl"></div>
+    <div class="pa" style="margin-top:6px">
+      <button class="px" onclick="closeP('ps')">취소</button>
     </div>
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 핵심 게임플레이
-    ════════════════════════════════════════════ -->
-    <div class="page-section" id="page-gameplay">
-      <div class="page-title">핵심 게임플레이 루프</div>
-      <div class="page-subtitle">생존부터 패권까지 — 7단계 순환 성장 구조</div>
-
-      <div class="section-block" id="sec-gp-loop">
-        <h3>핵심 루프</h3>
-        <div class="loop-flow">
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">1</div>
-              <div class="loop-title">생존</div>
-              <div class="loop-desc">땟목 확장<br>기초 자원 확보</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">2</div>
-              <div class="loop-title">자원 수집</div>
-              <div class="loop-desc">부유물 채취<br>섬 탐사</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">3</div>
-              <div class="loop-title">기지 건설</div>
-              <div class="loop-desc">판자+땟목<br>함선 기지 확장</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">4</div>
-              <div class="loop-title">병력 훈련</div>
-              <div class="loop-desc">3종 병종<br>육성</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">5</div>
-              <div class="loop-title">전투/약탈</div>
-              <div class="loop-desc">PvE/PvP<br>자원 쟁탈</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">6</div>
-              <div class="loop-title">연맹 참여</div>
-              <div class="loop-desc">닻 고정<br>연합 작전</div>
-            </div>
-          </div>
-          <div class="loop-arrow">▶</div>
-          <div class="loop-step">
-            <div class="loop-box">
-              <div class="loop-num">7</div>
-              <div class="loop-title">월드 패권</div>
-              <div class="loop-desc">센터 존<br>점령</div>
-            </div>
-          </div>
-        </div>
-        <p style="font-size:13px;color:var(--teal);text-align:center;margin-top:4px">◀─── 반복 성장 루프 ───▶</p>
-      </div>
-
-      <div class="section-block" id="sec-gp-detail">
-        <h3>각 단계 상세</h3>
-        <div class="accordion-item open">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>① 생존 단계 — 물 위 땟목 확장</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <p>물 위에 떠 있는 잔해와 판자를 연결하여 초기 땟목을 확장한다. 기초 자원을 확보하며 생존 거점을 구축하는 가장 핵심적인 초반 행동 루프.</p>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>② 자원 수집 — 부유물, 섬, 침몰 유적</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <ul>
-              <li>월드맵 부유 자원: 해류에 따라 이동하는 자원 오브젝트 채취</li>
-              <li>섬 탐사 (빙산의 일각): 수면 아래 숨겨진 대량 자원</li>
-              <li>침몰 도시 유적: 고위험 고보상, 연맹 협력 탐사</li>
-            </ul>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>③ 기지 건설 — 판자에서 함선까지</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <p>판자(Plank) → 땟목(Raft) → 함선 기지(Ship Fortress)로 단계적 확장. 생산/군사/방어/연구/지휘 시설을 배치하여 전략적 기지를 완성한다.</p>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>④ ~ ⑦ 병력 훈련 → 전투 → 연맹 → 패권</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <ul>
-              <li><strong>병력 훈련:</strong> 3종 병종(파도전사·해류사냥꾼·심해포격수) 상성 운영</li>
-              <li><strong>전투/약탈:</strong> PvE 몬스터 처치, PvP 타 플레이어 약탈</li>
-              <li><strong>연맹 참여:</strong> 닻 시스템으로 연맹 단위 이동 및 연합 작전</li>
-              <li><strong>월드 패권:</strong> 센터 존 "대홍수의 탑" 점령 → 서버 전체 버프 획득</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  </div>
+</div>
+<!-- 유닛 상세 팝업 -->
+<div class="pbg" id="punit">
+  <div class="pbox" style="width:min(90vw,360px);">
+    <div id="punit-content"></div>
+    <div class="pa" style="margin-top:12px;justify-content:center;">
+      <button class="px" onclick="closeUnitDetail()">닫기 (ESC)</button>
     </div>
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 게임 시스템
-    ════════════════════════════════════════════ -->
-    <div class="page-section" id="page-systems">
-      <div class="page-title">게임 시스템</div>
-      <div class="page-subtitle">기지 건설 · 자원 · 섬 · 병종 · 연맹 시스템 상세</div>
-
-      <!-- 기지 건설 -->
-      <div class="section-block" id="sec-sys-build">
-        <h3>기지 건설 시스템</h3>
-        <div class="build-flow">
-          <div class="build-step">
-            <div class="build-icon">🪵</div>
-            <div class="build-name">판자 (Plank)</div>
-            <div class="build-desc">가장 작은 건설 단위<br>목재 1~3개 소모</div>
-          </div>
-          <div class="build-arrow">➜</div>
-          <div class="build-step">
-            <div class="build-icon">🛖</div>
-            <div class="build-name">땟목 (Raft)</div>
-            <div class="build-desc">판자 여러 개를 연결한<br>플랫폼 단위</div>
-          </div>
-          <div class="build-arrow">➜</div>
-          <div class="build-step">
-            <div class="build-icon">⛵</div>
-            <div class="build-name">함선 기지</div>
-            <div class="build-desc">땟목들을 이어<br>거대 기지 완성</div>
-          </div>
-        </div>
-
-        <table class="data-table">
-          <thead>
-            <tr><th>카테고리</th><th>건물 예시</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="col-hl">생산 시설</td><td>낚시터, 해초 농장, 빗물 저장소</td></tr>
-            <tr><td class="col-hl">군사 시설</td><td>훈련소, 무기고, 갑판 포대</td></tr>
-            <tr><td class="col-hl">방어 시설</td><td>방책, 망루, 기뢰 설치대</td></tr>
-            <tr><td class="col-hl">연구 시설</td><td>항해 연구소, 생존 연구소</td></tr>
-            <tr><td class="col-gold">지휘 시설</td><td style="color:var(--gold)">함교 — 주력 지휘소 (핵심 건물)</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 자원 시스템 -->
-      <div class="section-block" id="sec-sys-resource">
-        <h3>자원 시스템</h3>
-        <div class="resource-grid">
-          <div class="resource-chip" style="border-color:#7d5a3c">
-            <div class="r-icon">🪵</div>
-            <div class="r-name">목재 (Wood)</div>
-            <div class="r-desc">판자/땟목 건설 기본 재료</div>
-          </div>
-          <div class="resource-chip" style="border-color:#1a7a4a">
-            <div class="r-icon">🐟</div>
-            <div class="r-name">식량 (Food)</div>
-            <div class="r-desc">병력 유지 및 생산</div>
-          </div>
-          <div class="resource-chip" style="border-color:#566573">
-            <div class="r-icon">⚙️</div>
-            <div class="r-name">금속 (Metal)</div>
-            <div class="r-desc">무기/장비 제작 소재</div>
-          </div>
-          <div class="resource-chip" style="border-color:var(--blue-accent)">
-            <div class="r-icon">💧</div>
-            <div class="r-name">청정수</div>
-            <div class="r-desc">고급 연구 및 특수 유닛</div>
-          </div>
-        </div>
-
-        <p style="font-size:13.5px;font-weight:600;color:var(--teal-light);margin-bottom:8px">자원 획득처</p>
-        <table class="data-table">
-          <thead><tr><th>획득처</th><th>설명</th></tr></thead>
-          <tbody>
-            <tr><td class="col-hl">기지 내 생산 시설</td><td>시간 기반 자원 생성, 레벨업으로 생산량 증가</td></tr>
-            <tr><td class="col-hl">월드맵 부유 자원</td><td>해류에 따라 이동하는 자원 오브젝트 채취</td></tr>
-            <tr><td class="col-hl">섬 탐사</td><td>빙산의 일각 — 수면 아래 대량 자원 잠재</td></tr>
-            <tr><td class="col-hl">침몰 도시 유적</td><td>고위험 고보상, 연맹 협력 탐사 필요</td></tr>
-            <tr><td class="col-hl">타 플레이어 약탈</td><td>PvP 공격으로 자원 강탈 가능</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 섬 & 자원지 -->
-      <div class="section-block" id="sec-sys-island">
-        <h3>섬 & 자원지 시스템 — 빙산의 일각</h3>
-        <p>월드맵에 분포하는 섬들은 <strong style="color:var(--text-strong)">"빙산의 일각"</strong> 형태. 수면 위에는 작은 암초/얼음 조각처럼 보이지만, 수면 아래에는 거대한 자원 저장소가 숨어 있다. 채굴할수록 섬이 점점 드러나며 탐사 경쟁이 형성된다.</p>
-
-        <table class="data-table" style="margin-top:16px">
-          <thead>
-            <tr><th>등급</th><th>특징</th><th>자원량</th><th>비고</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>★ 표류 잔해</td><td>소형, 단독 채취</td><td>소량</td><td>초보 구역</td></tr>
-            <tr><td>★★ 암초 섬</td><td>중형, 경쟁 채취</td><td>중량</td><td>이너 진입 후</td></tr>
-            <tr><td class="col-hl">★★★ 침몰 도시</td><td>대형, 연맹 점령전</td><td>대량</td><td>연맹전 필요</td></tr>
-            <tr><td class="col-gold">★★★★ 심해 유적</td><td>특수, 이벤트 한정</td><td>최대량</td><td>시즌 이벤트</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 병종 시스템 -->
-      <div class="section-block" id="sec-sys-troop">
-        <h3>병종 시스템 — 3종 가위바위보 상성</h3>
-        <div class="troop-grid">
-          <div class="troop-card troop-warrior">
-            <div class="troop-icon">⚔️</div>
-            <div class="troop-name">파도 전사</div>
-            <div class="troop-eng">Wave Warrior</div>
-            <div class="troop-role">근접 강습 특화</div>
-            <div class="troop-detail">
-              무기: 작살, 방패<br>
-              특기: 갑판 돌격, 함선 탑승 전투<br>
-              <span class="troop-strong">★ 사냥꾼에 강함</span><br>
-              <span class="troop-weak">✗ 포격수에 약함</span>
-            </div>
-          </div>
-          <div class="troop-card troop-hunter">
-            <div class="troop-icon">🏹</div>
-            <div class="troop-name">해류 사냥꾼</div>
-            <div class="troop-eng">Current Hunter</div>
-            <div class="troop-role">원거리 정찰 특화</div>
-            <div class="troop-detail">
-              무기: 활, 투창<br>
-              특기: 원거리 공격, 정찰 범위 확장<br>
-              <span class="troop-strong">★ 포격수에 강함</span><br>
-              <span class="troop-weak">✗ 파도전사에 약함</span>
-            </div>
-          </div>
-          <div class="troop-card troop-gunner">
-            <div class="troop-icon">💣</div>
-            <div class="troop-name">심해 포격수</div>
-            <div class="troop-eng">Deep Gunner</div>
-            <div class="troop-role">중화력 공성 특화</div>
-            <div class="troop-detail">
-              무기: 화포, 투석기<br>
-              특기: 건물 파괴, 광역 피해<br>
-              <span class="troop-strong">★ 파도전사에 강함</span><br>
-              <span class="troop-weak">✗ 사냥꾼에 약함</span>
-            </div>
-          </div>
-        </div>
-        <div class="counter-banner">
-          상성 순환 (가위바위보) ▸ 파도전사 → 사냥꾼 → 포격수 → 파도전사
-        </div>
-      </div>
-
-      <!-- 연맹 시스템 -->
-      <div class="section-block" id="sec-sys-alliance">
-        <h3>연맹 시스템 — 닻(Anchor) 이동 메카닉</h3>
-        <p>연맹 가입 후 <strong style="color:var(--text-strong)">연맹 기지(Alliance Flagship)</strong>가 등장하며, 연맹원들은 기지를 중심으로 닻을 고정하여 집결/이동한다. 이것이 일반 SLG와 아쿠아 서바이벌을 구분하는 핵심 차별점.</p>
-
-        <div class="anchor-compare" style="margin-top:16px">
-          <div class="anchor-box anchor-down">
-            <strong>⚓ 닻 내림 (정박 모드)</strong>
-            위치 고정, 이동 불가<br>
-            연맹 버프 +20% 활성화<br>
-            방어력 +15% 상시 적용<br>
-            연맹장 이동 시 함께 이동
-          </div>
-          <div class="anchor-box anchor-up">
-            <strong>⛵ 닻 올림 (항해 모드)</strong>
-            자유 항해 가능<br>
-            이동 속도 +30%<br>
-            연맹 버프 비활성화<br>
-            단독 탐사/약탈에 적합
-          </div>
-        </div>
-
-        <p style="font-size:13.5px;font-weight:600;color:var(--teal-light);margin:20px 0 8px">연맹 건물</p>
-        <table class="data-table">
-          <thead><tr><th>건물</th><th>기능</th></tr></thead>
-          <tbody>
-            <tr><td class="col-hl">연맹 함교 (Alliance Bridge)</td><td>연맹 주력 지휘소, 연맹 버프 발원지</td></tr>
-            <tr><td class="col-hl">연맹 조선소 (Alliance Shipyard)</td><td>연맹 공용 함선 건조 및 업그레이드</td></tr>
-            <tr><td class="col-hl">연맹 포대 (Alliance Battery)</td><td>연맹 영역 방어, 적 침략 대응</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 수익화 모델
-    ════════════════════════════════════════════ -->
-    <div class="page-section" id="page-monetize">
-      <div class="page-title">수익화 모델</div>
-      <div class="page-subtitle">WOS / SOS / King Shot 레퍼런스 기반 모바일 SLG 수익 구조</div>
-
-      <div class="section-block" id="sec-mono-3axis">
-        <h3>수익화 3축 구조</h3>
-        <div class="mono-grid">
-          <div class="mono-card" style="border-color:var(--gold)">
-            <div class="mono-card-title">💳 패스 상품</div>
-            <ul>
-              <li><strong style="color:var(--teal-light)">항해자 패스 (월정액)</strong><br>일일 자원 + 가속 아이템</li>
-              <li style="margin-top:8px"><strong style="color:var(--teal-light)">함장 패스 (배틀패스)</strong><br>시즌 미션 보상 트랙</li>
-            </ul>
-          </div>
-          <div class="mono-card" style="border-color:var(--teal)">
-            <div class="mono-card-title">🛒 상점 상품</div>
-            <ul>
-              <li>자원 팩 (목재/식량/금속/청정수)</li>
-              <li>가속 아이템 (건설/훈련/연구)</li>
-              <li>영웅 조각 (지휘관 강화)</li>
-              <li>특수 스킨 (함선, 병종 외형)</li>
-            </ul>
-          </div>
-          <div class="mono-card" style="border-color:var(--blue-accent)">
-            <div class="mono-card-title">🎪 이벤트 수익화</div>
-            <ul>
-              <li>시즌 이벤트 상점</li>
-              <li>연맹 이벤트 보상 구매</li>
-              <li>한정 스킨/아이템 판매</li>
-              <li>협력 이벤트 패키지</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-block" id="sec-mono-kpi">
-        <h3>수익화 지표 목표</h3>
-        <div class="kpi-row">
-          <div class="kpi-badge"><span class="kpi-val">월정액</span><span class="kpi-label">안정적 MRR</span></div>
-          <div class="kpi-badge"><span class="kpi-val">배틀패스</span><span class="kpi-label">시즌 리텐션</span></div>
-          <div class="kpi-badge"><span class="kpi-val">인앱 구매</span><span class="kpi-label">고 ARPU</span></div>
-          <div class="kpi-badge"><span class="kpi-val">이벤트</span><span class="kpi-label">참여 유도</span></div>
-        </div>
-      </div>
-
-      <div class="section-block" id="sec-mono-principle">
-        <h3>과금 설계 원칙</h3>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>레퍼런스 WOS (Whiteout Survival) 과금 구조 분석</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <ul>
-              <li>월정액 패스 → 무과금도 즐길 수 있는 기본 성장 제공</li>
-              <li>배틀패스 → 시즌 콘텐츠로 리텐션 강화</li>
-              <li>한정 영웅 패키지 → 고과금 유저 대상 핵심 수익</li>
-              <li>가속 아이템 → 시간 가치 소비, 경쟁 심리 자극</li>
-            </ul>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>아쿠아 서바이벌 과금 차별화 방향</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            <ul>
-              <li><strong>함선 스킨:</strong> 기지 전체 외형 변경 — 시각적 성취감 + 과금 동기</li>
-              <li><strong>닻 이동권:</strong> 빠른 이동을 위한 소모성 아이템</li>
-              <li><strong>탐사 가속:</strong> 침몰 유적 탐사 시간 단축권</li>
-              <li><strong>시즌 함선 스킨:</strong> 시즌별 한정 함선 외형 제공</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ════════════════════════════════════════════
-         PAGE: 성장 & 로드맵
-    ════════════════════════════════════════════ -->
-    <div class="page-section" id="page-roadmap">
-      <div class="page-title">성장 & 개발 로드맵</div>
-      <div class="page-subtitle">플레이어 성장 5단계 + 개발 Phase 3단계</div>
-
-      <div class="section-block" id="sec-road-growth">
-        <h3>플레이어 성장 단계</h3>
-        <div class="growth-timeline">
-          <div class="growth-item">
-            <div class="growth-num">1</div>
-            <div class="growth-content">
-              <div class="growth-title">표류자 (Drifter)</div>
-              <div class="growth-sub">튜토리얼 ~ 기지 레벨 5</div>
-              <ul>
-                <li>땟목 연결 미니게임 클리어</li>
-                <li>기초 자원 확보 및 기지 건설 시작</li>
-                <li>기본 병종 훈련</li>
-              </ul>
-            </div>
-          </div>
-          <div class="growth-item">
-            <div class="growth-num">2</div>
-            <div class="growth-content">
-              <div class="growth-title">생존자 (Survivor)</div>
-              <div class="growth-sub">기지 레벨 6~15</div>
-              <ul>
-                <li>함선 기지 본격 확장</li>
-                <li>2차 병종 해금 및 상성 전략 학습</li>
-                <li>아우터 존 섬 탐사 시작</li>
-              </ul>
-            </div>
-          </div>
-          <div class="growth-item">
-            <div class="growth-num">3</div>
-            <div class="growth-content">
-              <div class="growth-title">항해자 (Navigator)</div>
-              <div class="growth-sub">기지 레벨 16~25</div>
-              <ul>
-                <li>연맹 가입, 닻 시스템 활성화</li>
-                <li>이너 존 진출 및 연맹전 참여</li>
-                <li>침몰 도시 탐사 시작</li>
-              </ul>
-            </div>
-          </div>
-          <div class="growth-item">
-            <div class="growth-num">4</div>
-            <div class="growth-content">
-              <div class="growth-title">함장 (Captain)</div>
-              <div class="growth-sub">기지 레벨 26~35</div>
-              <ul>
-                <li>전문 병종 육성 완성</li>
-                <li>센터 존 도전 및 패권 경쟁 참여</li>
-                <li>연맹 고위직 역할 수행</li>
-              </ul>
-            </div>
-          </div>
-          <div class="growth-item">
-            <div class="growth-num">5</div>
-            <div class="growth-content">
-              <div class="growth-title">해왕 (Sea King)</div>
-              <div class="growth-sub">기지 레벨 36+</div>
-              <ul>
-                <li>서버 패권 도전 — "대홍수의 탑" 점령</li>
-                <li>레전드 장비 제작 및 최강 함선 완성</li>
-                <li>서버 전체 버프 보유, 영향력 행사</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-block" id="sec-road-phase">
-        <h3>개발 우선순위 — Phase 구분</h3>
-        <div class="phase-grid">
-          <div class="phase-card phase-1">
-            <div class="phase-header">PHASE 1</div>
-            <div class="phase-body">
-              <div class="phase-title">핵심 프로토타입</div>
-              <ul>
-                <li>땟목 연결 미니게임 (프롤로그)</li>
-                <li>기초 기지 건설 시스템</li>
-                <li>3종 병종 기본 전투</li>
-              </ul>
-            </div>
-          </div>
-          <div class="phase-card phase-2">
-            <div class="phase-header">PHASE 2</div>
-            <div class="phase-body">
-              <div class="phase-title">월드 구축</div>
-              <ul>
-                <li>월드맵 및 자원지 시스템</li>
-                <li>연맹 & 닻 이동 시스템</li>
-                <li>아우터/이너/센터 존 구조</li>
-              </ul>
-            </div>
-          </div>
-          <div class="phase-card phase-3">
-            <div class="phase-header">PHASE 3</div>
-            <div class="phase-body">
-              <div class="phase-title">콘텐츠 확장</div>
-              <ul>
-                <li>침몰 도시 탐사 콘텐츠</li>
-                <li>시즌 이벤트 시스템</li>
-                <li>수익화 모델 구현</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-block" id="sec-road-next">
-        <h3>다음 논의 항목</h3>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>지휘관(영웅) 시스템 상세 기획</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            스킬 구성, 등급 체계, 성장 트리, 영웅 수집 방식 등 지휘관 시스템 전반을 정의해야 합니다. WOS의 영웅 시스템을 참고하되 해양 세계관에 맞는 고유 특성이 필요합니다.
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>전투 공식 및 밸런싱 수치 설계</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            3종 상성 배율, 공격력/방어력 성장 곡선, 병력 수 vs 전투력 관계, PvP 매칭 범위 등 핵심 수치 설계가 필요합니다.
-          </div>
-        </div>
-        <div class="accordion-item">
-          <div class="accordion-q" onclick="toggleAccordion(this)">
-            <span>아트 컨셉 방향 확정</span>
-            <span class="accordion-arrow">▼</span>
-          </div>
-          <div class="accordion-body">
-            세계관 비주얼 스타일 가이드 — 캐릭터 아트 방향(사실적 vs 카툰), 함선 기지 비주얼, UI 컬러 팔레트, 아이콘 스타일 확정이 필요합니다.
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content -->
-</div><!-- /main -->
+  </div>
+</div>
+<!-- 결과 -->
+<div id="ov">
+  <div id="om" style="font-size:2.2rem;font-weight:900;"></div>
+  <div id="os" style="font-size:.88rem;color:#888;"></div>
+  <button id="ob" onclick="init()">다시 시작</button>
+</div>
 
 <script>
-/* ─── SUBNAV DATA ─── */
-var subnavData = {
-  overview: [
-    { id: 'sec-overview-info', label: '기본 정보' },
-    { id: 'sec-overview-diff', label: '핵심 차별화 포인트' },
-    { id: 'sec-overview-ref',  label: '레퍼런스 게임 비교' }
-  ],
-  world: [
-    { id: 'sec-world-bg',       label: '세계관 배경' },
-    { id: 'sec-world-prologue', label: '프롤로그 — 대홍수의 기억' },
-    { id: 'sec-world-zone',     label: '월드 존 구조' }
-  ],
-  gameplay: [
-    { id: 'sec-gp-loop',   label: '핵심 루프' },
-    { id: 'sec-gp-detail', label: '각 단계 상세' }
-  ],
-  systems: [
-    { id: 'sec-sys-build',    label: '기지 건설 시스템' },
-    { id: 'sec-sys-resource', label: '자원 시스템' },
-    { id: 'sec-sys-island',   label: '섬 & 자원지' },
-    { id: 'sec-sys-troop',    label: '병종 시스템' },
-    { id: 'sec-sys-alliance', label: '연맹 시스템' }
-  ],
-  monetize: [
-    { id: 'sec-mono-3axis',     label: '수익화 3축 구조' },
-    { id: 'sec-mono-kpi',       label: '수익화 지표 목표' },
-    { id: 'sec-mono-principle', label: '과금 설계 원칙' }
-  ],
-  roadmap: [
-    { id: 'sec-road-growth', label: '플레이어 성장 단계' },
-    { id: 'sec-road-phase',  label: '개발 Phase 구분' },
-    { id: 'sec-road-next',   label: '다음 논의 항목' }
-  ]
+// ── 속성 ──
+const AT={
+  fire:  {n:'불',e:'🔥',c:'#ff7043'},
+  water: {n:'물',e:'💧',c:'#42a5f5'},
+  forest:{n:'숲',e:'🌿',c:'#66bb6a'},
+  light: {n:'빛',e:'✨',c:'#fff176'},
+  dark:  {n:'암',e:'🌑',c:'#ba68c8'},
 };
+const CM=[0,1.0,2.1,3.3,4.6,6.0];
+const HMAX=10;
+const BEATS={fire:'forest',forest:'water',water:'fire',light:'dark',dark:'light'};
+const WEAK_OF={fire:'water',forest:'fire',water:'forest',light:'dark',dark:'light'};
+const COLS=24, ROWS=10;
 
-var pageTabTitles = {
-  overview: '게임 개요',
-  world:    '세계관 & 스토리',
-  gameplay: '핵심 게임플레이',
-  systems:  '게임 시스템',
-  monetize: '수익화 모델',
-  roadmap:  '성장 & 로드맵'
-};
-
-var currentPage = 'overview';
-
-/* ─── RENDER TOPNAV (부제) ─── */
-function renderTopnav(page) {
-  var nav = document.getElementById('topnav-list');
-  var items = subnavData[page] || [];
-  nav.innerHTML = items.map(function(item) {
-    return '<div class="nav-tab" data-target="' + item.id + '" onclick="scrollToSection(\'' + item.id + '\')">'
-      + item.label
-      + '</div>';
-  }).join('');
-  setTimeout(updateActiveTopnav, 50);
+// ── 헥스 지오메트리 (flat-top) ──
+// R = circumradius (center→vertex), HH = hex height (flat-to-flat)
+// gW = 18.5*R, gH = 6.5*HH = 6.5*√3*R
+// Pointy-top hex: 꼭짓점이 위아래, WW=√3*R (hex width), 2R (height)
+// gW = WW*(COLS+0.5), gH = R*(2+(ROWS-1)*1.5)
+function _hexR(W,H){return Math.min((W-12)/(Math.sqrt(3)*(COLS+0.5)),(H-12)/(2+(ROWS-1)*1.5));}
+function _hexC(c,r,R,WW,ox,oy){
+  return {x:ox+WW/2+c*WW+(r%2?WW/2:0), y:oy+R+r*1.5*R};
+}
+function _hexPts(cx,cy,R){
+  let s='';
+  for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/2;s+=`${(cx+R*Math.cos(a)).toFixed(1)},${(cy+R*Math.sin(a)).toFixed(1)} `;}
+  return s.trim();
 }
 
-/* ─── SCROLL TO SECTION ─── */
-function scrollToSection(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var top = el.getBoundingClientRect().top + window.pageYOffset - 64;
-  window.scrollTo({ top: top, behavior: 'smooth' });
+// ── 캐릭터 템플릿 ──
+// 공격/방어 각 3속성, 주속성이 양쪽 첫번째(100%), 나머지 2개는 30%
+const TMPL={
+  kael:   {name:'카엘',   pri:'fire',  atkAttrs:['fire','water','forest'],  defAttrs:['fire','light','dark'],   atkPow:120,defPow:60, spd:8,  maxHp:1000,mov:3,atkRange:1,
+            skills:[
+              {id:'burst',    name:'불꽃폭발',   desc:'불×3 → 강타+화상 2턴',       cost:{fire:3},  tgt:'enemy'},
+              {id:'ignite',   name:'점화',       desc:'불×2 → 화상 3턴',            cost:{fire:2},  tgt:'enemy'},
+              {id:'inferno',  name:'인페르노',   desc:'불×5 → 최강 화염 피해',      cost:{fire:5},  tgt:'enemy'},
+            ]},
+  sylva:  {name:'실바',   pri:'forest',atkAttrs:['forest','light','water'], defAttrs:['forest','water','dark'], atkPow:95, defPow:90, spd:6,  maxHp:900, mov:2,atkRange:2,
+            skills:[
+              {id:'healall',  name:'치유의 비',   desc:'숲×3 → 아군 전체 HP 회복',  cost:{forest:3},tgt:'allally'},
+              {id:'barrier',  name:'자연의 방패', desc:'숲×2 → 아군 1명 실드',      cost:{forest:2},tgt:'ally'},
+              {id:'rejuvenate',name:'재생',       desc:'숲×3 → 자신 HP+실드',       cost:{forest:3},tgt:'self'},
+            ]},
+  aqua:   {name:'아쿠아', pri:'water', atkAttrs:['water','dark','forest'],  defAttrs:['water','light','forest'],atkPow:105,defPow:70, spd:9,  maxHp:850, mov:4,atkRange:3,
+            skills:[
+              {id:'flood',    name:'급류',        desc:'물×3 → 피해+공격력↓ 2턴',   cost:{water:3}, tgt:'enemy'},
+              {id:'aquashield',name:'물의 방패',  desc:'물×2 → 아군 전체 실드',     cost:{water:2}, tgt:'allally'},
+              {id:'tidewall', name:'조수 방벽',   desc:'물×4 → 아군 전체 대형 실드',cost:{water:4}, tgt:'allally'},
+            ]},
+  luna:   {name:'루나',   pri:'light', atkAttrs:['light','fire','water'],   defAttrs:['light','forest','dark'], atkPow:100,defPow:80, spd:7,  maxHp:950, mov:2,atkRange:4,
+            skills:[
+              {id:'shield',   name:'성스러운 방패',desc:'빛×2 → 아군 1명 실드',     cost:{light:2}, tgt:'ally'},
+              {id:'holylight',name:'성스러운 빛', desc:'빛×2 → 아군 전체 HP 회복', cost:{light:2}, tgt:'allally'},
+              {id:'resurrection',name:'부활의 빛',desc:'빛×4 → 아군 전체 대회복',  cost:{light:4}, tgt:'allally'},
+            ]},
+  shadow: {name:'섀도우', pri:'dark',  atkAttrs:['dark','fire','water'],    defAttrs:['dark','forest','light'], atkPow:115,defPow:65, spd:10, maxHp:880, mov:5,atkRange:2,
+            skills:[
+              {id:'drain',    name:'생명흡수',    desc:'암×3 → 피해+HP흡수',        cost:{dark:3},  tgt:'enemy'},
+              {id:'blind',    name:'암흑',        desc:'암×2 → 적 공격력↓ 2턴',     cost:{dark:2},  tgt:'enemy'},
+              {id:'nightmare',name:'악몽',        desc:'암×4 → 적 전체 디버프',      cost:{dark:4},  tgt:'allenemy'},
+            ]},
+  // ── 몬스터 (적) ──
+  goblin:  {name:'고블린',  pri:'forest',atkAttrs:['forest','fire','dark'],   defAttrs:['forest','water','dark'],  atkPow:80, defPow:50, spd:10, maxHp:700, mov:4,atkRange:1,
+             skills:[
+               {id:'poison',  name:'독침',   desc:'숲×1 → 독 피해 2턴',      cost:{forest:1},tgt:'enemy'},
+               {id:'ambush',  name:'기습',   desc:'숲×2 → 추가 피해',         cost:{forest:2},tgt:'enemy'},
+               {id:'flee',    name:'도주',   desc:'숲×1 → 자신 실드',         cost:{forest:1},tgt:'self'},
+             ]},
+  orc:     {name:'오크',    pri:'fire',  atkAttrs:['fire','forest','dark'],   defAttrs:['fire','forest','light'],  atkPow:110,defPow:70, spd:6,  maxHp:1300,mov:3,atkRange:1,
+             skills:[
+               {id:'berserk', name:'광폭화',  desc:'불×2 → 자신 공격력↑',     cost:{fire:2},  tgt:'self'},
+               {id:'smash',   name:'분쇄',    desc:'불×2 → 실드 무시 피해',   cost:{fire:2},  tgt:'enemy'},
+               {id:'warshout',name:'전투함성',desc:'불×1 → 자신 실드',        cost:{fire:1},  tgt:'self'},
+             ]},
+  wyvern:  {name:'와이번',  pri:'fire',  atkAttrs:['fire','dark','water'],    defAttrs:['fire','forest','light'],  atkPow:120,defPow:55, spd:8,  maxHp:1000,mov:5,atkRange:3,
+             skills:[
+               {id:'firebreath',name:'화염 숨결',desc:'불×2 → 화상 피해',    cost:{fire:2},  tgt:'enemy'},
+               {id:'swoop',   name:'급강하',  desc:'암×2 → 강력 피해',        cost:{dark:2},  tgt:'enemy'},
+               {id:'tailslam',name:'꼬리 강타',desc:'물×2 → 피해',            cost:{water:2}, tgt:'enemy'},
+             ]},
+  wraith:  {name:'망령',    pri:'dark',  atkAttrs:['dark','water','light'],   defAttrs:['dark','forest','fire'],   atkPow:95, defPow:85, spd:9,  maxHp:850, mov:3,atkRange:2,
+             skills:[
+               {id:'curse',   name:'저주',    desc:'암×3 → 공격력↓+화상 2턴', cost:{dark:3},  tgt:'enemy'},
+               {id:'terror',  name:'공포',    desc:'암×2 → 공격력↓ 3턴',      cost:{dark:2},  tgt:'enemy'},
+               {id:'lifesteal',name:'생명 흡수',desc:'암×2 → 피해+HP흡수',   cost:{dark:2},  tgt:'enemy'},
+             ]},
+  golem:   {name:'골렘',    pri:'light', atkAttrs:['light','forest','fire'],  defAttrs:['light','water','dark'],   atkPow:90, defPow:110,spd:4,  maxHp:1600,mov:2,atkRange:1,
+             skills:[
+               {id:'fortify', name:'석화방어',desc:'빛×2 → 자신 실드 대량',   cost:{light:2}, tgt:'self'},
+               {id:'stomp',   name:'짓밟기',  desc:'빛×2 → 강타 피해',        cost:{light:2}, tgt:'enemy'},
+               {id:'harden',  name:'석화',    desc:'빛×1 → 자신 실드',         cost:{light:1}, tgt:'self'},
+             ]},
+};
+
+// ── 상태 ──
+const MAP_W=4000, MAP_H=1800;
+let G={}, grid=[], logSide='player', autoMode=false, devOpen=false;
+let moveMode=false, reachable=new Set(), targeting=false;
+let atkPick=null, defPick=null;
+let panX=0, panY=0, mapScale=1.0, isPanning=false, panSX=0, panSY=0;
+let _zoomTimer=null;
+let trails=[], graves=[], globalTurnIdx=0;
+let mountains=new Set(); // 이동 불가 산 타일 "c,r" 집합
+let waters=new Set();   // 이동 불가 물 타일 "c,r" 집합 (사거리 관통 가능)
+let moveHistory=null; // {id,fromX,fromY,toX,toY,trailCount,buriedCorpse}
+let originalReachable=new Set(); // 턴 시작 시 원래 위치에서 계산된 이동 범위
+let sklRangeUnit=null, sklRangeTgt=null; // 스킬 팝업 맵 하이라이트
+let atkRangeSet=new Set(); // 공격 버튼 클릭 시 사거리 하이라이트
+
+// ── 덱 ──
+function makeDeck(){const d=[];Object.keys(AT).forEach(k=>{for(let i=0;i<8;i++)d.push({id:Math.random(),attr:k});});return d;}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
+function drawCards(u,n){const room=HMAX-u.hand.length,act=Math.min(n,room);for(let i=0;i<act;i++){if(!u.drawPile.length){if(!u.discardPile.length)break;u.drawPile=shuffle(u.discardPile);u.discardPile=[];}u.hand.push(u.drawPile.shift());}}
+function discAttr(u,attr,n){let r=n;for(let i=u.hand.length-1;i>=0&&r>0;i--){if(u.hand[i].attr===attr){u.discardPile.push(u.hand.splice(i,1)[0]);r--;}}}
+function discMulti(u,costs){Object.entries(costs).forEach(([a,n])=>discAttr(u,a,n));}
+function cntA(u,attr){return u.hand.filter(c=>c.attr===attr).length;}
+
+// ── 유닛 생성 ──
+function mkUnit(key,side,x,y){
+  const t=TMPL[key];
+  return {key,id:`${side[0]}_${key}`,side,
+    name:t.name,pri:t.pri,weak:WEAK_OF[t.pri],
+    atkAttrs:t.atkAttrs,defAttrs:t.defAttrs,
+    atkPow:t.atkPow,defPow:t.defPow,
+    spd:t.spd,maxHp:t.maxHp,mov:t.mov,atkRange:t.atkRange,
+    hp:t.maxHp,shield:0,x,y,
+    moved:false,acted:false,
+    skills:t.skills||[],
+    drawPile:shuffle(makeDeck()),discardPile:[],hand:[],
+    effects:[],stunned:false};
 }
 
-/* ─── SCROLL SPY (topnav 하이라이트) ─── */
-function updateActiveTopnav() {
-  var items = subnavData[currentPage] || [];
-  var scrollY = window.pageYOffset + 100;
-  var activeId = items.length ? items[0].id : null;
+// ── 그리드 ──
+function initGrid(){grid=Array(ROWS).fill(null).map(()=>Array(COLS).fill(null));}
+function placeUnit(u){grid[u.y][u.x]=u;}
 
-  for (var i = 0; i < items.length; i++) {
-    var el = document.getElementById(items[i].id);
-    if (el && el.offsetTop <= scrollY) activeId = items[i].id;
+// ── 산 타일 생성 ──
+function initMountains(){
+  mountains=new Set();
+  // 배치 후보: 플레이어 스폰 열(0-2) 제외, 맵 가장자리 열 제외
+  const cands=[];
+  for(let r=0;r<ROWS;r++)
+    for(let c=3;c<COLS-1;c++)
+      cands.push({c,r});
+  const pool=shuffle(cands);
+  // 22~28개 배치 — 군집 방식 (랜덤 씨앗에서 인접 셀도 추가)
+  const placed=new Set();
+  let seeds=pool.slice(0,16);
+  seeds.forEach(({c,r})=>{
+    placed.add(`${c},${r}`);
+    // 40% 확률로 인접 1칸도 같이 산으로 (산맥 느낌)
+    if(Math.random()<0.40){
+      const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+      const [dc,dr]=dirs[Math.floor(Math.random()*4)];
+      const nc=c+dc, nr=r+dr;
+      if(nc>=3&&nc<COLS-1&&nr>=0&&nr<ROWS) placed.add(`${nc},${nr}`);
+    }
+  });
+  mountains=placed;
+}
+
+// ── 물 타일 생성 ──
+function initWaters(){
+  waters=new Set();
+  const placed=new Set();
+  // 후보 셀: 산/스폰 제외
+  const cands=[];
+  for(let r=0;r<ROWS;r++)
+    for(let c=4;c<COLS-3;c++)
+      if(!mountains.has(`${c},${r}`))cands.push(`${c},${r}`);
+  const seeds=shuffle(cands).slice(0,6); // 호수 씨앗 6개
+  seeds.forEach(seed=>{
+    if(placed.has(seed))return;
+    const lakeSize=3+Math.floor(Math.random()*5); // 3~7칸
+    const lakeSet=[seed];
+    placed.add(seed);
+    let head=0;
+    while(head<lakeSet.length&&lakeSet.length<lakeSize){
+      const [lc,lr]=lakeSet[head++].split(',').map(Number);
+      for(const[dc,dr]of shuffle([[1,0],[-1,0],[0,1],[0,-1]])){
+        if(lakeSet.length>=lakeSize)break;
+        const nc=lc+dc,nr=lr+dr;
+        const nk=`${nc},${nr}`;
+        if(nc<4||nc>=COLS-3||nr<0||nr>=ROWS)continue;
+        if(mountains.has(nk)||placed.has(nk))continue;
+        lakeSet.push(nk);placed.add(nk);
+      }
+    }
+    lakeSet.forEach(k=>waters.add(k));
+  });
+}
+
+// ── 지형 연결성 검사 ── 통행 가능 타일이 하나의 연결 영역을 형성하는지 확인
+function checkTerrainConnected(){
+  const blocked=new Set([...mountains,...waters]);
+  // 통행 가능 타일 목록 + 첫 번째 타일(BFS 시작점)
+  let total=0, start=null;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(!blocked.has(`${c},${r}`)){total++;if(!start)start={c,r};}
+  }
+  if(!total)return false;
+  // BFS 연결 영역 계산
+  const visited=new Set([`${start.c},${start.r}`]);
+  const q=[start];
+  let head=0;
+  while(head<q.length){
+    const {c,r}=q[head++];
+    for(const[dc,dr]of hexNeighbors(c,r)){
+      const nc=c+dc,nr=r+dr;
+      if(nc<0||nc>=COLS||nr<0||nr>=ROWS)continue;
+      const k=`${nc},${nr}`;
+      if(visited.has(k)||blocked.has(k))continue;
+      visited.add(k);q.push({c:nc,r:nr});
+    }
+  }
+  // 통행 가능 타일의 85% 이상이 하나의 영역이어야 함
+  return visited.size>=total*0.85;
+}
+
+// ── 시야선(LOS) 판정 ── 산은 차단, 물은 통과
+function hasLOS(c1,r1,c2,r2){
+  if(c1===c2&&r1===r2)return true;
+  const dc=c2-c1, dr=r2-r1;
+  const n=Math.max(Math.abs(dc),Math.abs(dr));
+  for(let i=1;i<n;i++){
+    const t=i/n;
+    const cc=Math.round(c1+dc*t);
+    const cr=Math.round(r1+dr*t);
+    if(mountains.has(`${cc},${cr}`))return false;
+  }
+  return true;
+}
+
+// 발자국 방향 각도 (👣는 기본 위쪽 → +90 오프셋)
+function trailAngle(x1,y1,x2,y2){
+  const R=_hexR(MAP_W,MAP_H),WW=Math.sqrt(3)*R;
+  const dx=(x2-x1)*WW+((y2%2)-(y1%2))*WW/2;
+  const dy=(y2-y1)*1.5*R;
+  return Math.atan2(dy,dx)*180/Math.PI+90;
+}
+
+// 유닛 사망 처리 — 무덤 등록
+function handleDeath(u){
+  if(graves.find(g=>g.id===u.id))return;
+  graves.push({x:u.x,y:u.y,key:u.key,id:u.id});
+  if(graves.length>5)graves.shift(); // 최대 5개, 오래된 것 제거
+}
+
+// 경로 BFS (이동 가능 조건과 동일)
+function findPath(u,tx,ty){
+  if(u.x===tx&&u.y===ty)return[];
+  const prev=new Map();
+  prev.set(`${u.x},${u.y}`,null);
+  const q=[{x:u.x,y:u.y}];
+  while(q.length){
+    const {x,y}=q.shift();
+    for(const[dx,dy]of hexNeighbors(x,y)){
+      const cx=x+dx,cy=y+dy;
+      if(cx<0||cx>=COLS||cy<0||cy>=ROWS)continue;
+      const k=`${cx},${cy}`;
+      if(prev.has(k))continue;
+      if(mountains.has(k))continue; // 산 우회
+      if(waters.has(k))continue;   // 물 우회
+      const occ=grid[cy][cx];
+      if(occ&&occ.hp>0&&occ.side!==u.side)continue;
+      prev.set(k,`${x},${y}`);
+      if(cx===tx&&cy===ty){
+        const path=[{x:cx,y:cy}];
+        let cur=k;
+        while(prev.get(cur)){const p=prev.get(cur);const[px,py]=p.split(',').map(Number);path.unshift({x:px,y:py});cur=p;}
+        return path;
+      }
+      q.push({x:cx,y:cy});
+    }
+  }
+  return [{x:u.x,y:u.y},{x:tx,y:ty}];
+}
+
+function gridMove(u,nx,ny){
+  // 경로 전체에 발자국 기록 — 2 카드 턴 후 소멸
+  const expAt=globalTurnIdx+4;
+  const path=findPath(u,nx,ny);
+  for(let i=0;i<path.length-1;i++){
+    const a=path[i],b=path[i+1];
+    trails.push({x:a.x,y:a.y,angle:trailAngle(a.x,a.y,b.x,b.y),expiresAt:expAt});
+  }
+  if(path.length>=2){
+    const last=path[path.length-1],prev2=path[path.length-2];
+    trails.push({x:last.x,y:last.y,angle:trailAngle(prev2.x,prev2.y,last.x,last.y),expiresAt:expAt});
+  }
+  // 도착 셀에 시체가 있으면 그리드에서 제거 (무덤은 유지)
+  const corpse=grid[ny][nx];
+  if(corpse&&corpse.hp<=0){grid[ny][nx]=null;corpse.buried=true;if(moveHistory&&!moveHistory.buriedCorpse)moveHistory.buriedCorpse=corpse;}
+  grid[u.y][u.x]=null; u.x=nx; u.y=ny; grid[u.y][u.x]=u;
+}
+
+function calcReachable(u){
+  const reach=new Set(), visited=new Set([`${u.x},${u.y}`]);
+  const q=[{x:u.x,y:u.y,steps:0}];
+  while(q.length){
+    const {x,y,steps}=q.shift();
+    const occ0=grid[y][x];
+    if(steps>0&&(!occ0||occ0.hp<=0))reach.add(`${x},${y}`); // 시체 위도 이동 가능
+    if(steps>=u.mov)continue;
+    for(const[dx,dy]of hexNeighbors(x,y)){
+      const nx=x+dx,ny=y+dy;
+      if(nx<0||nx>=COLS||ny<0||ny>=ROWS)continue;
+      const k=`${nx},${ny}`;
+      if(visited.has(k))continue;
+      if(mountains.has(k))continue; // 산 진입 불가
+      if(waters.has(k))continue;   // 물 진입 불가
+      const occ=grid[ny][nx];
+      if(occ&&occ.hp>0&&occ.side!==u.side)continue; // 살아있는 적만 차단
+      visited.add(k);q.push({x:nx,y:ny,steps:steps+1});
+    }
+  }
+  return reach;
+}
+
+function getAttackable(u){
+  const foeSide=u.side==='player'?'enemy':'player';
+  return alive(foeSide).filter(f=>mdist(u,f)<=u.atkRange&&hasLOS(u.x,u.y,f.x,f.y));
+}
+
+// ── 헥스 거리 (odd-r offset → cube 좌표 변환) ──
+function hexNeighbors(c,r){
+  return r%2===0
+    ? [[1,0],[-1,0],[0,-1],[-1,-1],[0,1],[-1,1]]
+    : [[1,0],[-1,0],[1,-1],[0,-1],[1,1],[0,1]];
+}
+function mdist(a,b){
+  // offset → cube 변환 (odd-r)
+  const ax=a.x-Math.floor((a.y-(a.y&1))/2), az=a.y, ay=-ax-az;
+  const bx=b.x-Math.floor((b.y-(b.y&1))/2), bz=b.y, by=-bx-bz;
+  return Math.max(Math.abs(ax-bx),Math.abs(ay-by),Math.abs(az-bz));
+}
+
+// ── 몬스터 활성화 판정 ──
+// 조건: 아군과 7칸 이내 OR 거리순 상위 (아군수)마리는 항상 활성
+const MONSTER_AWAKE_RANGE=7;
+function updateMonsterAwake(){
+  if(!G.units)return;
+  const players=alive('player');
+  const enemies=alive('enemy');
+  if(!players.length||!enemies.length)return;
+  const minDist=e=>Math.min(...players.map(p=>mdist(e,p)));
+  const sorted=[...enemies].sort((a,b)=>minDist(a)-minDist(b));
+  // 거리순 상위 5마리 항상 활성
+  sorted.slice(0,5).forEach(e=>e.awake=true);
+  // 7칸 이내 진입 시 활성
+  enemies.forEach(e=>{
+    if(!e.awake&&players.some(p=>mdist(e,p)<=MONSTER_AWAKE_RANGE))e.awake=true;
+  });
+}
+function isMonsterActive(u){
+  if(u.side!=='enemy')return true;
+  return !!u.awake;
+}
+
+// ── 유틸 ──
+function gU(id){return G.units.find(u=>u.id===id);}
+function cur(){return gU(G.queue[G.qi]);}
+function alive(side){return G.units.filter(u=>u.side===side&&u.hp>0);}
+
+// ── 초기화 ──
+function initPan(){
+  mapScale=0.75;
+  const vw=window.innerWidth, vh=window.innerHeight-58;
+  // 첫 번째 턴 아군 포커싱
+  const firstPlayer=G.queue&&G.units?G.units.find(u=>u.id===G.queue[0]&&u.side==='player')
+    ||G.units&&[...G.units].filter(u=>u.side==='player').sort((a,b)=>b.spd-a.spd)[0]:null;
+  if(firstPlayer){
+    const W=MAP_W,H=MAP_H,R=_hexR(W,H),WW=Math.sqrt(3)*R;
+    const ox=(W-WW*(COLS+0.5))/2, oy=(H-R*(2+(ROWS-1)*1.5))/2;
+    const cx=ox+WW/2+firstPlayer.x*WW, cy=oy+R+firstPlayer.y*1.5*R;
+    panX=Math.round(vw/2-cx*mapScale);
+    panY=Math.round(vh/2-cy*mapScale);
+  } else {
+    panX=Math.round((vw-MAP_W*mapScale)/2);  // fallback
+    panY=Math.round((vh-MAP_H*mapScale)/2);
+  }
+  applyPan();
+}
+function applyPan(){
+  document.getElementById('mapcanvas').style.transform=`translate(${panX}px,${panY}px) scale(${mapScale})`;
+  // 별빛 패럴렉스 업데이트
+  if(typeof _starParallax==='function')_starParallax(panX,panY);
+}
+function clampPan(){
+  const vw=window.innerWidth, vh=window.innerHeight-58;
+  const sw=MAP_W*mapScale, sh=MAP_H*mapScale;
+  panX=Math.max(Math.min(80,panX), Math.min(0,vw-sw-80));
+  panY=Math.max(Math.min(80,panY), Math.min(0,vh-sh-80));
+}
+function showZoomIndicator(){
+  const el=document.getElementById('zoom-indicator');
+  el.textContent=Math.round(mapScale*100)+'%';
+  el.style.opacity='1';
+  clearTimeout(_zoomTimer);
+  _zoomTimer=setTimeout(()=>el.style.opacity='0',1200);
+}
+let _toastTimer=null;
+function showToast(msg,dur=1800){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.style.display='block';
+  el.style.animation='none';
+  void el.offsetWidth;
+  el.style.animation=`toastpop ${dur}ms ease forwards`;
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.style.display='none',dur);
+}
+
+function init(){
+  initGrid();
+  // 산+물 생성 후 연결성 검사 — 실패 시 최대 30회 재시도
+  let _terrainTries=0;
+  do{ initMountains(); initWaters(); _terrainTries++; }
+  while(!checkTerrainConnected()&&_terrainTries<30);
+  document.getElementById('ov').classList.remove('show');
+  cancelTarget(); exitMoveMode();
+  devOpen=false;document.getElementById('devpanel').classList.remove('open');document.getElementById('bdev').classList.remove('on');
+  ['pa','pd','ps'].forEach(closeP);
+
+  const pkeys=['kael','sylva','aqua','luna','shadow'];
+  const monsterTypes=['goblin','orc','wyvern','wraith','golem'];
+
+  // 플레이어 유닛 (HP 80%)
+  const punits=pkeys.map((k,i)=>{
+    const row=Math.round(i*(ROWS-1)/(pkeys.length-1));
+    const u=mkUnit(k,'player',1,row);
+    u.hp=u.maxHp=Math.round(u.maxHp*0.8);
+    return u;
+  });
+
+  // 몬스터 유닛 4배 (HP 20%, 랜덤 배치)
+  const allMonsterKeys=[];
+  for(let t=0;t<4;t++) monsterTypes.forEach(k=>allMonsterKeys.push(k));
+  const shuffledKeys=shuffle(allMonsterKeys);
+
+  // 배치 가능 셀: 오른쪽 절반 (col >= COLS/2)
+  const halfCol=Math.floor(COLS/2);
+  const availCells=[];
+  for(let r=0;r<ROWS;r++)
+    for(let c=halfCol;c<COLS;c++)
+      if(!mountains.has(`${c},${r}`)&&!waters.has(`${c},${r}`))availCells.push({c,r});
+  const shuffledCells=shuffle(availCells);
+
+  const eunits=shuffledKeys.map((k,i)=>{
+    const {c,r}=shuffledCells[i];
+    const u=mkUnit(k,'enemy',c,r);
+    u.id=`e_${k}_${i}`;  // 중복 방지용 고유 ID
+    u.hp=u.maxHp=Math.round(u.maxHp*0.2);
+    return u;
+  });
+
+  const units=[...punits,...eunits];
+  units.forEach(placeUnit);
+
+  const queue=[...units].sort((a,b)=>b.spd-a.spd).map(u=>u.id);
+  G={units,queue,qi:0,busy:false};
+  trails=[]; graves=[]; globalTurnIdx=0;
+  units.forEach(u=>drawCards(u,5));
+  updateMonsterAwake();
+  initPan();
+
+  clearLog();
+  log('⚔️ 맵 배틀 시작!','ly','both');
+  log('턴 순서: '+queue.map(id=>gU(id).name).join(' → '),'ly','both');
+  renderAll();
+  setTimeout(nextTurn,300);
+}
+
+// ── 턴 ──
+function nextTurn(){
+  updateMonsterAwake();
+  let tries=0;
+  while(gU(G.queue[G.qi]).hp<=0){G.qi=(G.qi+1)%G.queue.length;if(++tries>G.queue.length)return;}
+  const u=cur();
+  G.busy=false;
+  u.moved=false; u.acted=false;
+  logSide=u.side;
+  tickFX(u);
+  if(checkEnd())return;
+  log(`── ${u.name}의 턴 (${u.x},${u.y}) ──`,'lt');
+  renderAll();
+  if(u.side==='player'){
+    if(u.stunned){log(`${u.name}: 봉인 행동불가`,'ly');u.stunned=false;endTurn();}
+    else if(autoMode)setTimeout(()=>aiTurn(u),400);
+    else {
+      setCmdUI(true);
+      // 턴 시작 시 이동 범위 자동 표시
+      if(!u.acted){moveMode=true;originalReachable=calcReachable(u);reachable=originalReachable;renderAll();}
+    }
+  } else {
+    setCmdUI(false);
+    setTimeout(()=>aiTurn(u),autoMode?300:600);
+  }
+}
+
+function endTurn(){
+  moveHistory=null;
+  globalTurnIdx++;
+  trails=trails.filter(t=>t.expiresAt>globalTurnIdx);
+  exitMoveMode(); cancelTarget(); setCmdUI(false);
+  ['pa','pd','ps'].forEach(closeP);
+  const u=cur();
+  const b=u.hand.length; drawCards(u,3);
+  const drawn=u.hand.slice(b);
+  if(drawn.length>0) log(`${u.name} +${drawn.length}장 보충 ${drawn.map(c=>AT[c.attr].e).join('')}`,'ly');
+  G.qi=(G.qi+1)%G.queue.length;
+  renderAll();
+  setTimeout(nextTurn,400);
+}
+
+// ── 이동 ──
+function startMove(){
+  // 이동 버튼이 없어짐 — 호환성을 위해 유지 (이동 패스로만 동작)
+  const u=cur();
+  if(!u||u.side!=='player'||u.acted||u.moved)return;
+  u.moved=true;
+  exitMoveMode();
+  renderAll();
+  setCmdUI(true);
+  log(`${u.name} 이동 패스`,'ld');
+}
+
+function doMove(nx,ny){
+  const u=cur();
+  // 이미 이동한 상태면 조용히 되돌리고 새 목적지로 이동 (원래 범위 내 자유 재배치)
+  if(moveHistory){
+    grid[u.y][u.x]=null;
+    u.x=moveHistory.fromX; u.y=moveHistory.fromY;
+    grid[u.y][u.x]=u;
+    if(moveHistory.buriedCorpse){const c=moveHistory.buriedCorpse;c.buried=false;grid[moveHistory.toY][moveHistory.toX]=c;}
+    trails.splice(moveHistory.trailCount);
+    u.moved=false;
+    moveHistory=null;
+  }
+  moveHistory={id:u.id,fromX:u.x,fromY:u.y,toX:nx,toY:ny,trailCount:trails.length,buriedCorpse:null};
+  log(`${u.name} 이동 (${u.x},${u.y})→(${nx},${ny})`,'ld');
+  gridMove(u,nx,ny);
+  u.moved=true;
+  renderAll();
+  flashChip(u.id,'flash-def',400);
+  setCmdUI(true);
+}
+
+function undoMove(){
+  if(!moveHistory)return;
+  const u=gU(moveHistory.id);
+  if(!u||u.acted)return;
+  // 그리드 복원
+  grid[u.y][u.x]=null;
+  u.x=moveHistory.fromX; u.y=moveHistory.fromY;
+  grid[u.y][u.x]=u;
+  // 밟았던 시체 복원
+  if(moveHistory.buriedCorpse){
+    const c=moveHistory.buriedCorpse;
+    c.buried=false;
+    grid[moveHistory.toY][moveHistory.toX]=c;
+  }
+  // 이 이동에서 생긴 흔적 제거
+  trails.splice(moveHistory.trailCount);
+  u.moved=false;
+  moveHistory=null;
+  moveMode=true;
+  renderAll(); setCmdUI(true);
+  log(`${u.name} 이동 취소`,'ld');
+}
+
+function exitMoveMode(){
+  moveMode=false;
+  reachable=new Set();
+  originalReachable=new Set();
+}
+
+// ── 팝업 열기 ──
+function isMyTurn(){return !G.busy&&cur()?.side==='player'&&!autoMode;}
+function closeAllPopups(){['pa','pd','ps','punit'].forEach(id=>document.getElementById(id).classList.remove('show'));atkRangeSet=new Set();sklRangeUnit=null;sklRangeTgt=null;if(G.units)renderMap();}
+
+// ── 유닛 상세 팝업 ──
+let _unitDetailId=null;
+function showUnitDetail(uid){
+  const u=G.units&&G.units.find(x=>x.id===uid);
+  if(!u)return;
+  _unitDetailId=uid;
+  const hpPct=Math.max(0,u.hp/u.maxHp*100).toFixed(1);
+  const hpC=u.hp/u.maxHp>.55?'#4caf50':u.hp/u.maxHp>.28?'#ff9800':'#f44336';
+  const sideLabel=u.side==='player'
+    ?`<span style="color:#6ab4ff">🔵 아군</span>`
+    :`<span style="color:#ff8070">🔴 적군</span>`;
+  const effHtml=u.effects.length
+    ?u.effects.map(ef=>ef.type==='burn'?'🔥 화상':ef.type==='atkdown'?'⬇️ 공격↓':'').filter(Boolean)
+       .map(s=>`<span style="background:#3a1a0a;border-radius:5px;padding:1px 6px;font-size:.62rem;">${s}</span>`).join(' ')
+    :'<span style="color:#555;font-size:.62rem;">없음</span>';
+  const skillHtml=u.skills.length
+    ?u.skills.map(sk=>{
+      const costStr=Object.entries(sk.cost).map(([a,n])=>`${AT[a].e}×${n}`).join(' ');
+      return `<div style="margin:6px 0;padding:7px 9px;background:#1a1530;border-radius:8px;border:1px solid #2a2050;">
+        <div style="font-size:.72rem;font-weight:700;color:#d0b0ff;">⚡ ${sk.name}</div>
+        <div style="font-size:.62rem;color:#9080c0;margin-top:2px;">${sk.desc}</div>
+        <div style="font-size:.58rem;color:#7060a0;margin-top:3px;">비용: ${costStr} &nbsp;·&nbsp; 대상: ${sk.tgt}</div>
+      </div>`;
+    }).join('')
+    :`<div style="color:#555;font-size:.65rem;padding:6px 0;">스킬 없음</div>`;
+  document.getElementById('punit-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="font-size:1.6rem;">${AT[u.pri].e}</div>
+      <div>
+        <div style="font-family:'Cinzel',sans-serif;font-size:.95rem;font-weight:700;color:#ffd98a;">${u.name}</div>
+        <div style="font-size:.65rem;margin-top:1px;">${sideLabel} &nbsp; ${AT[u.pri].e} ${AT[u.pri].n} &nbsp;·&nbsp; 약점: ${AT[WEAK_OF[u.pri]]?.e||'?'}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:4px;font-size:.62rem;color:#888;">HP</div>
+    <div style="height:8px;background:#1a1006;border-radius:4px;overflow:hidden;margin-bottom:8px;">
+      <div style="width:${hpPct}%;height:100%;background:${hpC};border-radius:4px;transition:width .3s;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.70rem;margin-bottom:10px;">
+      <div style="color:#aaa;">HP <b style="color:#eee">${u.hp} / ${u.maxHp}</b></div>
+      <div style="color:#aaa;">속도 <b style="color:#eee">${u.spd}</b></div>
+      <div style="color:#aaa;">공격력 <b style="color:#ff9878">${u.atkPow}</b></div>
+      <div style="color:#aaa;">이동 <b style="color:#eee">${u.mov}</b></div>
+      <div style="color:#aaa;">방어력 <b style="color:#78b8ff">${u.defPow}</b></div>
+      <div style="color:#aaa;">사거리 <b style="color:#eee">${u.atkRange}</b></div>
+    </div>
+    ${u.shield>0?`<div style="font-size:.68rem;color:#64b5f6;margin-bottom:8px;">🛡 실드: ${u.shield}</div>`:''}
+    <div style="font-size:.62rem;color:#888;margin-bottom:4px;">상태이상</div>
+    <div style="margin-bottom:10px;">${effHtml}</div>
+    <div style="font-size:.68rem;color:#a090d0;font-weight:700;margin-bottom:2px;">✨ 스킬</div>
+    ${skillHtml}
+  `;
+  document.getElementById('punit').classList.add('show');
+}
+function closeUnitDetail(){
+  document.getElementById('punit').classList.remove('show');
+  _unitDetailId=null;
+}
+function openA(){
+  const u=isMyTurn()?cur():alive('player')[0];if(!u)return;
+  if(isMyTurn()&&getAttackable(u).length===0)showToast('⚔️ 사거리 내 적이 없습니다');
+  closeAllPopups();atkPick=null;
+  // 공격 사거리 맵 하이라이트
+  atkRangeSet=new Set();
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
+    if(mdist({x:u.x,y:u.y},{x:c,y:r})<=u.atkRange&&hasLOS(u.x,u.y,c,r))atkRangeSet.add(`${c},${r}`);
+  buildAttrPopup('a',u);
+  document.getElementById('pa').classList.add('show');
+  if(G.units)renderMap();
+}
+function openD(){
+  const u=isMyTurn()?cur():alive('player')[0];if(!u)return;
+  closeAllPopups();defPick=null;buildAttrPopup('d',u);
+  document.getElementById('pd').classList.add('show');
+}
+function openS(){
+  const u=isMyTurn()?cur():alive('player')[0];if(!u)return;
+  closeAllPopups();
+  sklRangeUnit=u;
+  // 첫 번째 스킬 사거리 기본 표시
+  sklRangeTgt=u.skills[0]?.tgt||'enemy';
+  buildSklPopup(u);
+  document.getElementById('ps').classList.add('show');
+  if(G.units)renderMap();
+}
+function closeP(id){document.getElementById(id).classList.remove('show');if(id==='pa'){atkRangeSet=new Set();if(G.units)renderMap();}if(id==='ps'){sklRangeUnit=null;sklRangeTgt=null;if(G.units)renderMap();}}
+
+// ── 속성 팝업 ──
+function buildAttrPopup(mode,u){
+  u=u||cur();
+  const listId=mode==='a'?'al':'dl';
+  const el=document.getElementById(listId);
+  el.innerHTML='';
+  const attrs=mode==='a'?u.atkAttrs:u.defAttrs;
+  const attackable=mode==='a'?getAttackable(u):[];
+  const canExec=isMyTurn()&&cur()===u;
+
+  attrs.forEach(attr=>{
+    const have=cntA(u,attr),isPri=attr===u.pri;
+    const row=document.createElement('div');
+    row.className='ar'+(have===0?' dis':'');
+    const weakTags=mode==='a'
+      ?attackable.filter(e=>e.weak===attr).map(e=>`<span style="color:#ff7070;font-size:.6rem">💥${e.name}</span>`).join(' '):'';
+    row.innerHTML=`<div class="ah">
+      <span class="ab" style="background:${AT[attr].c}22;color:${AT[attr].c};border:1px solid ${AT[attr].c}66">${AT[attr].e} ${AT[attr].n}</span>
+      ${weakTags}<span class="ht" style="margin-left:4px">보유 <b style="color:#ccc">${have}</b>장</span>
+      <span class="et ${isPri?'ep':'es'}">${isPri?'100%':'30%'}</span></div>
+      <div class="cr" id="${mode}cr${attr}"></div>`;
+    el.appendChild(row);
+
+    const cr=row.querySelector(`#${mode}cr${attr}`);
+    const mult=isPri?1.0:0.3, pow=mode==='a'?u.atkPow:u.defPow;
+    for(let n=1;n<=5;n++){
+      const av=have>=n, btn=document.createElement('div');
+      btn.className='cn'+(av?' av':'');
+      const base=Math.round(pow*mult*CM[Math.min(n,CM.length-1)]);
+      const hasWeak=mode==='a'&&attackable.some(e=>e.weak===attr);
+      const disp=mode==='a'?(hasWeak?`<span style="color:#ff8060">${Math.round(base*1.5)}</span>`:base):`+${base}`;
+      btn.innerHTML=`${n}장<br><span style="font-size:.62rem;opacity:.8">${disp}</span>`;
+      btn.dataset.mode=mode;btn.dataset.attr=attr;btn.dataset.n=n;
+      if(av&&canExec)btn.onclick=()=>pick(mode,attr,n);
+      cr.appendChild(btn);
+    }
+  });
+  updatePrev(mode,u);
+}
+
+function pick(mode,attr,n){
+  if(mode==='a')atkPick={attr,n};else defPick={attr,n};
+  document.querySelectorAll(`[data-mode="${mode}"]`).forEach(b=>{b.classList.remove('pk');b.style.color='';b.style.borderColor='';});
+  document.querySelectorAll(`[data-mode="${mode}"][data-attr="${attr}"][data-n="${n}"]`).forEach(b=>{b.classList.add('pk');b.style.color=AT[attr].c;b.style.borderColor=AT[attr].c;});
+  updatePrev(mode);
+}
+
+function updatePrev(mode,u){
+  u=u||cur();
+  const p=mode==='a'?atkPick:defPick;
+  const pv=document.getElementById(mode==='a'?'av':'dv');
+  const cf=document.getElementById(mode==='a'?'ac':'dc');
+  if(!p){pv.innerHTML='속성과 장수를 선택하세요';cf.classList.remove('on');return;}
+  const isPri=p.attr===u.pri,mult=isPri?1.0:0.3;
+  const eff=isPri?'<span style="color:#ffd54f">주속성</span>':'<span style="color:#ff7043">비주력×0.3</span>';
+  const pow=mode==='a'?u.atkPow:u.defPow;
+  const val=Math.round(pow*mult*CM[p.n]);
+  if(mode==='a'){
+    pv.innerHTML=`${AT[p.attr].e} ${AT[p.attr].n} <b>${p.n}장</b> → 기본피해 <b>${val}</b> ${eff}<br><span style="font-size:.68rem;color:#888">약점 대상엔 ×1.5</span>`;
+  } else {
+    pv.innerHTML=`${AT[p.attr].e} ${AT[p.attr].n} <b>${p.n}장</b> → 실드 <b>+${val}</b> ${eff}`;
+  }
+  cf.classList.add('on');
+}
+
+// ── 타겟팅 ──
+function reqAtkTarget(){
+  closeP('pa');
+  const u=cur();
+  const attackable=getAttackable(u);
+  if(!attackable.length){log('공격 범위 내 적 없음','ly');showToast('⚔️ 사거리 내 적이 없습니다');return;}
+  enterTarget(attackable,t=>doAtk(u,t,atkPick.attr,atkPick.n));
+}
+
+function enterTarget(candidates,cb){
+  targeting=true;
+  document.getElementById('hint').classList.add('show');
+  candidates.forEach(u=>{
+    const hexEl=document.getElementById(`c${u.x}_${u.y}`);
+    if(hexEl){hexEl.classList.add('atktgt');hexEl.style.cursor='crosshair';hexEl.onclick=()=>{cancelTarget();cb(u);};}
+    const chipEl=document.querySelector(`.chip[data-uid="${u.id}"]`);
+    if(chipEl){chipEl.classList.add('attacktgt');chipEl.style.pointerEvents='auto';chipEl.onclick=()=>{cancelTarget();cb(u);};}
+  });
+}
+
+function cancelTarget(){
+  targeting=false;
+  document.getElementById('hint').classList.remove('show');
+  if(!G.units)return;
+  G.units.forEach(u=>{
+    const hexEl=document.getElementById(`c${u.x}_${u.y}`);
+    if(hexEl){hexEl.classList.remove('atktgt');hexEl.style.cursor='';hexEl.onclick=null;}
+    const chipEl=document.querySelector(`.chip[data-uid="${u.id}"]`);
+    if(chipEl){chipEl.classList.remove('attacktgt');chipEl.style.pointerEvents='';chipEl.onclick=null;}
+  });
+}
+
+document.addEventListener('keydown',e=>{
+  // 입력창 포커스 중엔 무시
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='Escape'){
+    closeAllPopups(); // punit도 포함됨
+    if(targeting)cancelTarget();
+    if(G.units)renderAll();
+  } else if(e.key===' '||e.code==='Space'){
+    e.preventDefault();
+    if(isMyTurn())endTurnBtn();
+  } else if(e.key==='`'||e.code==='Backquote'){
+    e.preventDefault();
+    focusCurUnit();
+  } else if(e.key==='1'){
+    if(isMyTurn())openA();
+  } else if(e.key==='2'){
+    if(isMyTurn())openD();
+  } else if(e.key==='3'){
+    if(isMyTurn())openS();
+  }
+});
+
+// ── 공격 ──
+function doAtk(actor,target,attr,n){
+  const isPri=attr===actor.pri,mult=isPri?1.0:0.3;
+  const base=Math.round(actor.atkPow*mult*CM[n]);
+  const isWeak=target.weak===attr;
+  const dmg=isWeak?Math.round(base*1.5):base;
+  log(`⚔️ ${actor.name}→${target.name} [${AT[attr].e}×${n}] ${dmg}${isWeak?' 💥약점!':''}`, 'la');
+  // 1. 공격자 글로우
+  flashChip(actor.id,'flash-atk',280);
+  // 2. 발사체 날아감 → 3. 피격 연출
+  setTimeout(()=>{
+    spawnProjectile(actor.id,target.id,AT[attr].c,()=>{
+      flashChip(target.id,isWeak?'flash-weak':'flash-hit',500);
+      flashChip(target.id,'shake',350);
+      spawnFloater(target.id,(isWeak?'💥':'')+dmg,isWeak?'weak':'dmg');
+      applyDmg(target,dmg);
+      discAttr(actor,attr,n); atkPick=null;
+      actor.acted=true;
+      setTimeout(()=>{renderAll();if(!checkEnd())endTurn();},450);
+    });
+  },120);
+}
+
+// ── 방어 ──
+function doDefend(){
+  if(!defPick)return;
+  const u=cur(),isPri=defPick.attr===u.pri,mult=isPri?1.0:0.3;
+  const shd=Math.round(u.defPow*mult*CM[defPick.n]);
+  log(`🛡 ${u.name} [${AT[defPick.attr].e}×${defPick.n}] 실드 +${shd}`,'ld');
+  flashChip(u.id,'flash-def',500);
+  spawnFloater(u.id,`🛡+${shd}`,'shd');
+  u.shield+=shd;
+  discAttr(u,defPick.attr,defPick.n);
+  defPick=null; closeP('pd');
+  u.acted=true;
+  setTimeout(()=>{renderAll();endTurn();},400);
+}
+
+// ── 스킬 ──
+function sklRangeLabel(u,sk){
+  if(sk.tgt==='self')return '자신';
+  if(sk.tgt==='allally')return '아군 전체';
+  if(sk.tgt==='allenemy')return '적 전체';
+  if(sk.tgt==='ally')return '아군 대상';
+  return `사거리 ${u.atkRange}`;
+}
+
+function buildSklPopup(u){
+  u=u||cur();
+  const el=document.getElementById('sl');el.innerHTML='';
+  const canExec=isMyTurn()&&cur()===u;
+  if(!u.skills.length){el.innerHTML='<div style="color:#555;font-size:.8rem;padding:8px">스킬 없음</div>';return;}
+  u.skills.forEach(sk=>{
+    const rdy=Object.entries(sk.cost).every(([a,n])=>cntA(u,a)>=n);
+    const div=document.createElement('div');
+    div.className='si'+(rdy?' ok':'');
+    let ch='';
+    Object.entries(sk.cost).forEach(([a,n])=>{const h=cntA(u,a);ch+=`<span class="ct ${h>=n?'ck':'cg'}">${AT[a].e}${AT[a].n}×${n}(${h})</span>`;});
+    const rangeLabel=sklRangeLabel(u,sk);
+    div.innerHTML=`<div class="sn">${sk.name} <span style="font-size:.58rem;color:#888;float:right">📍${rangeLabel}</span></div><div class="sd">${sk.desc}</div><div style="margin-top:5px">${ch}</div>`;
+    if(rdy&&canExec)div.onclick=()=>{closeP('ps');triggerSkill(sk);};
+    // 마우스오버 → 맵 범위 하이라이트
+    div.addEventListener('mouseenter',()=>{sklRangeTgt=sk.tgt;renderMap();});
+    div.addEventListener('mouseleave',()=>{sklRangeTgt=sklRangeUnit?.skills[0]?.tgt||'enemy';renderMap();});
+    el.appendChild(div);
+  });
+}
+
+function triggerSkill(sk){
+  const u=cur();
+  log(`✨ ${u.name} [${sk.name}]`,'ls');
+  if(sk.tgt==='enemy'){
+    const atk=getAttackable(u);
+    if(!atk.length){log('범위 내 적 없음','ly');return;}
+    enterTarget(atk,t=>execSkl(u,sk,t));
+  } else if(sk.tgt==='ally'){
+    enterTarget(alive('player'),t=>execSkl(u,sk,t));
+  } else if(sk.tgt==='self'){
+    execSkl(u,sk,u);
+  } else if(sk.tgt==='allally'){
+    execSkl(u,sk,null);
+  } else if(sk.tgt==='allenemy'){
+    execSkl(u,sk,null);
+  }
+}
+
+function execSkl(u,sk,t){
+  if(sk.id==='burst'&&t){
+    const dmg=Math.round(u.atkPow*1.5*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);t.effects.push({type:'burn',val:Math.round(u.atkPow*.3),rem:2});
+    log(`  → ${t.name} ${dmg}피해+화상2T`,'ls');
+  } else if(sk.id==='flood'&&t){
+    const dmg=Math.round(u.atkPow*1.2*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);t.effects.push({type:'atkdown',val:.3,rem:2});
+    log(`  → ${t.name} ${dmg}피해+공격↓2T`,'ls');
+  } else if(sk.id==='drain'&&t){
+    const dmg=Math.round(u.atkPow*1.4*(t.weak===u.pri?1.5:1));
+    const heal=Math.round(dmg*.4);
+    applyDmg(t,dmg);u.hp=Math.min(u.hp+heal,u.maxHp);
+    log(`  → ${t.name} ${dmg}피해 / 자신 HP+${heal}`,'ls');
+  } else if(sk.id==='shield'&&t){
+    const shd=Math.round(u.defPow*3);t.shield+=shd;
+    log(`  → ${t.name} 실드+${shd}`,'ld');
+  } else if(sk.id==='healall'){
+    const heal=Math.round(u.defPow*1.5);
+    alive('player').forEach(p=>{p.hp=Math.min(p.hp+heal,p.maxHp);flashChip(p.id,'flash-heal',500);spawnFloater(p.id,`+${heal}`,'heal');});
+    log(`  → 아군 전체 HP+${heal}`,'ld');
+  } else if(sk.id==='curse'&&t){
+    t.effects.push({type:'burn',val:Math.round(u.atkPow*.25),rem:2});
+    t.effects.push({type:'atkdown',val:.3,rem:2});
+    log(`  → ${t.name} 저주(화상+공격↓2T)`,'ls');
+  } else if(sk.id==='fortify'||sk.id==='harden'||sk.id==='flee'||sk.id==='warshout'){
+    const shd=Math.round(u.defPow*(sk.id==='fortify'?4:sk.id==='harden'?2:1));u.shield+=shd;
+    flashChip(u.id,'flash-def',600);spawnFloater(u.id,`🛡+${shd}`,'shd');
+    log(`  → ${u.name} 실드+${shd}`,'ld');
+  } else if(sk.id==='ignite'&&t){
+    t.effects.push({type:'burn',val:Math.round(u.atkPow*.35),rem:3});
+    log(`  → ${t.name} 화상3T`,'ls');
+  } else if(sk.id==='inferno'&&t){
+    const dmg=Math.round(u.atkPow*2.5*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);log(`  → ${t.name} ${dmg}피해(최강)`,'ls');
+  } else if(sk.id==='barrier'&&t){
+    const shd=Math.round(u.defPow*2.5);t.shield+=shd;
+    flashChip(t.id,'flash-def',500);spawnFloater(t.id,`🛡+${shd}`,'shd');
+    log(`  → ${t.name} 실드+${shd}`,'ld');
+  } else if(sk.id==='rejuvenate'){
+    const heal=Math.round(u.defPow*2),shd=Math.round(u.defPow*1.5);
+    u.hp=Math.min(u.hp+heal,u.maxHp);u.shield+=shd;
+    flashChip(u.id,'flash-heal',500);spawnFloater(u.id,`+${heal}🛡+${shd}`,'heal');
+    log(`  → ${u.name} HP+${heal} 실드+${shd}`,'ld');
+  } else if(sk.id==='aquashield'){
+    const shd=Math.round(u.defPow*1.8);
+    alive('player').forEach(p=>{p.shield+=shd;flashChip(p.id,'flash-def',500);spawnFloater(p.id,`🛡+${shd}`,'shd');});
+    log(`  → 아군 전체 실드+${shd}`,'ld');
+  } else if(sk.id==='tidewall'){
+    const shd=Math.round(u.defPow*3.5);
+    alive('player').forEach(p=>{p.shield+=shd;flashChip(p.id,'flash-def',600);spawnFloater(p.id,`🛡+${shd}`,'shd');});
+    log(`  → 아군 전체 대형 실드+${shd}`,'ld');
+  } else if(sk.id==='holylight'){
+    const heal=Math.round(u.defPow*2);
+    alive('player').forEach(p=>{p.hp=Math.min(p.hp+heal,p.maxHp);flashChip(p.id,'flash-heal',500);spawnFloater(p.id,`+${heal}`,'heal');});
+    log(`  → 아군 전체 HP+${heal}`,'ld');
+  } else if(sk.id==='resurrection'){
+    const heal=Math.round(u.defPow*4);
+    alive('player').forEach(p=>{p.hp=Math.min(p.hp+heal,p.maxHp);flashChip(p.id,'flash-heal',700);spawnFloater(p.id,`✨+${heal}`,'heal');});
+    log(`  → 아군 전체 대회복 HP+${heal}`,'ld');
+  } else if(sk.id==='blind'&&t){
+    t.effects.push({type:'atkdown',val:.35,rem:2});
+    flashChip(t.id,'flash-hit',400);spawnFloater(t.id,'🌑암흑','dmg');
+    log(`  → ${t.name} 공격↓ 2T`,'ls');
+  } else if(sk.id==='nightmare'){
+    alive('enemy').forEach(e=>{e.effects.push({type:'atkdown',val:.25,rem:3});flashChip(e.id,'flash-hit',400);spawnFloater(e.id,'😱','dmg');});
+    log(`  → 적 전체 악몽(공격↓3T)`,'ls');
+  } else if(sk.id==='poison'&&t){
+    t.effects.push({type:'burn',val:Math.round(u.atkPow*.2),rem:2});
+    log(`  → ${t.name} 독2T`,'ls');
+  } else if(sk.id==='ambush'&&t){
+    const dmg=Math.round(u.atkPow*1.3*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);log(`  → ${t.name} 기습 ${dmg}피해`,'ls');
+  } else if(sk.id==='berserk'){
+    u.atkPow=Math.round(u.atkPow*1.4);
+    flashChip(u.id,'flash-atk',600);spawnFloater(u.id,'💢광폭','shd');
+    log(`  → ${u.name} 공격력↑`,'ld');
+  } else if(sk.id==='smash'&&t){
+    const dmg=Math.round(u.atkPow*1.2);
+    const saved=t.shield;t.shield=0;t.hp=Math.max(0,t.hp-dmg);
+    flashChip(t.id,'flash-hit',500);spawnFloater(t.id,`💥${dmg}`,'dmg');
+    log(`  → ${t.name} 실드${saved} 무시+${dmg}피해`,'ls');
+  } else if(sk.id==='firebreath'&&t){
+    const dmg=Math.round(u.atkPow*.9*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);t.effects.push({type:'burn',val:Math.round(u.atkPow*.2),rem:2});
+    log(`  → ${t.name} ${dmg}피해+화상`,'ls');
+  } else if(sk.id==='swoop'&&t){
+    const dmg=Math.round(u.atkPow*1.6*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);log(`  → ${t.name} 급강하 ${dmg}피해`,'ls');
+  } else if(sk.id==='tailslam'&&t){
+    const dmg=Math.round(u.atkPow*1.0*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);log(`  → ${t.name} 꼬리강타 ${dmg}피해`,'ls');
+  } else if(sk.id==='terror'&&t){
+    t.effects.push({type:'atkdown',val:.35,rem:3});
+    flashChip(t.id,'flash-hit',400);spawnFloater(t.id,'😱공포','dmg');
+    log(`  → ${t.name} 공격↓3T`,'ls');
+  } else if(sk.id==='lifesteal'&&t){
+    const dmg=Math.round(u.atkPow*1.1*(t.weak===u.pri?1.5:1));
+    const heal=Math.round(dmg*.5);
+    applyDmg(t,dmg);u.hp=Math.min(u.hp+heal,u.maxHp);
+    log(`  → ${t.name} ${dmg}피해+흡수 HP+${heal}`,'ls');
+  } else if(sk.id==='stomp'&&t){
+    const dmg=Math.round(u.atkPow*1.3*(t.weak===u.pri?1.5:1));
+    applyDmg(t,dmg);log(`  → ${t.name} 짓밟기 ${dmg}피해`,'ls');
+  }
+  discMulti(u,sk.cost);
+  u.acted=true;
+  renderAll();if(!checkEnd())endTurn();
+}
+
+// ── AI ──
+function flashCmdOverlay(idx){
+  const ov=document.getElementById('cmd-overlay');
+  if(!ov)return;
+  const btns=ov.querySelectorAll('.ccb');
+  if(btns[idx]){btns[idx].classList.add('chosen');setTimeout(()=>btns[idx]?.classList.remove('chosen'),450);}
+}
+
+function aiTurn(u){
+  if(u.stunned){log(`${u.name}: 봉인`,'ly');u.stunned=false;endTurn();return;}
+  // 비활성 몬스터 (아군과 7칸 초과): 턴 스킵
+  if(u.side==='enemy'&&!isMonsterActive(u)){
+    u.moved=true;u.acted=true;endTurn();return;
+  }
+  const foeSide=u.side==='player'?'enemy':'player';
+  const foes=alive(foeSide);
+  if(!foes.length){checkEnd();return;}
+
+  // player autoMode: 커맨드 버튼 미리보기 후 _doAiTurn (내부에서 범위 시각화)
+  if(u.side==='player'&&autoMode){
+    let btnIdx=1;
+    const tgtP=foes.find(f=>BEATS[u.pri]===f.pri)||[...foes].sort((a,b)=>a.hp-b.hp)[0];
+    if(u.hp/u.maxHp<0.3&&u.shield<100){
+      for(const a of u.defAttrs){if(cntA(u,a)>=2){btnIdx=2;break;}}
+    } else if(mdist(u,tgtP)>u.atkRange||!hasLOS(u.x,u.y,tgtP.x,tgtP.y)){
+      btnIdx=0;
+    }
+    renderAll();
+    setTimeout(()=>{flashCmdOverlay(btnIdx);setTimeout(()=>_doAiTurn(u),300);},200);
+    return;
+  }
+  _doAiTurn(u);
+}
+
+function _doAiTurn(u){
+  const foeSide=u.side==='player'?'enemy':'player';
+  const foes=alive(foeSide);
+  if(!foes.length){checkEnd();return;}
+  let tgt=foes.find(f=>BEATS[u.pri]===f.pri)||[...foes].sort((a,b)=>a.hp-b.hp)[0];
+
+  // 방어 (저체력) — 범위 표시 없이 즉시
+  if(u.hp/u.maxHp<0.3&&u.shield<100){
+    for(const attr of u.defAttrs){
+      const have=cntA(u,attr);
+      if(have>=2){
+        const shd=Math.round(u.defPow*(attr===u.pri?1:.3)*CM[2]);
+        log(`🛡 ${u.name} 실드+${shd}`,'ld');
+        flashChip(u.id,'flash-def',500);
+        spawnFloater(u.id,`🛡+${shd}`,'shd');
+        u.shield+=shd;discAttr(u,attr,2);
+        u.moved=true;u.acted=true;
+        setTimeout(()=>{renderAll();if(!checkEnd())endTurn();},350);return;
+      }
+    }
   }
 
-  document.querySelectorAll('#topnav-list .nav-tab').forEach(function(el) {
-    el.classList.toggle('active', el.getAttribute('data-target') === activeId);
-  });
+  // ── Phase 1: 이동 범위 시각화 ──
+  const needMove=mdist(u,tgt)>u.atkRange||!hasLOS(u.x,u.y,tgt.x,tgt.y);
+  const reach=needMove?calcReachable(u):new Set();
+
+  if(needMove){
+    reachable=reach; moveMode=true;
+    renderAll();
+  }
+
+  setTimeout(()=>{
+    // ── Phase 2: 이동 실행 ──
+    if(needMove){
+      let best=null,bestD=Infinity;
+      reach.forEach(key=>{
+        const[cx,cy]=key.split(',').map(Number);
+        const d=Math.abs(cx-tgt.x)+Math.abs(cy-tgt.y);
+        if(d<bestD){bestD=d;best={x:cx,y:cy};}
+      });
+      if(best){
+        log(`🏃 ${u.name} (${u.x},${u.y})→(${best.x},${best.y})`,'ld');
+        gridMove(u,best.x,best.y);
+      }
+      moveMode=false;reachable=new Set();
+    }
+    u.moved=true;
+    renderAll();
+
+    // ── Phase 3: 스킬 우선 판단 ──
+    const attackable=getAttackable(u);
+    const usableSk=u.skills.find(sk=>
+      sk.tgt==='enemy'&&
+      Object.entries(sk.cost).every(([a,n])=>cntA(u,a)>=n)&&
+      attackable.length>0
+    );
+
+    if(usableSk&&Math.random()<0.40){
+      // 스킬 사정거리 표시
+      atkRangeSet=new Set();
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
+        if(mdist({x:u.x,y:u.y},{x:c,y:r})<=u.atkRange&&hasLOS(u.x,u.y,c,r))atkRangeSet.add(`${c},${r}`);
+      sklRangeUnit=u;sklRangeTgt='enemy';
+      renderAll();
+      setTimeout(()=>{
+        atkRangeSet=new Set();sklRangeUnit=null;sklRangeTgt=null;
+        const skTgt=attackable.find(f=>BEATS[u.pri]===f.pri)||[...attackable].sort((a,b)=>a.hp-b.hp)[0];
+        log(`✨ ${u.name} [${usableSk.name}]`,'ls');
+        execSkl(u,usableSk,skTgt);
+      },750);
+      return;
+    }
+
+    // ── Phase 3b: 공격 사정거리 표시 ──
+    if(attackable.length){
+      tgt=attackable.find(f=>BEATS[u.pri]===f.pri)||[...attackable].sort((a,b)=>a.hp-b.hp)[0];
+      atkRangeSet=new Set();
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
+        if(mdist({x:u.x,y:u.y},{x:c,y:r})<=u.atkRange&&hasLOS(u.x,u.y,c,r))atkRangeSet.add(`${c},${r}`);
+      renderAll();
+
+      setTimeout(()=>{
+        atkRangeSet=new Set();
+        // ── Phase 4: 공격 실행 ──
+        const order=[u.pri,...u.atkAttrs.filter(x=>x!==u.pri)];
+        for(const attr of order){
+          const have=cntA(u,attr);if(!have)continue;
+          const use=Math.min(have,3),isPri=attr===u.pri;
+          const base=Math.round(u.atkPow*(isPri?1:.3)*CM[use]);
+          const isWeak=tgt.weak===attr;
+          const dmg=isWeak?Math.round(base*1.5):base;
+          log(`⚔️ ${u.name}→${tgt.name} [${AT[attr].e}×${use}] ${dmg}${isWeak?' 💥':''}`,'la');
+          flashChip(u.id,'flash-atk',280);
+          setTimeout(()=>{
+            spawnProjectile(u.id,tgt.id,AT[attr].c,()=>{
+              flashChip(tgt.id,isWeak?'flash-weak':'flash-hit',500);
+              flashChip(tgt.id,'shake',350);
+              spawnFloater(tgt.id,(isWeak?'💥':'')+dmg,isWeak?'weak':'dmg');
+              applyDmg(tgt,dmg);discAttr(u,attr,use);
+              u.acted=true;
+              setTimeout(()=>{renderAll();if(!checkEnd())endTurn();},420);
+            });
+          },100);return;
+        }
+      },750);
+      return;
+    }
+
+    log(`${u.name}: 범위 내 적 없음`,'ly');
+    u.acted=true;endTurn();
+  }, needMove?700:0);
 }
 
-window.addEventListener('scroll', updateActiveTopnav, { passive: true });
-
-/* ─── PAGE SWITCH ─── */
-function switchPage(page, btn) {
-  currentPage = page;
-
-  document.querySelectorAll('.page-section').forEach(function(el) {
-    el.classList.remove('active');
-  });
-  document.getElementById('page-' + page).classList.add('active');
-
-  document.querySelectorAll('.toc-item').forEach(function(el) {
-    el.classList.remove('active');
-  });
-  if (btn && btn.classList.contains('toc-item')) btn.classList.add('active');
-
-  // 사이드바 toc-item 동기화
-  var tocItems = document.querySelectorAll('.toc-item');
-  var pageOrder = ['overview','world','gameplay','systems','monetize','roadmap'];
-  tocItems.forEach(function(el, i) {
-    if (pageOrder[i] === page) el.classList.add('active');
-  });
-
-  renderTopnav(page);
-  history.replaceState(null, '', '#' + page);
-  window.scrollTo(0, 0);
+// ── 데미지 / 효과 ──
+function applyDmg(u,dmg){
+  if(u.shield>0){const abs=Math.min(u.shield,dmg);u.shield-=abs;dmg-=abs;if(abs>0)log(`  실드 ${abs} 흡수`,'ld');}
+  const wasAlive=u.hp>0;
+  u.hp=Math.max(0,u.hp-dmg);
+  if(dmg>0)log(`  HP -${dmg}`,'lx');
+  if(wasAlive&&u.hp<=0)handleDeath(u);
 }
 
-/* ─── ACCORDION TOGGLE ─── */
-function toggleAccordion(el) {
-  el.parentElement.classList.toggle('open');
+function tickFX(u){
+  for(let i=u.effects.length-1;i>=0;i--){
+    const e=u.effects[i];
+    if(e.type==='burn'){applyDmg(u,e.val);log(`[화상] ${u.name} -${e.val}`,'lx');spawnFloater(u.id,`🔥${e.val}`,'dmg');}
+    if(--e.rem<=0)u.effects.splice(i,1);
+  }
 }
 
-/* ─── INIT ─── */
-window.onload = function() {
-  var hash = window.location.hash.replace('#', '');
-  var valid = ['overview','world','gameplay','systems','monetize','roadmap'];
-  var page = valid.indexOf(hash) !== -1 ? hash : 'overview';
-  switchPage(page, null);
+function checkEnd(){
+  if(!alive('player').length){showResult(false);return true;}
+  if(!alive('enemy').length){showResult(true);return true;}
+  return false;
+}
+function showResult(win){
+  document.getElementById('om').textContent=win?'🏆 Victory!':'💀 Defeat...';
+  document.getElementById('om').style.color=win?'#ffd54f':'#ef5350';
+  document.getElementById('os').textContent=win?'적 팀 전멸!':'아군 전멸...';
+  document.getElementById('ov').classList.add('show');
+}
+
+// ── UI ──
+function setCmdUI(on){
+  const u=on?cur():null;
+  const canUndo=on&&u&&!u.acted&&!!moveHistory;
+  // 이동 범위: 턴 시작 시 계산된 originalReachable 유지 (재계산 안 함)
+  if(on&&u){
+    moveMode=true;
+    reachable=originalReachable; // 턴 시작 좌표 기준 범위 그대로 유지
+  } else if(!on){
+    moveMode=false;
+    reachable=new Set();
+  }
+  // 공격/방어/스킬은 이동 여부 무관하게 항상 활성 (acted 전까지)
+  const canAct=on&&u&&!u.acted;
+  const canAtk=canAct&&getAttackable(u).length>0;
+  const canDef=canAct&&u.defAttrs.some(a=>cntA(u,a)>=1);
+  const hasSk=canAct&&u.skills.some(sk=>Object.entries(sk.cost).every(([a,n])=>cntA(u,a)>=n));
+  const canEnd=on&&u;
+  // 포커스 버튼: 항상 활성
+  const mv=document.getElementById('bmv');
+  if(canUndo){
+    mv.className='cb on';
+    mv.style.cssText='color:#ffb74d;border-color:#ffb74d;';
+    mv.innerHTML='↩️<br>취소';
+    mv.onclick=undoMove;
+  } else {
+    mv.className='cb'+(on&&u?' on':'');
+    mv.style.cssText='';
+    mv.innerHTML='🎯<br>포커스';
+    mv.onclick=focusCurUnit;
+  }
+  document.getElementById('ba').classList.toggle('on',!!canAtk);
+  document.getElementById('bd').classList.toggle('on',!!canDef);
+  document.getElementById('bs').classList.toggle('on',!!hasSk);
+  document.getElementById('bet').classList.toggle('on',!!canEnd);
+}
+
+// 현재 턴 유닛으로 화면 포커스
+function focusCurUnit(){
+  const u=cur();
+  if(!u)return;
+  const R=_hexR(MAP_W,MAP_H);
+  const WW=Math.sqrt(3)*R;
+  const ox=(MAP_W-WW*(COLS+0.5))/2;
+  const oy=(MAP_H-R*(2+(ROWS-1)*1.5))/2;
+  const {x,y}=_hexC(u.x,u.y,R,WW,ox,oy);
+  const vw=window.innerWidth, vh=window.innerHeight-58;
+  const targetPanX=vw/2-x*mapScale;
+  const targetPanY=vh/2-y*mapScale;
+  // 부드러운 이동 (CSS transition 활용)
+  const mc=document.getElementById('mapcanvas');
+  mc.style.transition='transform .35s cubic-bezier(.25,.8,.25,1)';
+  panX=targetPanX; panY=targetPanY;
+  clampPan(); applyPan();
+  setTimeout(()=>mc.style.transition='',380);
+}
+
+function endTurnBtn(){
+  if(!isMyTurn())return;
+  exitMoveMode();['pa','pd','ps'].forEach(closeP);cancelTarget();
+  endTurn();
+}
+
+let logOpen=false, infoOpen=false;
+function toggleLog(){
+  logOpen=!logOpen;
+  document.getElementById('logpanel').classList.toggle('show',logOpen);
+  document.getElementById('blog').classList.toggle('on',logOpen);
+  if(logOpen){const l=document.getElementById('log');l.scrollTop=l.scrollHeight;}
+}
+function toggleInfo(){
+  infoOpen=!infoOpen;
+  document.getElementById('infopanel').classList.toggle('show',infoOpen);
+  document.getElementById('binfo').classList.toggle('on',infoOpen);
+  if(infoOpen)renderUInfo();
+}
+
+function toggleAuto(){
+  autoMode=!autoMode;
+  document.getElementById('bau').classList.toggle('on',autoMode);
+  log(autoMode?'🤖 자동전투 ON':'🤖 자동전투 OFF','ly');
+  if(autoMode){
+    const u=cur();
+    if(u?.side==='player'&&!G.busy){setCmdUI(false);exitMoveMode();['pa','pd','ps'].forEach(closeP);cancelTarget();setTimeout(()=>aiTurn(u),400);}
+  }
+}
+
+// ── 캐릭터 초상화 (SVG 자동 생성) ──
+const _PC = {}; // portrait cache
+
+const _CLASS = {
+  kael:'warrior',shadow:'assassin',
+  sylva:'healer',luna:'support',aqua:'mage',
+  // 몬스터
+  goblin:'monster_goblin',orc:'monster_orc',
+  wyvern:'monster_wyvern',wraith:'monster_wraith',golem:'monster_golem',
 };
+const _FEMALE = new Set(['sylva','aqua','luna']);
+const _MONSTER = new Set(['goblin','orc','wyvern','wraith','golem']);
 
-window.addEventListener('hashchange', function() {
-  var hash = window.location.hash.replace('#', '');
-  var valid = ['overview','world','gameplay','systems','monetize','roadmap'];
-  var page = valid.indexOf(hash) !== -1 ? hash : 'overview';
-  switchPage(page, null);
-});
+function getMonsterPortrait(key){
+  const t=TMPL[key], col=AT[t.pri].c;
+  const rr=parseInt(col.slice(1,3),16),gg=parseInt(col.slice(3,5),16),bb=parseInt(col.slice(5,7),16);
+  const colD=`rgb(${rr>>1},${gg>>1},${bb>>1})`;
+  const colL=`rgb(${Math.min(255,(rr+255)>>1)},${Math.min(255,(gg+255)>>1)},${Math.min(255,(bb+255)>>1)})`;
+  const shapes={
+    goblin:`
+      <!-- 귀 -->
+      <ellipse cx="11" cy="22" rx="4.5" ry="7" fill="#5a8a40" transform="rotate(-15,11,22)"/>
+      <ellipse cx="37" cy="22" rx="4.5" ry="7" fill="#5a8a40" transform="rotate(15,37,22)"/>
+      <ellipse cx="11" cy="22" rx="2.5" ry="4" fill="#ff8888" opacity=".5" transform="rotate(-15,11,22)"/>
+      <ellipse cx="37" cy="22" rx="2.5" ry="4" fill="#ff8888" opacity=".5" transform="rotate(15,37,22)"/>
+      <!-- 머리 -->
+      <ellipse cx="24" cy="22" rx="13" ry="13" fill="#6aaa4a"/>
+      <ellipse cx="18" cy="22" rx="11" ry="11" fill="#6aaa4a" opacity=".5"/>
+      <!-- 눈썹 찡그림 -->
+      <path d="M17,15 Q20,12 23,15" stroke="#2a4a18" stroke-width="2" fill="none"/>
+      <path d="M25,15 Q28,12 31,15" stroke="#2a4a18" stroke-width="2" fill="none"/>
+      <!-- 눈 (노란 눈) -->
+      <ellipse cx="19" cy="20" rx="3.5" ry="3.5" fill="#ffee44"/>
+      <ellipse cx="29" cy="20" rx="3.5" ry="3.5" fill="#ffee44"/>
+      <ellipse cx="19" cy="20" rx="2" ry="2" fill="#111"/>
+      <ellipse cx="29" cy="20" rx="2" ry="2" fill="#111"/>
+      <ellipse cx="18.2" cy="19" rx=".8" ry=".8" fill="#fff"/>
+      <ellipse cx="28.2" cy="19" rx=".8" ry=".8" fill="#fff"/>
+      <!-- 코 -->
+      <ellipse cx="24" cy="25" rx="3" ry="2" fill="#4a8030"/>
+      <ellipse cx="22" cy="25.5" rx="1.2" ry=".9" fill="#2a5018"/>
+      <ellipse cx="26" cy="25.5" rx="1.2" ry=".9" fill="#2a5018"/>
+      <!-- 이빨 -->
+      <path d="M18,30 Q24,34 30,30" stroke="#2a4a18" stroke-width="1.5" fill="none"/>
+      <rect x="20" y="29" width="2.5" height="4" rx=".5" fill="#fffcee"/>
+      <rect x="25.5" y="29" width="2.5" height="4" rx=".5" fill="#fffcee"/>
+      <!-- 몸통 -->
+      <ellipse cx="24" cy="46" rx="10" ry="7" fill="#4a7a30"/>
+      <rect x="16" y="36" width="16" height="14" rx="3" fill="#558840"/>
+      <!-- 무기 자국 -->
+      <rect x="33" y="38" width="3" height="14" rx="1.5" fill="${colD}" transform="rotate(15,33,38)"/>`,
+
+    orc:`
+      <!-- 뿔 -->
+      <polygon points="13,16 8,2 18,14" fill="#8a6a30"/>
+      <polygon points="35,16 42,2 30,14" fill="#8a6a30"/>
+      <!-- 머리 -->
+      <ellipse cx="24" cy="22" rx="14" ry="14" fill="#7a5030"/>
+      <!-- 눈썹 -->
+      <rect x="14" y="13" width="8" height="3" rx="1.5" fill="#3a1a08"/>
+      <rect x="26" y="13" width="8" height="3" rx="1.5" fill="#3a1a08"/>
+      <!-- 눈 (빨간 눈) -->
+      <ellipse cx="19" cy="19" rx="4" ry="3.5" fill="#cc2200"/>
+      <ellipse cx="29" cy="19" rx="4" ry="3.5" fill="#cc2200"/>
+      <ellipse cx="19" cy="19" rx="2.2" ry="2" fill="#440000"/>
+      <ellipse cx="29" cy="19" rx="2.2" ry="2" fill="#440000"/>
+      <ellipse cx="18" cy="18" rx=".9" ry=".9" fill="#ff6644" opacity=".8"/>
+      <ellipse cx="28" cy="18" rx=".9" ry=".9" fill="#ff6644" opacity=".8"/>
+      <!-- 코 -->
+      <ellipse cx="24" cy="25" rx="4" ry="3" fill="#5a3018"/>
+      <ellipse cx="22" cy="26" rx="1.5" ry="1.2" fill="#3a1a08"/>
+      <ellipse cx="26" cy="26" rx="1.5" ry="1.2" fill="#3a1a08"/>
+      <!-- 엄니 -->
+      <rect x="19" y="30" width="3" height="6" rx="1.5" fill="#fffcaa" transform="rotate(-8,19,30)"/>
+      <rect x="26" y="30" width="3" height="6" rx="1.5" fill="#fffcaa" transform="rotate(8,26,30)"/>
+      <!-- 몸통 갑옷 -->
+      <ellipse cx="24" cy="47" rx="12" ry="7" fill="#3a2010"/>
+      <rect x="14" y="36" width="20" height="15" rx="2" fill="#4a2818"/>
+      <rect x="16" y="36" width="16" height="5" rx="1" fill="${col}55"/>`,
+
+    wyvern:`
+      <!-- 날개 힌트 -->
+      <path d="M6,30 Q2,15 14,18" stroke="${col}88" stroke-width="3" fill="none"/>
+      <path d="M42,30 Q46,15 34,18" stroke="${col}88" stroke-width="3" fill="none"/>
+      <!-- 목/머리 -->
+      <ellipse cx="24" cy="26" rx="11" ry="13" fill="#5a3a18"/>
+      <!-- 비늘 패턴 -->
+      <ellipse cx="20" cy="21" rx="2.5" ry="2" fill="${col}55"/>
+      <ellipse cx="27" cy="20" rx="2.5" ry="2" fill="${col}55"/>
+      <ellipse cx="23" cy="27" rx="2" ry="1.5" fill="${col}44"/>
+      <!-- 뿔 -->
+      <polygon points="19,12 15,2 22,11" fill="${colD}"/>
+      <polygon points="29,12 33,2 26,11" fill="${colD}"/>
+      <!-- 눈 (세로 동공) -->
+      <ellipse cx="19" cy="22" rx="3.5" ry="3.5" fill="#ff8800"/>
+      <ellipse cx="29" cy="22" rx="3.5" ry="3.5" fill="#ff8800"/>
+      <ellipse cx="19" cy="22" rx="1.2" ry="3" fill="#111"/>
+      <ellipse cx="29" cy="22" rx="1.2" ry="3" fill="#111"/>
+      <ellipse cx="18.5" cy="20.5" rx=".7" ry=".7" fill="#fff" opacity=".8"/>
+      <ellipse cx="28.5" cy="20.5" rx=".7" ry=".7" fill="#fff" opacity=".8"/>
+      <!-- 주둥이 -->
+      <ellipse cx="24" cy="30" rx="7" ry="4" fill="#4a2a10"/>
+      <path d="M17,30 Q24,35 31,30" stroke="#2a1008" stroke-width="1.5" fill="none"/>
+      <!-- 이빨 -->
+      <polygon points="20,30 21.5,35 22.5,30" fill="#ffe"/>
+      <polygon points="25.5,30 27,35 28,30" fill="#ffe"/>
+      <!-- 몸통 -->
+      <ellipse cx="24" cy="47" rx="11" ry="7" fill="#4a2a10"/>
+      <rect x="15" y="37" width="18" height="14" rx="3" fill="#5a3818"/>
+      <ellipse cx="24" cy="40" rx="6" ry="3" fill="${col}33"/>`,
+
+    wraith:`
+      <!-- 후광/오라 -->
+      <ellipse cx="24" cy="20" rx="18" ry="18" fill="${col}" opacity=".08"/>
+      <ellipse cx="24" cy="20" rx="14" ry="14" fill="${col}" opacity=".1"/>
+      <!-- 두건 -->
+      <ellipse cx="24" cy="16" rx="13" ry="11" fill="#1a0a2a"/>
+      <path d="M11,16 Q24,4 37,16 Q37,28 24,30 Q11,28 11,16Z" fill="#2a1040"/>
+      <!-- 얼굴 (반투명 해골) -->
+      <ellipse cx="24" cy="22" rx="9" ry="10" fill="#c8c0d8" opacity=".85"/>
+      <!-- 눈 (빈 눈구멍) -->
+      <ellipse cx="20" cy="20" rx="3.5" ry="4" fill="${col}"/>
+      <ellipse cx="28" cy="20" rx="3.5" ry="4" fill="${col}"/>
+      <ellipse cx="20" cy="20" rx="2" ry="2.5" fill="#0a0518"/>
+      <ellipse cx="28" cy="20" rx="2" ry="2.5" fill="#0a0518"/>
+      <!-- 눈 광채 -->
+      <ellipse cx="20" cy="19" rx="1.2" ry="1.2" fill="${colL}" opacity=".9"/>
+      <ellipse cx="28" cy="19" rx="1.2" ry="1.2" fill="${colL}" opacity=".9"/>
+      <!-- 코 없음, 입 -->
+      <path d="M19,28 Q24,32 29,28" stroke="#6a5080" stroke-width="1.5" fill="none"/>
+      <!-- 로브 -->
+      <path d="M8,38 Q24,34 40,38 Q38,54 24,55 Q10,54 8,38Z" fill="#1a0a2a"/>
+      <path d="M12,38 Q24,35 36,38 Q35,50 24,51 Q13,50 12,38Z" fill="#2a1040"/>
+      <!-- 오라 파티클 -->
+      <ellipse cx="14" cy="42" rx="2" ry="3" fill="${col}" opacity=".4" transform="rotate(-20,14,42)"/>
+      <ellipse cx="34" cy="42" rx="2" ry="3" fill="${col}" opacity=".4" transform="rotate(20,34,42)"/>`,
+
+    golem:`
+      <!-- 돌 질감 어깨 -->
+      <ellipse cx="9" cy="34" rx="7" ry="9" fill="#707888"/>
+      <ellipse cx="39" cy="34" rx="7" ry="9" fill="#606878"/>
+      <!-- 크랙 -->
+      <path d="M7,30 L9,36 L6,40" stroke="#3a4050" stroke-width="1.5" fill="none"/>
+      <path d="M41,30 L39,36 L42,40" stroke="#3a4050" stroke-width="1.5" fill="none"/>
+      <!-- 머리 (거대한 돌 블록) -->
+      <rect x="10" y="10" width="28" height="26" rx="4" fill="#808898"/>
+      <rect x="12" y="12" width="24" height="22" rx="3" fill="#9098a8"/>
+      <!-- 돌 균열 -->
+      <path d="M18,12 L20,22 L16,28" stroke="#5a6070" stroke-width="1.5" fill="none"/>
+      <path d="M30,14 L28,24" stroke="#5a6070" stroke-width="1.2" fill="none"/>
+      <!-- 눈 (수정 발광) -->
+      <rect x="14" y="18" width="8" height="6" rx="2" fill="${col}33"/>
+      <rect x="26" y="18" width="8" height="6" rx="2" fill="${col}33"/>
+      <rect x="15" y="19" width="6" height="4" rx="1.5" fill="${col}"/>
+      <rect x="27" y="19" width="6" height="4" rx="1.5" fill="${col}"/>
+      <rect x="16.5" y="20" width="3" height="2" rx="1" fill="${colL}"/>
+      <rect x="28.5" y="20" width="3" height="2" rx="1" fill="${colL}"/>
+      <!-- 입 (균열) -->
+      <path d="M16,30 L20,33 L24,30 L28,33 L32,30" stroke="#4a5060" stroke-width="2" fill="none"/>
+      <!-- 몸통 -->
+      <rect x="12" y="37" width="24" height="17" rx="3" fill="#707888"/>
+      <rect x="14" y="39" width="20" height="13" rx="2" fill="#808898"/>
+      <!-- 가슴 룬 -->
+      <rect x="21" y="43" width="6" height="1.5" fill="${col}" rx=".7"/>
+      <rect x="23.2" y="40.5" width="1.5" height="7" fill="${col}" rx=".7"/>`,
+  };
+
+  const gid=`gm${key}`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56" style="width:100%;height:100%;display:block;">
+<defs>
+  <radialGradient id="${gid}a" cx="50%" cy="40%" r="65%">
+    <stop offset="0%" stop-color="${col}" stop-opacity=".3"/>
+    <stop offset="100%" stop-color="${col}" stop-opacity=".03"/>
+  </radialGradient>
+</defs>
+<rect width="48" height="56" fill="#0c0a1e"/>
+<rect width="48" height="56" fill="url(#${gid}a)"/>
+<ellipse cx="24" cy="54.5" rx="14" ry="2.5" fill="#000" opacity=".6"/>
+${shapes[key]||shapes.orc}
+</svg>`;
+  _PC[key]=svg;
+  return svg;
+}
+
+function getPortrait(key){
+  if(_PC[key]) return _PC[key];
+  if(_MONSTER.has(key)) return getMonsterPortrait(key);
+  const t=TMPL[key], col=AT[t.pri].c;
+  const fem=_FEMALE.has(key);
+  let h=0; for(const c of key) h=(h*31+c.charCodeAt(0))&255;
+
+  const cls=_CLASS[key]||'mage';
+  const fw=fem?8.0:9.5, fh=fem?10.8:10.2;
+  const faceY=21.5;
+  const skin=fem?'#dda07a':'#c08855';
+  const skinD=fem?'#a86040':'#906035';
+  const skinH=fem?'#edc09a':'#d4a070';
+  const lex=(24-fw*0.40).toFixed(1), rex=(24+fw*0.40).toFixed(1);
+
+  // col을 밝게/어둡게
+  const rr=parseInt(col.slice(1,3),16),gg=parseInt(col.slice(3,5),16),bb=parseInt(col.slice(5,7),16);
+  const colD=`rgb(${rr>>1},${gg>>1},${bb>>1})`;
+  const colL=`rgb(${Math.min(255,(rr+255)>>1)},${Math.min(255,(gg+255)>>1)},${Math.min(255,(bb+255)>>1)})`;
+
+  // 머리 스타일 4종 (하이라이트 포함)
+  const hairs=[
+    // 단발 + 광택
+    `<ellipse cx="24" cy="11" rx="${fw+2}" ry="8" fill="${col}"/>
+     <ellipse cx="19" cy="8.5" rx="4" ry="3" fill="${colL}" opacity=".4"/>
+     <ellipse cx="24" cy="5" rx="${fw+1}" ry="3.5" fill="${colL}" opacity=".2"/>`,
+    // 장발
+    `<ellipse cx="24" cy="10" rx="${fw+1.5}" ry="7" fill="${col}"/>
+     <rect x="${(24-fw-3.5).toFixed(1)}" y="14" width="5" height="20" rx="2.5" fill="${col}cc"/>
+     <rect x="${(24+fw-1.5).toFixed(1)}" y="14" width="5" height="20" rx="2.5" fill="${colD}dd"/>
+     <ellipse cx="19" cy="8" rx="3.5" ry="3" fill="${colL}" opacity=".38"/>`,
+    // 스파이키
+    `<polygon points="24,0 ${(24-fw*.65).toFixed(1)},13 24,8 ${(24+fw*.65).toFixed(1)},13" fill="${col}"/>
+     <polygon points="${(24-fw*.35).toFixed(1)},2 ${(24-fw*1.05).toFixed(1)},13 ${(24-fw*.1).toFixed(1)},10" fill="${colL}99"/>
+     <polygon points="${(24+fw*.35).toFixed(1)},2 ${(24+fw*1.05).toFixed(1)},13 ${(24+fw*.1).toFixed(1)},10" fill="${colD}88"/>
+     <ellipse cx="${(24-fw*.3).toFixed(1)}" cy="4" rx="2" ry="1.5" fill="${colL}" opacity=".45"/>`,
+    // 묶음/트윈
+    `<ellipse cx="24" cy="11" rx="${fw}" ry="7" fill="${col}"/>
+     <ellipse cx="${(24+fw+4).toFixed(1)}" cy="15" rx="5.5" ry="7" fill="${col}bb"/>
+     <ellipse cx="${(24-fw-4).toFixed(1)}" cy="15" rx="5.5" ry="7" fill="${col}bb"/>
+     <ellipse cx="19" cy="8" rx="3" ry="2.5" fill="${colL}" opacity=".4"/>`,
+  ][h%4];
+
+  // 클래스별 몸통
+  const body={
+    warrior:`
+      <rect x="${(24-fw+.5).toFixed(1)}" y="33" width="${(fw*2-1).toFixed(1)}" height="18" rx="2" fill="${colD}"/>
+      <rect x="${(24-fw+2).toFixed(1)}" y="33" width="${(fw*2-4).toFixed(1)}" height="4" rx="1" fill="${col}77"/>
+      <rect x="${(24-fw-.5).toFixed(1)}" y="33" width="5.5" height="13" rx="1.5" fill="${col}66"/>
+      <rect x="${(24+fw-5).toFixed(1)}" y="33" width="5.5" height="13" rx="1.5" fill="${col}55"/>
+      <ellipse cx="24" cy="35.5" rx="4.5" ry="2.8" fill="${col}99"/>
+      <ellipse cx="21" cy="35" rx="1.5" ry="1" fill="${colL}" opacity=".35"/>`,
+    mage:`
+      <ellipse cx="24" cy="47" rx="10" ry="5.5" fill="${colD}88"/>
+      <rect x="${(24-fw+2).toFixed(1)}" y="33" width="${(fw*2-4).toFixed(1)}" height="18" rx="3" fill="${col}44"/>
+      <rect x="23.2" y="37" width="1.6" height="13" rx=".8" fill="${col}99"/>
+      <ellipse cx="24" cy="37" rx="5.5" ry="3.8" fill="${col}bb"/>
+      <ellipse cx="21" cy="35" rx="2.5" ry="1.5" fill="${colL}" opacity=".4"/>`,
+    healer:`
+      <ellipse cx="24" cy="47" rx="9.5" ry="5.5" fill="${col}44"/>
+      <rect x="${(24-fw+2).toFixed(1)}" y="33" width="${(fw*2-4).toFixed(1)}" height="18" rx="2" fill="${col}33"/>
+      <rect x="20" y="44" width="8" height="2" fill="${col}" rx="1"/>
+      <rect x="23.2" y="40.5" width="1.6" height="7" fill="${col}" rx=".8"/>
+      <ellipse cx="21" cy="35" rx="2" ry="1.5" fill="${colL}" opacity=".38"/>`,
+    support:`
+      <ellipse cx="24" cy="46" rx="10.5" ry="6" fill="${col}33"/>
+      <rect x="${(24-fw+2).toFixed(1)}" y="33" width="${(fw*2-4).toFixed(1)}" height="18" rx="3" fill="${col}25"/>
+      <ellipse cx="24" cy="45" rx="6" ry="4.5" fill="${col}66"/>
+      <ellipse cx="24" cy="38.5" rx="7.5" ry="2.5" fill="${col}55"/>
+      <ellipse cx="20" cy="35" rx="2" ry="1.5" fill="${colL}" opacity=".4"/>`,
+    assassin:`
+      <polygon points="17,33 24,29 31,33 30,52 18,52" fill="${colD}dd"/>
+      <polygon points="21,33 24,30 27,33 27,42 21,42" fill="${col}66"/>
+      <rect x="23.2" y="32" width="1.6" height="20" rx=".8" fill="${col}aa"/>`,
+  };
+
+  const gid=`g${key}`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56" style="width:100%;height:100%;display:block;">
+<defs>
+  <radialGradient id="${gid}a" cx="38%" cy="22%" r="72%">
+    <stop offset="0%" stop-color="${col}" stop-opacity=".4"/>
+    <stop offset="100%" stop-color="${col}" stop-opacity=".04"/>
+  </radialGradient>
+  <radialGradient id="${gid}f" cx="30%" cy="22%" r="68%">
+    <stop offset="0%" stop-color="#fff" stop-opacity=".25"/>
+    <stop offset="55%" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000" stop-opacity=".18"/>
+  </radialGradient>
+  <radialGradient id="${gid}e" cx="32%" cy="28%" r="75%">
+    <stop offset="0%" stop-color="${colL}"/>
+    <stop offset="100%" stop-color="${col}"/>
+  </radialGradient>
+</defs>
+<rect width="48" height="56" fill="#0c0a1e"/>
+<rect width="48" height="56" fill="url(#${gid}a)"/>
+<!-- 바닥 그림자 -->
+<ellipse cx="24" cy="54.5" rx="14" ry="2.8" fill="#000" opacity=".55"/>
+<!-- 머리카락 뒷레이어 -->
+${hairs}
+<!-- 목 -->
+<rect x="${(24-fw*.24).toFixed(1)}" y="30" width="${(fw*.48).toFixed(1)}" height="5.5" rx="1.5" fill="${skin}"/>
+<rect x="${(24-fw*.24).toFixed(1)}" y="32" width="${(fw*.48).toFixed(1)}" height="3.5" rx="1" fill="${skinD}" opacity=".3"/>
+<!-- 몸통 -->
+${body[cls]||body.mage}
+<!-- 얼굴 베이스 -->
+<ellipse cx="24" cy="${faceY}" rx="${fw}" ry="${fh}" fill="${skin}"/>
+<!-- 얼굴 측면/하단 음영 -->
+<ellipse cx="${(24+fw*.18).toFixed(1)}" cy="${(faceY+1.5).toFixed(1)}" rx="${(fw*.88).toFixed(1)}" ry="${(fh*.8).toFixed(1)}" fill="${skinD}" opacity=".22"/>
+<!-- 이마 하이라이트 -->
+<ellipse cx="${(24-fw*.1).toFixed(1)}" cy="${(faceY-fh*.38).toFixed(1)}" rx="${(fw*.55).toFixed(1)}" ry="${(fh*.3).toFixed(1)}" fill="${skinH}" opacity=".38"/>
+<!-- 턱 음영 -->
+<ellipse cx="24" cy="${(faceY+fh*.78).toFixed(1)}" rx="${(fw*.55).toFixed(1)}" ry="${(fh*.2).toFixed(1)}" fill="${skinD}" opacity=".28"/>
+${fem?`<!-- 볼 블러시 -->
+<ellipse cx="${(24-fw*.62).toFixed(1)}" cy="${(faceY+2).toFixed(1)}" rx="2.8" ry="1.6" fill="#ff8888" opacity=".22"/>
+<ellipse cx="${(24+fw*.62).toFixed(1)}" cy="${(faceY+2).toFixed(1)}" rx="2.8" ry="1.6" fill="#ff8888" opacity=".22"/>`:''}
+<!-- 눈 흰자 -->
+<ellipse cx="${lex}" cy="${(faceY-1.8).toFixed(1)}" rx="${fem?2.4:2.2}" ry="${fem?3.0:2.6}" fill="#e8e8f0" opacity=".92"/>
+<ellipse cx="${rex}" cy="${(faceY-1.8).toFixed(1)}" rx="${fem?2.4:2.2}" ry="${fem?3.0:2.6}" fill="#e8e8f0" opacity=".92"/>
+<!-- 홍채 -->
+<ellipse cx="${lex}" cy="${(faceY-1.4).toFixed(1)}" rx="${fem?1.75:1.6}" ry="${fem?2.2:2.0}" fill="url(#${gid}e)"/>
+<ellipse cx="${rex}" cy="${(faceY-1.4).toFixed(1)}" rx="${fem?1.75:1.6}" ry="${fem?2.2:2.0}" fill="url(#${gid}e)"/>
+<!-- 동공 -->
+<ellipse cx="${lex}" cy="${(faceY-1.2).toFixed(1)}" rx="${fem?.95:.85}" ry="${fem?1.2:1.1}" fill="#0d0b18"/>
+<ellipse cx="${rex}" cy="${(faceY-1.2).toFixed(1)}" rx="${fem?.95:.85}" ry="${fem?1.2:1.1}" fill="#0d0b18"/>
+<!-- 눈 하이라이트 -->
+<ellipse cx="${(parseFloat(lex)-.5).toFixed(1)}" cy="${(faceY-2.2).toFixed(1)}" rx=".75" ry=".7" fill="#fff"/>
+<ellipse cx="${(parseFloat(rex)-.5).toFixed(1)}" cy="${(faceY-2.2).toFixed(1)}" rx=".75" ry=".7" fill="#fff"/>
+<!-- 코 -->
+<ellipse cx="24" cy="${(faceY+3.8).toFixed(1)}" rx="${(fw*.13).toFixed(1)}" ry="1.1" fill="${skinD}" opacity=".6"/>
+<!-- 입 -->
+<path d="M${(24-fw*.24).toFixed(1)},${(faceY+6.5).toFixed(1)} Q24,${(faceY+7.6).toFixed(1)} ${(24+fw*.24).toFixed(1)},${(faceY+6.5).toFixed(1)}" stroke="${skinD}" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".8"/>
+<!-- 얼굴 라이팅 오버레이 -->
+<ellipse cx="24" cy="${faceY}" rx="${fw}" ry="${fh}" fill="url(#${gid}f)"/>
+<!-- 이마 스페큘러 -->
+<ellipse cx="${(24-fw*.22).toFixed(1)}" cy="${(faceY-fh*.58).toFixed(1)}" rx="2.8" ry="1.6" fill="#fff" opacity=".16"/>
+</svg>`;
+  _PC[key]=svg;
+  return svg;
+}
+
+// ── 렌더 ──
+function renderAll(){renderMap();if(infoOpen)renderUInfo();if(devOpen)renderDev();}
+
+// ── DEV 패널 ──
+function toggleDev(){
+  devOpen=!devOpen;
+  document.getElementById('devpanel').classList.toggle('open',devOpen);
+  document.getElementById('bdev').classList.toggle('on',devOpen);
+  if(devOpen)renderDev();
+}
+function renderDev(){
+  const el=document.getElementById('devinfo');
+  if(!el||!G.units)return;
+  const u=cur();
+  let html='';
+  G.units.forEach(gu=>{
+    if(gu.hp<=0){return;}
+    const isCur=gu===u;
+    const sc=gu.side==='player'?'#2a6ac4':'#c43030';
+    html+=`<div style="margin-bottom:7px;padding:4px;border-radius:4px;border:1px solid ${isCur?sc:'#1a1628'};${isCur?'background:#0d0b20':''}">`;
+    html+=`<div style="color:${AT[gu.pri].c};font-weight:700;font-size:.68rem;margin-bottom:3px">${AT[gu.pri].e} ${gu.name}${isCur?' ◀':''}</div>`;
+    Object.keys(AT).forEach(a=>{
+      const h=cntA(gu,a),d=gu.drawPile.filter(c=>c.attr===a).length,dc=gu.discardPile.filter(c=>c.attr===a).length;
+      if(!h&&!d&&!dc)return;
+      const isPri=a===gu.pri;
+      html+=`<div style="display:flex;align-items:center;gap:3px;margin:1px 0;font-size:.6rem;">
+        <span style="color:${AT[a].c};${isPri?'font-weight:700':''}">${AT[a].e}</span>
+        <span style="color:#6af">✋${h}</span>
+        <span style="color:#888">🃏${d}</span>
+        <span style="color:#555">♻️${dc}</span>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html||'<div style="color:#444">—</div>';
+}
+
+// ── 연출: 플로터 / 헥스 플래시 ──
+function spawnFloater(uid,text,cls){
+  const chipEl=document.querySelector(`.chip[data-uid="${uid}"]`);
+  if(!chipEl)return;
+  const rect=chipEl.getBoundingClientRect();
+  const f=document.createElement('div');
+  f.className='floater '+cls;
+  f.textContent=text;
+  f.style.cssText=`left:${(rect.left+rect.width/2).toFixed(0)}px;top:${(rect.top+10).toFixed(0)}px;`;
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),900);
+}
+// 칩에 CSS 클래스로 플래시 (칩이 SVG 위에 있어서 flashHex는 보이지 않음)
+function flashChip(uid,cls,dur){
+  const el=document.querySelector(`.chip[data-uid="${uid}"]`);
+  if(!el)return;
+  el.classList.add(cls);
+  setTimeout(()=>el.classList.remove(cls),dur);
+}
+// 이동 헥스 플래시 (유닛 없는 빈 셀용)
+function flashHex(c,r,color,dur){
+  const poly=document.getElementById(`c${c}_${r}`);
+  if(!poly)return;
+  const orig=poly.getAttribute('fill');
+  poly.setAttribute('fill',color);
+  setTimeout(()=>poly.setAttribute('fill',orig),dur);
+}
+// 발사체: from chip → to chip, 완료 후 cb 호출
+function spawnProjectile(fromId,toId,color,cb){
+  const fe=document.querySelector(`.chip[data-uid="${fromId}"]`);
+  const te=document.querySelector(`.chip[data-uid="${toId}"]`);
+  if(!fe||!te){cb?.();return;}
+  const fr=fe.getBoundingClientRect(), tr=te.getBoundingClientRect();
+  const fx=fr.left+fr.width/2, fy=fr.top+fr.height/2;
+  const tx=tr.left+tr.width/2, ty=tr.top+tr.height/2;
+  const p=document.createElement('div');
+  p.className='proj';
+  p.style.cssText=`left:${fx.toFixed(0)}px;top:${fy.toFixed(0)}px;width:10px;height:10px;background:${color};box-shadow:0 0 14px ${color},0 0 6px #fff;`;
+  document.body.appendChild(p);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    p.style.left=`${tx.toFixed(0)}px`;p.style.top=`${ty.toFixed(0)}px`;
+  }));
+  setTimeout(()=>{p.remove();cb?.();},250);
+}
+
+function getQueuePos(uid){
+  if(!G.queue)return -1;
+  const q=G.queue,qi=G.qi,n=q.length;
+  let pos=0;
+  for(let i=0;i<n;i++){
+    const idx=(qi+i)%n;
+    if(gU(q[idx])?.hp<=0)continue;
+    if(q[idx]===uid)return pos;
+    pos++;
+  }
+  return -1;
+}
+
+function renderMap(){
+  const ma=document.getElementById('mapcanvas');
+  ma.innerHTML='';
+  ma.style.width=MAP_W+'px'; ma.style.height=MAP_H+'px';
+  const W=MAP_W, H=MAP_H;
+  const R=_hexR(W,H);
+  const WW=Math.sqrt(3)*R; // hex width (pointy-top)
+  const ox=(W-WW*(COLS+0.5))/2, oy=(H-R*(2+(ROWS-1)*1.5))/2;
+  function hc(c,r){return _hexC(c,r,R,WW,ox,oy);}
+
+  // ── SVG 헥스 그리드 ──
+  const ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('width',W);svg.setAttribute('height',H);
+  svg.style.cssText='position:absolute;inset:0;';
+
+  // ── SVG defs (그라디언트, 필터) ──
+  const defs=document.createElementNS(ns,'defs');
+
+  // 플레이어 존 (좌) 배경 그라디언트 — 시원한 청록
+  const pgBg=document.createElementNS(ns,'linearGradient');
+  pgBg.id='pgBg';pgBg.setAttribute('x1','0%');pgBg.setAttribute('y1','0%');pgBg.setAttribute('x2','100%');pgBg.setAttribute('y2','0%');
+  [{o:'0%',c:'#2060a0',op:'0.22'},{o:'100%',c:'#2060a0',op:'0.0'}].forEach(({o,c,op})=>{
+    const s=document.createElementNS(ns,'stop');s.setAttribute('offset',o);s.setAttribute('stop-color',c);s.setAttribute('stop-opacity',String(op));pgBg.appendChild(s);
+  });
+  defs.appendChild(pgBg);
+
+  // 적 존 (우) 배경 그라디언트 — 따뜻한 붉은 틴트
+  const egBg=document.createElementNS(ns,'linearGradient');
+  egBg.id='egBg';egBg.setAttribute('x1','0%');egBg.setAttribute('y1','0%');egBg.setAttribute('x2','100%');egBg.setAttribute('y2','0%');
+  [{o:'0%',c:'#aa3010',op:'0.0'},{o:'100%',c:'#aa3010',op:'0.20'}].forEach(({o,c,op})=>{
+    const s=document.createElementNS(ns,'stop');s.setAttribute('offset',o);s.setAttribute('stop-color',c);s.setAttribute('stop-opacity',String(op));egBg.appendChild(s);
+  });
+  defs.appendChild(egBg);
+
+  // 존 구분선 그라디언트 (흙길/모래색)
+  const divGrad=document.createElementNS(ns,'linearGradient');
+  divGrad.id='divGrad';divGrad.setAttribute('x1','0%');divGrad.setAttribute('y1','0%');divGrad.setAttribute('x2','0%');divGrad.setAttribute('y2','100%');
+  [{o:'0%',c:'transparent'},{o:'15%',c:'#c8a040'},{o:'50%',c:'#e0b848'},{o:'85%',c:'#c8a040'},{o:'100%',c:'transparent'}].forEach(({o,c})=>{
+    const s=document.createElementNS(ns,'stop');s.setAttribute('offset',o);s.setAttribute('stop-color',c);divGrad.appendChild(s);
+  });
+  defs.appendChild(divGrad);
+
+  // 헥스 글로우 필터 (이동범위/스킬범위용)
+  const fGlow=document.createElementNS(ns,'filter');
+  fGlow.id='fglow';fGlow.setAttribute('x','-30%');fGlow.setAttribute('y','-30%');fGlow.setAttribute('width','160%');fGlow.setAttribute('height','160%');
+  const feG=document.createElementNS(ns,'feGaussianBlur');feG.setAttribute('stdDeviation','3');feG.setAttribute('result','blur');
+  const feM=document.createElementNS(ns,'feMerge');
+  const n1=document.createElementNS(ns,'feMergeNode');n1.setAttribute('in','blur');
+  const n2=document.createElementNS(ns,'feMergeNode');n2.setAttribute('in','SourceGraphic');
+  feM.appendChild(n1);feM.appendChild(n2);fGlow.appendChild(feG);fGlow.appendChild(feM);
+  defs.appendChild(fGlow);
+
+  svg.appendChild(defs);
+
+  // ── 존 배경 rect ──
+  const midX=ox+WW*(COLS/2+0.25);
+  const pgR=document.createElementNS(ns,'rect');
+  pgR.setAttribute('x','0');pgR.setAttribute('y','0');pgR.setAttribute('width',midX.toFixed(0));pgR.setAttribute('height',H);
+  pgR.setAttribute('fill','url(#pgBg)');pgR.setAttribute('pointer-events','none');
+  svg.appendChild(pgR);
+  const egR=document.createElementNS(ns,'rect');
+  egR.setAttribute('x',midX.toFixed(0));egR.setAttribute('y','0');egR.setAttribute('width',(W-midX).toFixed(0));egR.setAttribute('height',H);
+  egR.setAttribute('fill','url(#egBg)');egR.setAttribute('pointer-events','none');
+  svg.appendChild(egR);
+
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const {x,y}=hc(c,r);
+      const isReach=moveMode&&reachable.has(`${c},${r}`);
+      const isAtkRange=atkRangeSet.has(`${c},${r}`);
+      const isSklRange=sklRangeUnit&&(()=>{
+        const su=sklRangeUnit,tgt=sklRangeTgt;
+        if(!tgt||tgt==='enemy')return mdist({x:su.x,y:su.y},{x:c,y:r})<=su.atkRange;
+        if(tgt==='ally'||tgt==='allally')return alive('player').some(p=>p.x===c&&p.y===r);
+        if(tgt==='allenemy')return alive('enemy').some(e=>e.x===c&&e.y===r);
+        if(tgt==='self')return su.x===c&&su.y===r;
+        return false;
+      })();
+      const zone=c<=2?'p':c>=COLS-4?'e':'m';
+      const isMtn=mountains.has(`${c},${r}`);
+      const isWater=waters.has(`${c},${r}`);
+
+      const poly=document.createElementNS(ns,'polygon');
+      poly.setAttribute('id',`c${c}_${r}`);
+      poly.setAttribute('points',_hexPts(x,y,R*0.91));
+
+      if(isMtn){
+        // ── 산 타일 — 회색 바위 지형 ──
+        const tv=(Math.sin(c*1.9+r*2.7)*0.5+0.5);
+        const gv=Math.round(88+tv*28);
+        poly.setAttribute('fill',`rgb(${gv+8},${gv+4},${gv})`);
+        poly.setAttribute('stroke',`rgb(${Math.round(gv*0.6)},${Math.round(gv*0.58)},${Math.round(gv*0.55)})`);
+        poly.setAttribute('stroke-width','1.8');
+        svg.appendChild(poly);
+
+        // 산 모양 SVG 삼각형들 (봉우리 2개)
+        const mScale=R*0.72;
+        // 뒤쪽 봉우리 (오른쪽, 살짝 작음)
+        const m2=document.createElementNS(ns,'polygon');
+        const m2x=x+mScale*0.22, m2y=y+mScale*0.18;
+        const m2h=mScale*0.62;
+        m2.setAttribute('points',`${m2x},${m2y-m2h} ${m2x-mScale*0.34},${m2y} ${m2x+mScale*0.38},${m2y}`);
+        m2.setAttribute('fill',`rgb(${gv+18},${gv+14},${gv+10})`);
+        m2.setAttribute('stroke','none');
+        m2.setAttribute('pointer-events','none');
+        svg.appendChild(m2);
+        // 뒤쪽 봉우리 눈
+        const sn2=document.createElementNS(ns,'polygon');
+        sn2.setAttribute('points',`${m2x},${m2y-m2h} ${m2x-mScale*0.10},${m2y-m2h+mScale*0.18} ${m2x+mScale*0.10},${m2y-m2h+mScale*0.16}`);
+        sn2.setAttribute('fill','rgba(255,252,248,0.88)');
+        sn2.setAttribute('stroke','none');
+        sn2.setAttribute('pointer-events','none');
+        svg.appendChild(sn2);
+
+        // 앞쪽 봉우리 (왼쪽, 크고 어두움)
+        const m1=document.createElementNS(ns,'polygon');
+        const m1x=x-mScale*0.14, m1y=y+mScale*0.26;
+        const m1h=mScale*0.78;
+        m1.setAttribute('points',`${m1x},${m1y-m1h} ${m1x-mScale*0.42},${m1y} ${m1x+mScale*0.40},${m1y}`);
+        m1.setAttribute('fill',`rgb(${gv+5},${gv+1},${gv-2})`);
+        m1.setAttribute('stroke','none');
+        m1.setAttribute('pointer-events','none');
+        svg.appendChild(m1);
+        // 앞쪽 봉우리 그림자 면
+        const m1sh=document.createElementNS(ns,'polygon');
+        m1sh.setAttribute('points',`${m1x},${m1y-m1h} ${m1x+mScale*0.40},${m1y} ${m1x},${m1y}`);
+        m1sh.setAttribute('fill',`rgba(0,0,0,0.18)`);
+        m1sh.setAttribute('stroke','none');
+        m1sh.setAttribute('pointer-events','none');
+        svg.appendChild(m1sh);
+        // 앞쪽 봉우리 눈
+        const sn1=document.createElementNS(ns,'polygon');
+        sn1.setAttribute('points',`${m1x},${m1y-m1h} ${m1x-mScale*0.13},${m1y-m1h+mScale*0.20} ${m1x+mScale*0.13},${m1y-m1h+mScale*0.18}`);
+        sn1.setAttribute('fill','rgba(255,252,248,0.96)');
+        sn1.setAttribute('stroke','none');
+        sn1.setAttribute('pointer-events','none');
+        svg.appendChild(sn1);
+
+      } else if(isWater){
+        // ── 물 타일 — 탑다운 호수/웅덩이 ──
+        const tv=(Math.sin(c*2.3+r*3.1)*0.5+0.5);
+        const bv=Math.round(120+tv*30);  // 120~150 blue base
+        poly.setAttribute('class','water-hex');
+        poly.setAttribute('fill',`rgb(${Math.round(bv*0.28)},${Math.round(bv*0.62)},${bv})`);
+        poly.setAttribute('stroke',`rgb(${Math.round(bv*0.18)},${Math.round(bv*0.45)},${Math.round(bv*0.80)})`);
+        poly.setAttribute('stroke-width','1.8');
+        svg.appendChild(poly);
+
+        // 물 표면 하이라이트 (빛 반사 얼룩)
+        const whi=document.createElementNS(ns,'ellipse');
+        whi.setAttribute('cx',(x+R*0.08).toFixed(1));
+        whi.setAttribute('cy',(y-R*0.15).toFixed(1));
+        whi.setAttribute('rx',(R*0.28+tv*R*0.08).toFixed(1));
+        whi.setAttribute('ry',(R*0.12+tv*R*0.04).toFixed(1));
+        whi.setAttribute('fill',`rgba(200,240,255,${(0.22+tv*0.12).toFixed(2)})`);
+        whi.setAttribute('pointer-events','none');
+        svg.appendChild(whi);
+
+        // 잔물결 동심 타원 (2개)
+        for(let wi=0;wi<2;wi++){
+          const we=document.createElementNS(ns,'ellipse');
+          const wr=R*(0.20+wi*0.14+tv*0.06);
+          we.setAttribute('cx',(x+R*(wi%2?0.06:-0.04)).toFixed(1));
+          we.setAttribute('cy',(y+R*(wi%2?0.08:0.02)).toFixed(1));
+          we.setAttribute('rx',wr.toFixed(1));
+          we.setAttribute('ry',(wr*0.55).toFixed(1));
+          we.setAttribute('fill','none');
+          we.setAttribute('stroke',`rgba(160,220,255,${(0.28-wi*0.08).toFixed(2)})`);
+          we.setAttribute('stroke-width','1.0');
+          we.setAttribute('pointer-events','none');
+          svg.appendChild(we);
+        }
+
+      } else if(isReach){
+        poly.setAttribute('class','reachable');
+        poly.setAttribute('fill','#0a1e38');
+        poly.setAttribute('stroke','#2a6aaa');
+        poly.setAttribute('stroke-width','2');
+        poly.onclick=()=>doMove(c,r);
+        svg.appendChild(poly);
+      } else if(isAtkRange){
+        poly.setAttribute('class','atk-range');
+        poly.setAttribute('fill','#2a0808');
+        poly.setAttribute('stroke','#cc3030');
+        poly.setAttribute('stroke-width','2');
+        svg.appendChild(poly);
+      } else if(isSklRange){
+        poly.setAttribute('class','skl-range');
+        poly.setAttribute('fill','#1a0828');
+        poly.setAttribute('stroke','#8833cc');
+        poly.setAttribute('stroke-width','2');
+        svg.appendChild(poly);
+      } else {
+        // 지형 색상 변화 — 밝은 잔디 초록 (존 구분 없이 통일감 있게)
+        const tv=(Math.sin(c*1.9+r*2.7)*0.5+0.5);
+        const gBase=Math.round(148+tv*24);  // 148~172 green
+        const rBase=Math.round(66+tv*18);   // 66~84 red
+        const bBase=Math.round(24+tv*14);   // 24~38 blue
+        // 존별 미세 색조 차이 (아군 쪽 약간 더 싱그럽게, 적 쪽 약간 더 탁하게)
+        const rAdj=zone==='e'?12:zone==='p'?-4:0;
+        const gAdj=zone==='e'?-10:zone==='p'?6:0;
+        const fill=`rgb(${rBase+rAdj},${gBase+gAdj},${bBase})`;
+        const sR=Math.round((rBase+rAdj)*0.52);
+        const sG=Math.round((gBase+gAdj)*0.52);
+        const sB=Math.round(bBase*0.55);
+        const stroke=`rgb(${sR},${sG},${sB})`;
+        poly.setAttribute('fill',fill);
+        poly.setAttribute('stroke',stroke);
+        poly.setAttribute('stroke-width','1.8');
+        svg.appendChild(poly);
+
+        // 상단 하이라이트 (햇빛 반사) — poly 이후에 appendChild 해야 위에 렌더됨
+        const hi=document.createElementNS(ns,'ellipse');
+        hi.setAttribute('cx',(x-R*0.10).toFixed(1));
+        hi.setAttribute('cy',(y-R*0.30).toFixed(1));
+        hi.setAttribute('rx',(R*0.30).toFixed(1));
+        hi.setAttribute('ry',(R*0.18).toFixed(1));
+        hi.setAttribute('fill',`rgba(230,255,180,${(0.10+tv*0.10).toFixed(2)})`);
+        hi.setAttribute('pointer-events','none');
+        svg.appendChild(hi);
+      }
+    }
+  }
+
+  // ── 존 구분선 (흙길 느낌 — 중립 갈색 점선) ──
+  const gridTop=oy+R, gridBot=H-oy-R;
+  const divLine=document.createElementNS(ns,'line');
+  divLine.setAttribute('x1',midX.toFixed(1));divLine.setAttribute('y1',gridTop.toFixed(1));
+  divLine.setAttribute('x2',midX.toFixed(1));divLine.setAttribute('y2',gridBot.toFixed(1));
+  divLine.setAttribute('stroke','url(#divGrad)');divLine.setAttribute('stroke-width','2');
+  divLine.setAttribute('opacity','0.28');divLine.setAttribute('stroke-dasharray','8,6');
+  divLine.setAttribute('pointer-events','none');
+  svg.appendChild(divLine);
+
+  ma.appendChild(svg);
+
+  // 칩 크기 (발자국·무덤·스킬범위 공통 사용)
+  const cw=Math.round(WW*0.88), ch=Math.round(R*2*0.92);
+
+  // ── 스킬/공격 범위 캐스터 링 (범위 셀은 SVG 폴리곤에서 처리) ──
+  if(sklRangeUnit){
+    const {x:sx,y:sy}=hc(sklRangeUnit.x,sklRangeUnit.y);
+    const sc=document.createElement('div');
+    sc.style.cssText=`position:absolute;left:${(sx-cw/2+1).toFixed(1)}px;top:${(sy-ch/2+1).toFixed(1)}px;`
+      +`width:${cw-2}px;height:${ch-2}px;border-radius:50%;border:3px solid #ffd54f99;pointer-events:none;z-index:5;`;
+    ma.appendChild(sc);
+  }
+
+  // ── 발자국 흔적 ──
+  const totalLife=4;
+  trails.forEach(t=>{
+    const {x,y}=hc(t.x,t.y);
+    const remaining=t.expiresAt-globalTurnIdx;
+    const op=(0.18+0.55*(remaining/totalLife)).toFixed(2);
+    const fs=Math.round(R*0.55);
+    const el=document.createElement('div');
+    el.style.cssText=`position:absolute;left:${(x-fs/2).toFixed(1)}px;top:${(y-fs/2).toFixed(1)}px;`
+      +`width:${fs}px;height:${fs}px;display:flex;align-items:center;justify-content:center;`
+      +`font-size:${fs}px;line-height:1;pointer-events:none;z-index:4;opacity:${op};`
+      +`transform:rotate(${t.angle.toFixed(0)}deg);transform-origin:center;`;
+    el.textContent='👣';
+    ma.appendChild(el);
+  });
+
+  // ── 무덤 마커 ──
+  graves.forEach(g=>{
+    const liveOn=G.units.some(u=>u.hp>0&&u.x===g.x&&u.y===g.y);
+    if(liveOn)return; // 살아있는 유닛이 위에 있으면 칩에서 표시
+    const {x,y}=hc(g.x,g.y);
+    const fs=Math.round(R*0.72);
+    const el=document.createElement('div');
+    el.style.cssText=`position:absolute;left:${(x-fs/2).toFixed(1)}px;top:${(y-fs/2).toFixed(1)}px;`
+      +`width:${fs}px;height:${fs}px;display:flex;align-items:center;justify-content:center;`
+      +`font-size:${fs}px;line-height:1;pointer-events:none;z-index:4;opacity:0.65;`;
+    el.textContent='🪦';
+    ma.appendChild(el);
+  });
+
+  // ── 유닛 칩 ──
+  const ciw=Math.max(cw-6,12), cih=Math.max(ch-5,10);
+
+  G.units.forEach(u=>{
+    if(u.buried)return; // 밟혀서 묻힌 시체는 렌더 스킵
+    const {x,y}=hc(u.x,u.y);
+    const qpos=getQueuePos(u.id);
+    const isAct=qpos===0, isNext=qpos===1;
+    const onGrave=u.hp>0&&graves.some(g=>g.x===u.x&&g.y===u.y);
+    const sleeping=u.side==='enemy'&&u.hp>0&&!isMonsterActive(u);
+    const chip=document.createElement('div');
+    chip.className='chip'+(isAct?' active':isNext?' nextturn':'')+(u.hp<=0?' dead':'');
+    chip.dataset.uid=u.id;
+    chip.style.cssText=`left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;color:${AT[u.pri].c};`
+      +(sleeping?'opacity:0.32;filter:grayscale(0.7);':'');
+
+    const teamCol=u.side==='player'?'#2a6ac4':'#c43030';
+    const ac=AT[u.pri].c, e=AT[u.pri].e;
+    const hpP=Math.max(0,u.hp/u.maxHp*100).toFixed(1);
+    const hpC=u.hp/u.maxHp>.55?'#4caf50':u.hp/u.maxHp>.28?'#ff9800':'#f44336';
+    const shPct=u.shield>0?Math.min(100,u.shield/(u.maxHp*.45)*100).toFixed(1):0;
+    const eff=u.effects.map(ef=>ef.type==='burn'?'🔥':ef.type==='atkdown'?'⬇️':'').join('');
+    // ── 원형 토큰 사이즈 계산 ──
+    const tokD=Math.round(Math.min(cw,ch)*0.90);
+    const teamBorder=isAct?'#ffd700':isNext?'#ffaa00':teamCol;
+    const tokShadow=isAct
+      ?'0 0 0 3px #ffd700,0 0 18px #ffd70088,0 5px 16px rgba(0,0,0,0.55)'
+      :isNext
+      ?'0 0 0 2px #ffaa00,0 0 10px #ffaa0066,0 4px 12px rgba(0,0,0,0.45)'
+      :`0 0 0 2px ${teamCol},0 4px 12px rgba(0,0,0,0.45)`;
+    // 초상화 오버사이즈 (원 밖으로 넘치도록) — 토큰 위로 튀어나오는 효과
+    const portScale=1.15;
+    const portW=Math.round(tokD*portScale);
+    const portH2=Math.round(tokD*portScale*(56/48));
+    const portML=Math.round(-(portW-tokD)/2);
+    const portMT=Math.round(-tokD*0.10); // 위로 살짝 올려 얼굴 중심
+
+    chip.innerHTML=`
+    <!-- 발바닥 그림자 -->
+    <div style="position:absolute;bottom:${-Math.round(tokD*0.08)}px;left:50%;transform:translateX(-50%);width:${Math.round(tokD*0.75)}px;height:${Math.round(tokD*0.12)}px;background:radial-gradient(ellipse,rgba(0,0,0,0.32),transparent 70%);border-radius:50%;pointer-events:none;z-index:0;"></div>
+    <!-- 원형 토큰 -->
+    <div class="tok-circle" style="width:${tokD}px;height:${tokD}px;border-radius:50%;border:3px solid ${teamBorder};overflow:visible;position:relative;flex-shrink:0;z-index:1;">
+      <!-- 내부 원 클립 컨테이너 -->
+      <div style="position:absolute;inset:0;border-radius:50%;overflow:hidden;background:${AT[u.pri].c}22;box-shadow:${tokShadow};">
+        <!-- 초상화 (토큰 위로 넘침) -->
+        <div style="position:absolute;left:${portML}px;top:${portMT}px;width:${portW}px;height:${portH2}px;overflow:visible;pointer-events:none;">
+          ${getPortrait(u.key)}
+        </div>
+        <!-- 사망 오버레이 -->
+        ${u.hp<=0?`<div style="position:absolute;inset:0;background:#00000099;display:flex;align-items:center;justify-content:center;font-size:1.1rem">💀</div>`:''}
+        <!-- 수면 오버레이 -->
+        ${sleeping?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.85rem">💤</div>`:''}
+        <!-- 상태이상 아이콘 -->
+        ${eff?`<div style="position:absolute;top:3px;left:3px;font-size:.52rem;line-height:1;text-shadow:0 1px 3px #000">${eff}</div>`:''}
+        <!-- 이동완료 체크 -->
+        ${u.moved&&u.hp>0?`<div style="position:absolute;top:3px;right:3px;font-size:.45rem;color:rgba(255,255,200,.7);text-shadow:0 1px 2px #000">✓</div>`:''}
+        <!-- 무덤 위 표시 -->
+        ${onGrave?`<div style="position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-size:.55rem;opacity:.9">✝</div>`:''}
+        <!-- 내부 광택 (상단 하이라이트) -->
+        <div style="position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent);border-radius:50% 50% 0 0;pointer-events:none;"></div>
+        <!-- 이름 태그 (원형 토큰 하단 내부) -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:2px 3px 3px;background:linear-gradient(0deg,rgba(0,0,0,0.76),rgba(0,0,0,0.38),transparent);border-radius:0 0 50% 50%;text-align:center;pointer-events:none;">
+          <span style="font-family:'Cinzel',sans-serif;font-size:${Math.max(8,Math.round(tokD*0.13))}px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.95),0 0 6px rgba(0,0,0,0.8);white-space:nowrap;letter-spacing:.02em;line-height:1;">${u.name}</span>
+        </div>
+      </div>
+      <!-- 활성 코인 인디케이터 (위로 떠오름) -->
+      ${isAct?`<div style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:.78rem;animation:tokFloat 1s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px #ffd700);pointer-events:none;z-index:10;">🪙</div>`:''}
+    </div>
+    <!-- HP / 실드 게이지 -->
+    <div class="chip-gauge" style="width:${tokD}px;margin-top:2px;">
+      ${u.side==='player'
+        ?`<div class="chip-cards" style="justify-content:center;">${[...u.hand].sort((a,b)=>Object.keys(AT).indexOf(a.attr)-Object.keys(AT).indexOf(b.attr)).map(c=>`<span class="chip-card-icon">${AT[c.attr].e}</span>`).join('')}</div>`
+        :`<div class="chip-card-count">🃏${u.hand.length}</div>`
+      }
+      ${u.shield>0?`<div class="cgsh"><div class="cgsh-f" style="width:${shPct}%"></div></div>`:''}
+      <div class="cghp"><div class="cghp-f" style="width:${hpP}%;background:${hpC}"></div></div>
+    </div>`;
+    // 호버 캡처 레이어 — 토큰 위에 투명 원으로 마우스 이벤트 수신
+    const hoverLayer=document.createElement('div');
+    hoverLayer.style.cssText=`position:absolute;left:${(x-tokD/2).toFixed(1)}px;top:${(y-tokD*1.12).toFixed(1)}px;`
+      +`width:${tokD}px;height:${tokD}px;border-radius:50%;z-index:50;cursor:default;`;
+    hoverLayer.addEventListener('mouseenter',()=>showUnitTip(u));
+    hoverLayer.addEventListener('mouseleave',hideUnitTip);
+    hoverLayer.addEventListener('mousemove',moveUnitTip);
+    hoverLayer.addEventListener('click',()=>{
+      // 공격 타겟 모드 중이면 클릭 무시 (chip.attacktgt가 처리)
+      if(targeting)return;
+      hideUnitTip();
+      // 이미 같은 유닛 팝업이 열려 있으면 닫기
+      if(_unitDetailId===u.id){closeUnitDetail();return;}
+      showUnitDetail(u.id);
+    });
+    hoverLayer.style.cursor='pointer';
+    ma.appendChild(hoverLayer);
+
+    ma.appendChild(chip);
+  });
+
+  // ── 커맨드 오버레이 (최상위 z-index) ──
+  const actU=G.units.find(u=>{
+    const qpos=getQueuePos(u.id);
+    return qpos===0&&u.side==='player'&&u.hp>0;
+  });
+  const old=document.getElementById('cmd-overlay');
+  if(old)old.remove();
+  if(actU){
+    const {x,y}=hc(actU.x,actU.y);
+    const hasSk=actU.skills.some(sk=>Object.entries(sk.cost).every(([a,n])=>cntA(actU,a)>=n));
+    // 게이지 높이 계산 (shield 있으면 더 아래)
+    const gaugeH=actU.shield>0?22:12;
+    const ov=document.createElement('div');
+    ov.id='cmd-overlay';
+    ov.style.cssText=`left:${x.toFixed(1)}px;top:${(y+(ch+7)/2+gaugeH+8).toFixed(1)}px;`;
+    ov.innerHTML=`
+      <div class="ccb${(!actU.moved||actU.acted)?' dis':''}" style="--cc:#ff7043" onclick="openA()" title="공격 (1)">⚔️</div>
+      <div class="ccb${(!actU.moved||actU.acted)?' dis':''}" style="--cc:#64b5f6" onclick="openD()" title="방어 (2)">🛡</div>
+      <div class="ccb${(!actU.moved||!hasSk||actU.acted)?' dis':''}" style="--cc:#ba68c8" onclick="openS()" title="스킬 (3)">✨</div>`;
+    ma.appendChild(ov);
+  }
+}
+
+function renderUInfo(){
+  const el=document.getElementById('uinfo');
+  const u=cur();
+  if(!u){el.innerHTML='—';return;}
+  const pc=AT[u.pri].c;
+  const handSum=Object.keys(AT).map(a=>{const n=cntA(u,a);return n?`${AT[a].e}<span style="color:${AT[a].c}">×${n}</span>`:''}).filter(Boolean).join(' ');
+  const sideCol=u.side==='player'?'#5588bb':'#bb5555';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+      <span style="font-weight:700;color:${pc};font-size:.85rem">${u.name}</span>
+      <span style="font-size:.6rem;color:${sideCol}">${u.side==='player'?'아군':'적군'}</span>
+      <span style="font-size:.6rem;color:#445;margin-left:auto">📍(${u.x},${u.y})</span>
+    </div>
+    <div style="display:flex;gap:8px;font-size:.65rem;color:#667;margin-bottom:4px">
+      <span>HP <b style="color:#ccc">${u.hp}/${u.maxHp}</b></span>
+      ${u.shield>0?`<span>🛡<b style="color:#64b5f6">${u.shield}</b></span>`:''}
+      <span>이동<b style="color:#ccc">${u.mov}</b></span>
+      <span>사거리<b style="color:#ccc">${u.atkRange}</b></span>
+    </div>
+    <div style="font-size:.65rem;color:#445;margin-bottom:3px">손패: ${handSum||'없음'}</div>
+    <div style="font-size:.6rem;color:#334">${u.moved?'✓이동완료':'이동가능'} · ${u.acted?'✓행동완료':'행동가능'}</div>`;
+}
+
+// ── 로그 ──
+function log(msg,cls='',side=null){
+  const s=side??logSide;
+  const a=document.getElementById('log');
+  const d=document.createElement('div');
+  d.className='le '+cls+(s==='enemy'?' log-r':'');d.textContent=msg;
+  a.appendChild(d);a.scrollTop=a.scrollHeight;
+}
+function clearLog(){document.getElementById('log').innerHTML='';}
+
+// ── 맵 패닝 + 휠 줌 ──
+(()=>{
+  const wrap=document.getElementById('mapwrap');
+
+  // 드래그 패닝
+  wrap.addEventListener('mousedown',e=>{
+    if(e.target.closest('.ccb,.cb,#bet,.cb2,.pbg,.sidepanel,#bottombar,#devpanel'))return;
+    isPanning=true; panSX=e.clientX-panX; panSY=e.clientY-panY;
+    wrap.classList.add('panning'); e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!isPanning)return;
+    panX=e.clientX-panSX; panY=e.clientY-panSY;
+    clampPan(); applyPan();
+  });
+  document.addEventListener('mouseup',()=>{isPanning=false;wrap.classList.remove('panning');});
+
+  // 휠 줌 (50%~200%, 마우스 위치 중심)
+  wrap.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const step=e.deltaY<0?0.1:-0.1;
+    const newScale=Math.round(Math.max(0.5,Math.min(1.5,mapScale+step))*100)/100;
+    if(newScale===mapScale)return;
+    // 마우스 위치 기준 줌
+    const mx=e.clientX, my=e.clientY;
+    const cx=(mx-panX)/mapScale, cy=(my-panY)/mapScale;
+    mapScale=newScale;
+    panX=mx-cx*mapScale; panY=my-cy*mapScale;
+    clampPan(); applyPan(); showZoomIndicator();
+  },{passive:false});
+
+  // 터치 패닝 + 핀치줌 (브라우저 줌 완전 차단)
+  let pinchDist0=0, pinchScale0=1;
+  function touchDist(t){
+    const dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY;
+    return Math.hypot(dx,dy);
+  }
+  wrap.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    if(e.touches.length===1){
+      const t=e.touches[0];
+      isPanning=true; panSX=t.clientX-panX; panSY=t.clientY-panY;
+    } else if(e.touches.length===2){
+      isPanning=false;
+      pinchDist0=touchDist(e.touches);
+      pinchScale0=mapScale;
+    }
+  },{passive:false});
+  document.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(e.touches.length===1&&isPanning){
+      const t=e.touches[0];
+      panX=t.clientX-panSX; panY=t.clientY-panSY;
+      clampPan(); applyPan();
+    } else if(e.touches.length===2){
+      const dist=touchDist(e.touches);
+      const raw=pinchScale0*(dist/pinchDist0);
+      const newScale=Math.min(Math.max(raw,0.5),1.5);
+      if(newScale===mapScale)return;
+      // 두 손가락 중심 기준 줌
+      const mx=(e.touches[0].clientX+e.touches[1].clientX)/2;
+      const my=(e.touches[0].clientY+e.touches[1].clientY)/2;
+      const cx=(mx-panX)/mapScale, cy=(my-panY)/mapScale;
+      mapScale=newScale;
+      panX=mx-cx*mapScale; panY=my-cy*mapScale;
+      clampPan(); applyPan(); showZoomIndicator();
+    }
+  },{passive:false});
+  document.addEventListener('touchend',e=>{
+    if(e.touches.length===0)isPanning=false;
+  });
+})();
+
+// ── 유닛 스탯 툴팁 ──
+(()=>{
+  const tip=document.getElementById('unit-tooltip');
+  let mx=0, my=0;
+
+  window.showUnitTip=function(u){
+    if(!u)return;
+    window._unitTipOn=true;
+    const hpPct=Math.max(0,u.hp/u.maxHp*100).toFixed(0);
+    const hpC=u.hp/u.maxHp>.55?'#4caf50':u.hp/u.maxHp>.28?'#ff9800':'#f44336';
+    const side=u.side==='player'?'🔵 아군':'🔴 적군';
+    const skillRows=u.skills.length
+      ?u.skills.map(sk=>`<div class="tip-skill-row">⚡ ${sk.name||sk.type||'스킬'}</div>`).join('')
+      :'<div style="color:#7a6040;font-size:.6rem;">스킬 없음</div>';
+    const eff=u.effects.map(ef=>ef.type==='burn'?'🔥 화상':ef.type==='atkdown'?'⬇️ 공격감소':'').filter(Boolean).join(', ');
+    tip.innerHTML=`
+      <div class="tip-name">${AT[u.pri].e} ${u.name} <span style="font-size:.62rem;color:#a07840;">${side}</span></div>
+      <div class="tip-row"><span class="lbl">HP</span><span>${u.hp} / ${u.maxHp}</span></div>
+      <div class="tip-hp"><div class="tip-hp-f" style="width:${hpPct}%;background:${hpC};"></div></div>
+      ${u.shield>0?`<div class="tip-row"><span class="lbl">실드</span><span style="color:#64b5f6;">${u.shield}</span></div>`:''}
+      <div class="tip-row"><span class="lbl">공격력</span><span>${u.atkPow}</span></div>
+      <div class="tip-row"><span class="lbl">방어력</span><span>${u.defPow}</span></div>
+      <div class="tip-row"><span class="lbl">속도</span><span>${u.spd}</span></div>
+      <div class="tip-row"><span class="lbl">이동</span><span>${u.mov}</span></div>
+      <div class="tip-row"><span class="lbl">사거리</span><span>${u.atkRange}</span></div>
+      <div class="tip-row"><span class="lbl">속성</span><span>${AT[u.pri].e} ${AT[u.pri].n||''}</span></div>
+      <div class="tip-row"><span class="lbl">약점</span><span>${AT[WEAK_OF[u.pri]]?.e||'?'}</span></div>
+      ${eff?`<div class="tip-row"><span class="lbl">상태</span><span style="color:#ff9870;">${eff}</span></div>`:''}
+      <div class="tip-skills"><div style="color:#907040;font-size:.6rem;margin-bottom:2px;">스킬</div>${skillRows}</div>
+    `;
+    tip.style.display='block';
+    positionTip();
+  };
+
+  window.hideUnitTip=function(){tip.style.display='none';window._unitTipOn=false;};
+
+  window.moveUnitTip=function(e){mx=e.clientX;my=e.clientY;positionTip();};
+
+  function positionTip(){
+    const tw=tip.offsetWidth||180, th=tip.offsetHeight||180;
+    const vw=window.innerWidth, vh=window.innerHeight-60;
+    let lx=mx+14, ly=my-20;
+    if(lx+tw>vw-8)lx=mx-tw-14;
+    if(ly+th>vh)ly=vh-th-4;
+    if(ly<4)ly=4;
+    tip.style.left=lx+'px';
+    tip.style.top=ly+'px';
+  }
+})();
+
+// ── 타일 지형 툴팁 ──
+(()=>{
+  const ttip=document.getElementById('tile-tooltip');
+  const wrap=document.getElementById('mapwrap');
+
+  // 스크린 좌표 → 맵캔버스 좌표 → 헥스 그리드 좌표
+  function screenToHex(sx,sy){
+    const mx=(sx-panX)/mapScale;
+    const my=(sy-panY)/mapScale;
+    const R=_hexR(MAP_W,MAP_H);
+    const WW=Math.sqrt(3)*R;
+    const ox=(MAP_W-WW*(COLS+0.5))/2;
+    const oy=(MAP_H-R*(2+(ROWS-1)*1.5))/2;
+    // 후보 행 범위만 체크 (최적화)
+    const rEst=(my-oy-R)/(1.5*R);
+    let bestC=-1,bestR=-1,bestD=Infinity;
+    for(let r=Math.max(0,Math.floor(rEst)-1);r<=Math.min(ROWS-1,Math.ceil(rEst)+1);r++){
+      const cEst=(mx-ox-WW/2-(r%2?WW/2:0))/WW;
+      for(let c=Math.max(0,Math.floor(cEst)-1);c<=Math.min(COLS-1,Math.ceil(cEst)+1);c++){
+        const {x,y}=_hexC(c,r,R,WW,ox,oy);
+        const d=Math.hypot(mx-x,my-y);
+        if(d<bestD){bestD=d;bestC=c;bestR=r;}
+      }
+    }
+    return bestD<=R&&bestC>=0?{c:bestC,r:bestR}:null;
+  }
+
+  function terrainInfo(c,r){
+    const k=`${c},${r}`;
+    if(mountains.has(k)) return {
+      icon:'⛰️',name:'산',
+      rows:[
+        {cls:'bad',txt:'이동 불가'},
+        {cls:'bad',txt:'사거리 차단 (LOS 차단)'},
+      ]
+    };
+    if(waters.has(k)) return {
+      icon:'💧',name:'호수',
+      rows:[
+        {cls:'bad',txt:'이동 불가'},
+        {cls:'ok', txt:'사거리 관통 가능'},
+      ]
+    };
+    const zone=c<=2?'아군 진영':c>=COLS-4?'적군 진영':'중립 지역';
+    return {
+      icon:'🌿',name:'평지',
+      rows:[
+        {cls:'',  txt:'이동 가능'},
+        {cls:'',  txt:zone},
+      ]
+    };
+  }
+
+  let lastHex=null;
+  wrap.addEventListener('mousemove',e=>{
+    const hex=screenToHex(e.clientX,e.clientY);
+    if(!hex){ttip.style.display='none';lastHex=null;return;}
+    // 헥스 바뀔 때만 내용 갱신
+    if(!lastHex||lastHex.c!==hex.c||lastHex.r!==hex.r){
+      lastHex=hex;
+      const {icon,name,rows}=terrainInfo(hex.c,hex.r);
+      ttip.innerHTML=`<div class="ttl">${icon} ${name}</div>`
+        +rows.map(row=>`<div class="trow${row.cls?' '+row.cls:''}">${row.txt}</div>`).join('');
+    }
+    // 위치 업데이트 — 유닛 툴팁(오른쪽)과 겹치지 않도록 왼쪽 우선
+    const tw=ttip.offsetWidth||120,th=ttip.offsetHeight||60;
+    const vw=window.innerWidth,vh=window.innerHeight-60;
+    let lx=e.clientX-tw-14,ly=e.clientY+14;
+    if(lx<8)lx=e.clientX+14; // 왼쪽 공간 없으면 오른쪽
+    if(ly+th>vh)ly=e.clientY-th-10;
+    ttip.style.left=lx+'px';ttip.style.top=ly+'px';
+    ttip.style.display='block';
+  });
+
+  wrap.addEventListener('mouseleave',()=>{
+    ttip.style.display='none';lastHex=null;
+  });
+})();
+
+// ── 사이드패널 드래그 이동 ──
+(()=>{
+  function makeMovable(panelId){
+    const el=document.getElementById(panelId);
+    const handle=el.querySelector('.sp-tit');
+    let drag=false, ox=0, oy=0;
+    handle.addEventListener('mousedown',e=>{
+      if(e.target.tagName==='SPAN')return;
+      drag=true;
+      const r=el.getBoundingClientRect();
+      // right/bottom → left/top 전환
+      el.style.right='auto'; el.style.bottom='auto';
+      el.style.left=r.left+'px'; el.style.top=r.top+'px';
+      ox=e.clientX-r.left; oy=e.clientY-r.top;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove',e=>{
+      if(!drag)return;
+      const x=Math.max(0,Math.min(window.innerWidth-el.offsetWidth, e.clientX-ox));
+      const y=Math.max(0,Math.min(window.innerHeight-el.offsetHeight, e.clientY-oy));
+      el.style.left=x+'px'; el.style.top=y+'px';
+    });
+    document.addEventListener('mouseup',()=>{drag=false;});
+  }
+  makeMovable('logpanel');
+  makeMovable('infopanel');
+})();
+
+init();
+
+// ══════════════════════════════════════════════════
+// ■ 탑다운 평지 배경 캔버스
+// ══════════════════════════════════════════════════
+(()=>{
+  const canvas=document.getElementById('bgcanvas');
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0;
+  let offX=0,offY=0;
+
+  // 풀밭 텍스처 패치 (탑다운 뷰 — 밝은 잔디 얼룩)
+  const rng=(seed)=>{let s=seed;return()=>{s=s*16807%2147483647;return(s-1)/2147483646;}};
+  const rand=rng(42);
+  // 풀 패치: 큰 밝은 얼룩들
+  const grassPatches=Array.from({length:60},()=>({
+    nx:rand(), ny:rand(),
+    rx:0.04+rand()*0.10, ry:0.03+rand()*0.07,
+    brightness:0.85+rand()*0.30,
+    phase:rand()*Math.PI*2,
+  }));
+  // 작은 짙은 풀 클러스터
+  const darkPatches=Array.from({length:40},()=>({
+    nx:rand(), ny:rand(),
+    r:0.012+rand()*0.025,
+    op:0.10+rand()*0.18,
+  }));
+  // 흙/모래 원형 패치
+  const dirtPatches=Array.from({length:18},()=>({
+    nx:rand(), ny:rand(),
+    r:0.015+rand()*0.04,
+    op:0.08+rand()*0.14,
+  }));
+
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+
+  let t=0;
+  function draw(){
+    t+=0.006;
+    ctx.clearRect(0,0,W,H);
+
+    // ① 기본 잔디 베이스 (탑다운 평지)
+    const base=ctx.createLinearGradient(0,0,W,H);
+    base.addColorStop(0,'#5aaa28');
+    base.addColorStop(0.4,'#4e9e20');
+    base.addColorStop(0.7,'#56a824');
+    base.addColorStop(1,'#4a9818');
+    ctx.fillStyle=base;
+    ctx.fillRect(0,0,W,H);
+
+    // ② 밝은 풀 얼룩 (미세하게 출렁이는 느낌)
+    grassPatches.forEach(p=>{
+      const px=((p.nx*W*1.8+offX*0.08)%(W*1.8)+W*1.8)%(W*1.8)-W*0.4;
+      const py=((p.ny*H*1.8+offY*0.08)%(H*1.8)+H*1.8)%(H*1.8)-H*0.4;
+      const sway=1+Math.sin(t*0.4+p.phase)*0.04;
+      const grd=ctx.createRadialGradient(px,py,0,px,py,p.rx*W*sway);
+      const br=p.brightness;
+      grd.addColorStop(0,`rgba(${Math.round(80*br)},${Math.round(175*br)},${Math.round(38*br)},0.38)`);
+      grd.addColorStop(0.5,`rgba(${Math.round(70*br)},${Math.round(160*br)},${Math.round(30*br)},0.15)`);
+      grd.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=grd;
+      ctx.fillRect(0,0,W,H);
+    });
+
+    // ③ 짙은 풀 그늘 클러스터
+    darkPatches.forEach(p=>{
+      const px=((p.nx*W*1.5+offX*0.06)%(W*1.5)+W*1.5)%(W*1.5)-W*0.25;
+      const py=((p.ny*H*1.5+offY*0.06)%(H*1.5)+H*1.5)%(H*1.5)-H*0.25;
+      const grd=ctx.createRadialGradient(px,py,0,px,py,p.r*W);
+      grd.addColorStop(0,`rgba(20,70,8,${p.op})`);
+      grd.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=grd;
+      ctx.fillRect(0,0,W,H);
+    });
+
+    // ④ 흙/모래 패치 (불규칙 지면 질감)
+    dirtPatches.forEach(p=>{
+      const px=((p.nx*W*1.4+offX*0.05)%(W*1.4)+W*1.4)%(W*1.4)-W*0.2;
+      const py=((p.ny*H*1.4+offY*0.05)%(H*1.4)+H*1.4)%(H*1.4)-H*0.2;
+      const grd=ctx.createRadialGradient(px,py,0,px,py,p.r*W);
+      grd.addColorStop(0,`rgba(160,120,60,${p.op})`);
+      grd.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=grd;
+      ctx.fillRect(0,0,W,H);
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  window._starParallax=function(px,py){offX=px*0.08;offY=py*0.08;};
+})();
 </script>
 </body>
 </html>
