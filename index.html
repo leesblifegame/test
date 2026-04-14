@@ -1174,7 +1174,7 @@ function init(){
 function nextTurn(){
   updateMonsterAwake();
   let tries=0;
-  while(gU(G.queue[G.qi]).hp<=0){G.qi=(G.qi+1)%G.queue.length;if(++tries>G.queue.length)return;}
+  while(gU(G.queue[G.qi]).hp<=0||(gU(G.queue[G.qi]).side==='enemy'&&!isMonsterActive(gU(G.queue[G.qi])))){G.qi=(G.qi+1)%G.queue.length;if(++tries>G.queue.length)return;}
   const u=cur();
   G.busy=false;
   u.moved=false; u.acted=false;
@@ -1190,6 +1190,7 @@ function nextTurn(){
     return;
   }
   log(`── ${u.name}의 턴 (${u.x},${u.y}) ──`,'lt');
+  focusCurUnit();
   renderAll();
   if(u.side==='player'){
     if(u.stunned){log(`${u.name}: 봉인 행동불가`,'ly');u.stunned=false;endTurn();}
@@ -3062,7 +3063,7 @@ function clearLog(){document.getElementById('log').innerHTML='';}
       e.preventDefault();
       const dist=touchDist(e.touches);
       const raw=pinchScale0*(dist/pinchDist0);
-      const newScale=Math.min(Math.max(raw,0.5),1.5);
+      const newScale=Math.min(Math.max(raw,0.3),1.5);
       if(newScale===mapScale)return;
       const mx=(e.touches[0].clientX+e.touches[1].clientX)/2;
       const my=(e.touches[0].clientY+e.touches[1].clientY)/2;
