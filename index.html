@@ -2767,29 +2767,32 @@ function clearLog(){document.getElementById('log').innerHTML='';}
     const dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY;
     return Math.hypot(dx,dy);
   }
+  let tapStartX=0, tapStartY=0, tapMoved=false;
   wrap.addEventListener('touchstart',e=>{
-    e.preventDefault();
+    // preventDefault 하지 않음 → 합성 click 이벤트 유지 (타일 탭 이동)
     if(e.touches.length===1){
       const t=e.touches[0];
+      tapStartX=t.clientX; tapStartY=t.clientY; tapMoved=false;
       isPanning=true; panSX=t.clientX-panX; panSY=t.clientY-panY;
     } else if(e.touches.length===2){
       isPanning=false;
       pinchDist0=touchDist(e.touches);
       pinchScale0=mapScale;
     }
-  },{passive:false});
+  },{passive:true});
   document.addEventListener('touchmove',e=>{
-    e.preventDefault();
     if(e.touches.length===1&&isPanning){
       const t=e.touches[0];
+      const dx=t.clientX-tapStartX, dy=t.clientY-tapStartY;
+      if(Math.hypot(dx,dy)>8) tapMoved=true; // 탭 vs 드래그 구분
       panX=t.clientX-panSX; panY=t.clientY-panSY;
       clampPan(); applyPan();
     } else if(e.touches.length===2){
+      e.preventDefault();
       const dist=touchDist(e.touches);
       const raw=pinchScale0*(dist/pinchDist0);
       const newScale=Math.min(Math.max(raw,0.5),1.5);
       if(newScale===mapScale)return;
-      // 두 손가락 중심 기준 줌
       const mx=(e.touches[0].clientX+e.touches[1].clientX)/2;
       const my=(e.touches[0].clientY+e.touches[1].clientY)/2;
       const cx=(mx-panX)/mapScale, cy=(my-panY)/mapScale;
@@ -2799,7 +2802,15 @@ function clearLog(){document.getElementById('log').innerHTML='';}
     }
   },{passive:false});
   document.addEventListener('touchend',e=>{
-    if(e.touches.length===0)isPanning=false;
+    if(e.touches.length===0){
+      // 탭(드래그 없음)이면 해당 좌표 요소에 click 강제 발생
+      if(!tapMoved&&e.changedTouches.length===1){
+        const t=e.changedTouches[0];
+        const el=document.elementFromPoint(t.clientX,t.clientY);
+        if(el) el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,clientX:t.clientX,clientY:t.clientY}));
+      }
+      isPanning=false;
+    }
   });
 })();
 
