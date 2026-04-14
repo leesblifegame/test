@@ -46,6 +46,37 @@ body{font-family:'Segoe UI',sans-serif;background:#2a6010;color:#e0e0f0;height:1
   #act-btns .cb,#act-btns #bet{flex:1;}
   #bsep-aux{display:none;}
   .cb2{min-width:36px;padding:3px 4px;font-size:.6rem;}
+
+  /* ── 공격/방어/스킬 팝업 ── */
+  .pbox{
+    width:min(96vw,440px)!important;
+    max-height:calc(85vh - 96px - env(safe-area-inset-bottom))!important;
+    padding:12px 14px!important;
+    border-radius:12px!important;
+  }
+  .pbg{align-items:flex-start!important;padding-top:8px;}
+  .ptit{font-size:.85rem!important;margin-bottom:8px!important;}
+  .ar{padding:7px 9px!important;margin-bottom:5px!important;}
+  .ah{margin-bottom:5px!important;}
+
+  /* ── 로그/정보 사이드패널 ── */
+  #logpanel{
+    right:4px!important;left:4px!important;width:auto!important;
+    bottom:calc(96px + env(safe-area-inset-bottom))!important;
+    max-height:40vh!important;
+  }
+  #infopanel{
+    left:4px!important;right:4px!important;width:auto!important;
+    bottom:calc(96px + env(safe-area-inset-bottom))!important;
+    max-height:50vh!important;
+  }
+
+  /* ── 유닛/타일 툴팁 ── */
+  #unit-tooltip{font-size:.68rem!important;max-width:52vw!important;}
+  #tile-tooltip{font-size:.65rem!important;max-width:44vw!important;}
+
+  /* ── DEV 패널 ── */
+  #devpanel{bottom:calc(96px + env(safe-area-inset-bottom))!important;}
 }
 .cb{flex:1;min-width:48px;max-width:72px;border-radius:8px;border:2px solid #1e1c30;background:#0d0b18;color:#444;font-size:.7rem;font-weight:700;text-align:center;padding:4px 2px;line-height:1.25;pointer-events:auto;cursor:pointer;transition:all .15s;}
 .cb.on{pointer-events:auto;cursor:pointer;color:#fff;box-shadow:0 0 10px currentColor;}
@@ -186,7 +217,9 @@ polygon.skl-range{animation:hexsklrng .8s ease-in-out infinite alternate;}
 .pbg{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;z-index:200;}
 .pbg.show{display:flex;}
 .pbox{background:#15122a;border:1px solid #3a2a5a;border-radius:14px;padding:18px 20px;width:min(90vw,440px);max-height:80vh;overflow-y:auto;}
-.ptit{font-size:.95rem;font-weight:700;margin-bottom:12px;}
+.ptit{font-size:.95rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ptit .pxbtn{flex-shrink:0;background:none;border:1px solid #5a3a2a;border-radius:6px;color:#a07040;font-size:.85rem;line-height:1;padding:2px 7px;cursor:pointer;transition:all .12s;}
+.ptit .pxbtn:hover{background:#5a3a1a;color:#ffd060;border-color:#8a5a2a;}
 .ar{background:#0f0d22;border:1px solid #252040;border-radius:9px;padding:9px 11px;margin-bottom:7px;}
 .ar.dis{opacity:.3;pointer-events:none;}
 .ah{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
@@ -584,44 +617,39 @@ polygon.skl-range{animation:hexsklrng .8s ease-in-out infinite alternate;}
 <!-- 공격 팝업 -->
 <div class="pbg" id="pa">
   <div class="pbox">
-    <div class="ptit" style="color:#ff7043">⚔️ 공격</div>
+    <div class="ptit" style="color:#ff7043">⚔️ 공격<button class="pxbtn" onclick="closeP('pa')">✕</button></div>
     <div id="al"></div>
     <div class="pv" id="av">속성과 장수를 선택하세요</div>
     <div class="pa">
       <button class="pc" id="ac" onclick="reqAtkTarget()">대상 선택 →</button>
-      <button class="px" onclick="closeP('pa')">취소</button>
     </div>
   </div>
 </div>
 <!-- 방어 팝업 -->
 <div class="pbg" id="pd">
   <div class="pbox">
-    <div class="ptit" style="color:#64b5f6">🛡 방어</div>
+    <div class="ptit" style="color:#64b5f6">🛡 방어<button class="pxbtn" onclick="closeP('pd')">✕</button></div>
     <div id="dl"></div>
     <div class="pv" id="dv">속성과 장수를 선택하세요</div>
     <div class="pa">
       <button class="pc" id="dc" onclick="doDefend()">방어 실행</button>
-      <button class="px" onclick="closeP('pd')">취소</button>
     </div>
   </div>
 </div>
 <!-- 스킬 팝업 -->
 <div class="pbg" id="ps">
   <div class="pbox">
-    <div class="ptit" style="color:#ba68c8">✨ 스킬</div>
+    <div class="ptit" style="color:#ba68c8">✨ 스킬<button class="pxbtn" onclick="closeP('ps')">✕</button></div>
     <div id="sl"></div>
-    <div class="pa" style="margin-top:6px">
-      <button class="px" onclick="closeP('ps')">취소</button>
-    </div>
   </div>
 </div>
 <!-- 유닛 상세 팝업 -->
 <div class="pbg" id="punit">
   <div class="pbox" style="width:min(90vw,360px);">
-    <div id="punit-content"></div>
-    <div class="pa" style="margin-top:12px;justify-content:center;">
-      <button class="px" onclick="closeUnitDetail()">닫기 (ESC)</button>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
+      <button class="pxbtn" onclick="closeUnitDetail()">✕</button>
     </div>
+    <div id="punit-content"></div>
   </div>
 </div>
 <!-- 결과 -->
@@ -852,16 +880,33 @@ function checkTerrainConnected(){
   return visited.size>=total*0.85;
 }
 
-// ── 시야선(LOS) 판정 ── 산은 차단, 물은 통과
+// ── 시야선(LOS) 판정 ── 큐브 좌표 보간으로 정확한 헥스 LOS
 function hasLOS(c1,r1,c2,r2){
   if(c1===c2&&r1===r2)return true;
-  const dc=c2-c1, dr=r2-r1;
-  const n=Math.max(Math.abs(dc),Math.abs(dr));
-  for(let i=1;i<n;i++){
-    const t=i/n;
-    const cc=Math.round(c1+dc*t);
-    const cr=Math.round(r1+dr*t);
-    if(mountains.has(`${cc},${cr}`))return false;
+  // odd-r offset → 큐브 좌표
+  function toCube(col,row){
+    const x=col-(row-(row&1))/2, z=row;
+    return{x,y:-x-z,z};
+  }
+  function toOffset(cx,cz){
+    return{c:cx+(cz-(cz&1))/2,r:cz};
+  }
+  const a=toCube(c1,r1), b=toCube(c2,r2);
+  const N=Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y),Math.abs(a.z-b.z));
+  for(let i=1;i<N;i++){
+    const t=i/N;
+    // 큐브 공간 선형 보간 (미세 넛지로 경계 모호성 방지)
+    const lx=a.x+(b.x-a.x)*t+1e-6;
+    const ly=a.y+(b.y-a.y)*t+1e-6;
+    const lz=a.z+(b.z-a.z)*t-2e-6;
+    let rx=Math.round(lx),ry=Math.round(ly),rz=Math.round(lz);
+    // x+y+z=0 보정
+    const dx=Math.abs(rx-lx),dy=Math.abs(ry-ly),dz=Math.abs(rz-lz);
+    if(dx>dy&&dx>dz)rx=-ry-rz;
+    else if(dy>dz)ry=-rx-rz;
+    else rz=-rx-ry;
+    const{c,r}=toOffset(rx,rz);
+    if(mountains.has(`${c},${r}`))return false;
   }
   return true;
 }
@@ -1117,6 +1162,14 @@ function nextTurn(){
   logSide=u.side;
   tickFX(u);
   if(checkEnd())return;
+  // 틱 데미지 등으로 사망 시 턴 즉시 스킵
+  if(u.hp<=0){
+    log(`${u.name} 사망으로 턴 스킵`,'lx');
+    renderAll();
+    G.qi=(G.qi+1)%G.queue.length;
+    setTimeout(nextTurn,300);
+    return;
+  }
   log(`── ${u.name}의 턴 (${u.x},${u.y}) ──`,'lt');
   renderAll();
   if(u.side==='player'){
@@ -1367,10 +1420,12 @@ function updatePrev(mode,u){
 
 // ── 타겟팅 ──
 function reqAtkTarget(){
-  closeP('pa');
+  // 팝업만 닫고 atkRangeSet은 유지 (타겟팅 중에도 사거리 표시)
+  document.getElementById('pa').classList.remove('show');
   const u=cur();
   const attackable=getAttackable(u);
   if(!attackable.length){log('공격 범위 내 적 없음','ly');showToast('⚔️ 사거리 내 적이 없습니다');return;}
+  renderMap(); // 범위 유지한 채 재렌더
   enterTarget(attackable,t=>doAtk(u,t,atkPick.attr,atkPick.n));
 }
 
@@ -1387,6 +1442,7 @@ function enterTarget(candidates,cb){
 
 function cancelTarget(){
   targeting=false;
+  atkRangeSet=new Set(); sklRangeUnit=null; sklRangeTgt=null;
   document.getElementById('hint').classList.remove('show');
   if(!G.units)return;
   G.units.forEach(u=>{
@@ -1395,6 +1451,7 @@ function cancelTarget(){
     const chipEl=document.querySelector(`.chip[data-uid="${u.id}"]`);
     if(chipEl){chipEl.classList.remove('attacktgt');chipEl.style.pointerEvents='';chipEl.onclick=null;}
   });
+  renderMap();
 }
 
 document.addEventListener('keydown',e=>{
@@ -1794,6 +1851,8 @@ function showResult(win){
 // ── UI ──
 function setCmdUI(on){
   const u=on?cur():null;
+  // 사망한 유닛은 UI 비활성
+  if(on&&u&&u.hp<=0){setCmdUI(false);return;}
   const canUndo=on&&u&&!u.acted&&!!moveHistory;
   // 이동 범위: 턴 시작 시 계산된 originalReachable 유지 (재계산 안 함)
   if(on&&u){
@@ -2478,12 +2537,6 @@ function renderMap(){
         poly.setAttribute('stroke-width','2');
         poly.onclick=()=>doMove(c,r);
         svg.appendChild(poly);
-      } else if(isAtkRange){
-        poly.setAttribute('class','atk-range');
-        poly.setAttribute('fill','#2a0808');
-        poly.setAttribute('stroke','#cc3030');
-        poly.setAttribute('stroke-width','2');
-        svg.appendChild(poly);
       } else if(isSklRange){
         poly.setAttribute('class','skl-range');
         poly.setAttribute('fill','#1a0828');
@@ -2518,6 +2571,25 @@ function renderMap(){
         hi.setAttribute('fill',`rgba(230,255,180,${(0.10+tv*0.10).toFixed(2)})`);
         hi.setAttribute('pointer-events','none');
         svg.appendChild(hi);
+      }
+    }
+  }
+
+  // ── 공격 사거리 2차 패스 (이동 범위 위 레이어) ──
+  if(atkRangeSet.size>0){
+    for(let r=0;r<ROWS;r++){
+      for(let c=0;c<COLS;c++){
+        if(!atkRangeSet.has(`${c},${r}`))continue;
+        const {x,y}=hc(c,r);
+        const pts=_hexPts(x,y,R*0.97);
+        const op=document.createElementNS(ns,'polygon');
+        op.setAttribute('points',pts);
+        op.setAttribute('class','atk-range');
+        op.setAttribute('fill','#2a080888');
+        op.setAttribute('stroke','#cc3030');
+        op.setAttribute('stroke-width','2');
+        op.setAttribute('pointer-events','none');
+        svg.appendChild(op);
       }
     }
   }
